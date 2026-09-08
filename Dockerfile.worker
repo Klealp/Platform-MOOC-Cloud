@@ -1,0 +1,30 @@
+# ---------- Etapa 1: compilacion ----------
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /src
+RUN apk add --no-cache git
+
+COPY go.mod ./
+RUN go mod download || true
+
+COPY . .
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/worker ./cmd/worker
+
+# ---------- Etapa 2: imagen final ----------
+# A diferencia de la API, el worker SI necesita ffmpeg: es la herramienta que
+# convierte el video a HLS y la que lee su duracion real (ffprobe).
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata ffmpeg wget && \
+    adduser -D -u 10001 appuser
+
+COPY --from=builder /out/worker /usr/local/bin/worker
+
+USER appuser
+EXPOSE 9100
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=5 \
+    CMD wget -qO- http://127.0.0.1:9100/healthz || exit 1
+
+ENTRYPOINT ["/usr/local/bin/worker"]

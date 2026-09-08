@@ -1,0 +1,162 @@
+# =====================================================================
+# Plataforma MOOC - despliegue local completo
+#
+#   docker compose up --build          levanta todo
+#   docker compose up --scale worker=3 varias instancias de worker
+#   docker compose down -v             borra TAMBIEN los volumenes
+#                                      (necesario si cambias db/init.sql)
+#
+# Puertos publicados en el anfitrion:
+#   8080  API
+#   5432  PostgreSQL
+#   6379  Redis
+#   9000  MinIO (API S3)      9001  MinIO (consola web)
+#   1025  Mailpit (SMTP)      8025  Mailpit (bandeja web)
+#   9090  Prometheus          3000  Grafana
+# =====================================================================
+
+services:
+
+  # ------------------------------------------------------------------
+  # API: sin estado, escalable horizontalmente.
+  # ------------------------------------------------------------------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Worker: consume la cola. NO publica puertos hacia el exterior salvo
+  # el de metricas, y puede correr con N replicas.
+  # ------------------------------------------------------------------
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # PostgreSQL: fuente de verdad transaccional.
+  # db/init.sql se ejecuta SOLO la primera vez que se crea el volumen.
+  # ------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mooc
+      POSTGRES_PASSWORD: mooc
+      POSTGRES_DB: mooc
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mooc -d mooc"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Redis: sesiones en cache, rate limiting y cola asynq.
+  # appendonly hace que la cola sobreviva a un reinicio del contenedor.
+  # ------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # MinIO: almacenamiento de objetos compatible con S3.
+  # Aqui viven los originales, los derivados HLS y las insignias.
+  # ------------------------------------------------------------------
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Mailpit: servidor SMTP falso. Captura los correos y los muestra en
+  # http://localhost:8025 sin enviarlos a ninguna parte.
+  # ------------------------------------------------------------------
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Observabilidad
+  # ------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - promdata:/prometheus
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./deploy/grafana:/etc/grafana/provisioning/datasources:ro
+      - grafanadata:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  promdata:
+  grafanadata:

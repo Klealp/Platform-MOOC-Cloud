@@ -1,0 +1,11 @@
+# Provisionamiento por archivo: Grafana queda con la fuente de datos
+# configurada al arrancar, sin pasos manuales en la interfaz.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true

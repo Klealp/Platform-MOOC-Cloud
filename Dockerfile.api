@@ -1,0 +1,34 @@
+# ---------- Etapa 1: compilacion ----------
+# Se compila dentro de Docker para que el binario no dependa de lo que haya
+# instalado en tu maquina. Esto es lo que hace el despliegue reproducible.
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /src
+RUN apk add --no-cache git
+
+# Primero solo go.mod: si no cambian las dependencias, Docker reutiliza esta
+# capa y no vuelve a descargarlas en cada build.
+COPY go.mod ./
+RUN go mod download || true
+
+COPY . .
+# go mod tidy resuelve go.sum a partir del codigo real.
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/api ./cmd/api
+
+# ---------- Etapa 2: imagen final ----------
+# Imagen minima: solo el binario. No lleva compilador ni codigo fuente.
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata wget && \
+    adduser -D -u 10001 appuser
+
+COPY --from=builder /out/api /usr/local/bin/api
+
+USER appuser
+EXPOSE 8080
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=5 \
+    CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1
+
+ENTRYPOINT ["/usr/local/bin/api"]

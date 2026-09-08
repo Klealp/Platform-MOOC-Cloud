@@ -1,0 +1,656 @@
+openapi: 3.1.0
+
+info:
+  title: Plataforma MOOC - API
+  version: "1.0.0"
+  description: |
+    API REST de la plataforma de cursos masivos abiertos en linea.
+
+    Convenciones generales:
+
+    - Prefijo `/api/v1`. Un cambio incompatible se publicaria como `/api/v2`.
+    - Autenticacion: `Authorization: Bearer <token>`. El token es OPACO
+      (no es un JWT) y se puede revocar en cualquier momento.
+    - Todos los errores comparten la misma forma (ver el esquema `Error`).
+    - Los recursos ajenos responden **404**, no 403: confirmar la existencia
+      de un identificador ya seria filtrar informacion.
+    - `Idempotency-Key` es obligatoria en el envio de un intento de quiz y
+      opcional en el resto de operaciones de escritura.
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Entorno local con Docker Compose
+
+tags:
+  - name: auth
+    description: Registro, verificacion, sesiones y contrasenas
+  - name: admin
+    description: Gestion de usuarios y auditoria
+  - name: authoring
+    description: Autoria de cursos y contenidos
+  - name: media
+    description: Carga y entrega de archivos
+  - name: quizzes
+    description: Autoria y presentacion de evaluaciones
+  - name: catalog
+    description: Catalogo publico e inscripcion
+  - name: learning
+    description: Consumo de contenido y progreso
+  - name: badges
+    description: Insignias y verificacion publica
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Registro publico de estudiantes
+      description: |
+        Crea SIEMPRE una cuenta con rol `student`. El rol no se puede elegir:
+        los profesores solo los crea un administrador.
+        La respuesta es identica exista o no el correo, para impedir la
+        enumeracion de cuentas. En `APP_ENV=dev` se incluye
+        `dev_verification_token` para facilitar las pruebas.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, full_name]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, minLength: 10 }
+                full_name: { type: string }
+      responses:
+        "202": { description: Solicitud aceptada }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /auth/verify-email:
+    post:
+      tags: [auth]
+      summary: Confirmar el correo con el token recibido
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties:
+                token: { type: string }
+      responses:
+        "200": { description: Cuenta verificada }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Iniciar sesion
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        "200":
+          description: Sesion creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: { type: string }
+                  token_type: { type: string, example: Bearer }
+                  expires_in: { type: integer }
+                  session_id: { type: string, format: uuid }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { description: Cuenta sin verificar o suspendida }
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Cerrar la sesion actual
+      responses:
+        "200": { description: Sesion cerrada }
+
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Identidad de la sesion actual
+      responses:
+        "200": { description: Datos del usuario }
+
+  /auth/sessions:
+    get:
+      tags: [auth]
+      summary: Listar las sesiones activas propias
+      responses:
+        "200": { description: Lista de sesiones }
+
+  /auth/sessions/{id}:
+    delete:
+      tags: [auth]
+      summary: Revocar una sesion propia
+      description: La revocacion es inmediata; tambien borra la cache en Redis.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Sesion revocada }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /auth/password/forgot:
+    post:
+      tags: [auth]
+      summary: Solicitar el restablecimiento de la contrasena
+      security: []
+      responses:
+        "202": { description: Solicitud aceptada }
+
+  /auth/password/reset:
+    post:
+      tags: [auth]
+      summary: Fijar una contrasena nueva
+      description: Revoca TODAS las sesiones abiertas del usuario.
+      security: []
+      responses:
+        "200": { description: Contrasena actualizada }
+
+  /admin/users:
+    get:
+      tags: [admin]
+      summary: Listar usuarios
+      responses:
+        "200": { description: Lista de usuarios }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      tags: [admin]
+      summary: Crear un usuario (unica via para crear profesores)
+      responses:
+        "201": { description: Usuario creado }
+        "409": { description: El correo ya existe }
+
+  /admin/users/{id}:
+    patch:
+      tags: [admin]
+      summary: Cambiar rol o estado
+      description: |
+        Rechaza con 409 cualquier cambio que dejaria al sistema sin
+        administradores activos. Suspender revoca las sesiones del usuario.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Usuario actualizado }
+        "409": { description: Se protegio al ultimo administrador activo }
+
+  /admin/audit:
+    get:
+      tags: [admin]
+      summary: Consultar la bitacora de auditoria
+      responses:
+        "200": { description: Lineas de auditoria }
+
+  /courses:
+    post:
+      tags: [authoring]
+      summary: Crear un curso (crea tambien su version 1 en borrador)
+      responses:
+        "201": { description: Curso creado }
+    get:
+      tags: [authoring]
+      summary: Listar los cursos propios
+      responses:
+        "200": { description: Lista de cursos }
+
+  /courses/{id}/versions:
+    get:
+      tags: [authoring]
+      summary: Listar las versiones del curso
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Lista de versiones }
+    post:
+      tags: [authoring]
+      summary: Crear un borrador clonando la version vigente
+      description: |
+        Copia modulos, unidades, recursos y quizzes CONSERVANDO los
+        `stable_id`. Como el progreso del estudiante apunta a `stable_id`,
+        publicar la nueva version no borra su avance.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "201": { description: Borrador creado }
+        "409": { description: Ya existe un borrador abierto }
+
+  /versions/{id}:
+    get:
+      tags: [authoring]
+      summary: Previsualizar la version y ver si es publicable
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200":
+          description: Esquema de la version y lista de problemas pendientes
+
+  /versions/{id}/publish:
+    post:
+      tags: [authoring]
+      summary: Publicar la version
+      description: |
+        Valida metadatos, estructura minima, criterios de aprobacion y
+        disponibilidad de todos los recursos visibles. Si algo falla devuelve
+        422 con la lista EXHAUSTIVA de problemas, no solo el primero.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Version publicada }
+        "422": { description: La version no cumple los requisitos }
+
+  /versions/{id}/modules:
+    post:
+      tags: [authoring]
+      summary: Crear un modulo
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "201": { description: Modulo creado }
+        "409": { description: La version esta publicada y es inmutable }
+
+  /modules/{id}/units:
+    post:
+      tags: [authoring]
+      summary: Crear una unidad
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "201": { description: Unidad creada }
+
+  /units/{id}/resources:
+    post:
+      tags: [authoring]
+      summary: Crear un recurso
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, title]
+              properties:
+                type:
+                  type: string
+                  enum: [rich_text, image, video, audio, pdf, download, external_link, quiz]
+                title: { type: string }
+                required: { type: boolean, default: true }
+                visible: { type: boolean, default: true }
+                downloadable: { type: boolean, default: false }
+                content_md: { type: string }
+                external_url: { type: string }
+                asset_id: { type: string, format: uuid }
+      responses:
+        "201": { description: Recurso creado }
+
+  /resources/{id}/content:
+    get:
+      tags: [authoring]
+      summary: Leer el contenido y su numero de revision
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Contenido en Markdown canonico }
+    put:
+      tags: [authoring]
+      summary: Autosave del contenido
+      description: |
+        Si se envia `expected_revision` y no coincide con la revision actual,
+        responde 409 en lugar de sobrescribir el trabajo de otro editor.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Guardado, devuelve la revision nueva }
+        "409": { description: Conflicto de edicion }
+
+  /uploads:
+    post:
+      tags: [media]
+      summary: Iniciar una carga multipart directa al almacenamiento
+      description: |
+        Devuelve una URL prefirmada por cada parte. El cliente sube las partes
+        DIRECTAMENTE al almacenamiento; los bytes nunca pasan por la API.
+      responses:
+        "201": { description: Carga iniciada con las URLs de cada parte }
+        "413": { description: El archivo supera el maximo permitido }
+
+  /uploads/{id}:
+    get:
+      tags: [media]
+      summary: Estado de la carga y partes que faltan
+      description: |
+        Consulta al ALMACENAMIENTO que partes llegaron de verdad y firma URLs
+        nuevas solo para las faltantes. Esto es lo que hace reanudable la
+        carga durante 24 horas.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Partes recibidas y faltantes }
+        "409": { description: La ventana de reanudacion expiro }
+    delete:
+      tags: [media]
+      summary: Cancelar la carga
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Carga cancelada }
+
+  /uploads/{id}/complete:
+    post:
+      tags: [media]
+      summary: Cerrar la carga y encolar el procesamiento
+      description: |
+        Ensambla el objeto y publica el trabajo de escaneo. Es idempotente:
+        reintentar devuelve el mismo resultado sin duplicar efectos.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "202": { description: Archivo recibido, verificacion en curso }
+        "422": { description: Faltan partes por subir }
+
+  /assets/{id}:
+    get:
+      tags: [media]
+      summary: Estado del archivo
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Estado y metadatos del archivo }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /assets/{id}/url:
+    get:
+      tags: [media]
+      summary: Obtener una URL de entrega firmada
+      description: |
+        Verifica primero el derecho de acceso (propietario, administrador o
+        estudiante con inscripcion activa) y solo entonces firma la URL.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: URL temporal de descarga o reproduccion }
+        "409": { description: El archivo aun no esta listo }
+
+  /assets/{id}/playlist:
+    get:
+      tags: [media]
+      summary: Lista de reproduccion HLS con segmentos firmados
+      description: |
+        Devuelve el `.m3u8` reescrito: cada segmento lleva su propia URL
+        prefirmada. Sin esto habria que abrir el bucket al publico.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200":
+          description: Lista de reproduccion
+          content:
+            application/vnd.apple.mpegurl:
+              schema: { type: string }
+
+  /catalog:
+    get:
+      tags: [catalog]
+      summary: Catalogo publico con busqueda, filtros y cursor
+      security: []
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: category, in: query, schema: { type: string } }
+        - { name: level, in: query, schema: { type: string } }
+        - { name: language, in: query, schema: { type: string } }
+        - { name: tag, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses:
+        "200": { description: Cursos publicados y `next_cursor` }
+
+  /catalog/{slug}:
+    get:
+      tags: [catalog]
+      summary: Ficha publica del curso
+      security: []
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Metadatos y esquema de contenidos visibles }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /enrollments:
+    post:
+      tags: [catalog]
+      summary: Inscribirse o reinscribirse
+      description: |
+        La reinscripcion reactiva la MISMA fila, de modo que el progreso y los
+        intentos de quiz anteriores se conservan.
+      responses:
+        "201": { description: Inscripcion activa }
+        "404": { description: Curso no encontrado o no publicado }
+    get:
+      tags: [learning]
+      summary: Listar las inscripciones propias
+      responses:
+        "200": { description: Lista de inscripciones }
+
+  /enrollments/{id}:
+    delete:
+      tags: [learning]
+      summary: Retirarse del curso (sin perder el progreso)
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Retiro registrado }
+
+  /enrollments/{id}/outline:
+    get:
+      tags: [learning]
+      summary: Contenido del curso con el avance de cada recurso
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Esquema, progreso por recurso y estado global }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /progress/events:
+    post:
+      tags: [learning]
+      summary: Reportar una senal de avance
+      description: |
+        El cliente envia SENALES (`open`, `heartbeat`, `complete`), nunca
+        porcentajes. Si el cuerpo incluye `progress_pct` o `completed`, la
+        peticion se rechaza con 422 y queda registrada en la auditoria.
+        Un `complete` sin el tiempo minimo de permanencia tambien se rechaza.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enrollment_id, resource_stable_id, event_type]
+              properties:
+                enrollment_id: { type: string, format: uuid }
+                resource_stable_id: { type: string, format: uuid }
+                event_type: { type: string, enum: [open, heartbeat, complete] }
+                position_secs: { type: integer }
+                delta_secs: { type: integer, maximum: 60 }
+      responses:
+        "200": { description: Senal registrada y progreso recalculado }
+        "422": { description: Senal rechazada }
+
+  /quizzes/{id}:
+    get:
+      tags: [quizzes]
+      summary: Vista del autor (incluye `is_correct`)
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Quiz completo }
+    patch:
+      tags: [quizzes]
+      summary: Configurar intentos, tiempo, nota minima y retroalimentacion
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Quiz actualizado }
+
+  /quizzes/{id}/questions:
+    post:
+      tags: [quizzes]
+      summary: Crear una pregunta de seleccion multiple (solo texto)
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt, options]
+              properties:
+                prompt: { type: string }
+                points: { type: number, default: 1 }
+                multiple: { type: boolean, default: false }
+                options:
+                  type: array
+                  minItems: 2
+                  items:
+                    type: object
+                    required: [text]
+                    properties:
+                      text: { type: string }
+                      is_correct: { type: boolean }
+                      feedback: { type: string }
+      responses:
+        "201": { description: Pregunta creada }
+        "400": { description: Menos de dos opciones o sin respuesta correcta }
+
+  /quizzes/{id}/attempts:
+    post:
+      tags: [quizzes]
+      summary: Iniciar un intento
+      description: |
+        Congela un snapshot del cuestionario. La respuesta NUNCA incluye
+        `is_correct`. Si ya hay un intento abierto se devuelve ese mismo:
+        recargar la pagina no consume un intento.
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Intento (nuevo o el que estaba abierto) }
+        "409": { description: Intentos agotados }
+
+  /attempts/{id}:
+    get:
+      tags: [quizzes]
+      summary: Consultar un intento propio
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Estado del intento }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [quizzes]
+      summary: Guardado parcial de respuestas
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Respuestas guardadas }
+        "409": { description: El intento ya se envio o expiro }
+
+  /attempts/{id}/submit:
+    post:
+      tags: [quizzes]
+      summary: Enviar el intento y calificar en servidor
+      parameters:
+        - { $ref: "#/components/parameters/PathId" }
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Resultado de la calificacion }
+        "409": { description: Ya hay una peticion en curso con esa llave }
+
+  /badges:
+    get:
+      tags: [badges]
+      summary: Insignias propias
+      responses:
+        "200": { description: Lista de insignias con su URL de verificacion }
+
+  /public/badges/{code}:
+    get:
+      tags: [badges]
+      summary: Verificacion publica de una insignia
+      description: |
+        Endpoint sin autenticacion. Devuelve el nombre del estudiante y el
+        curso, nunca el correo ni identificadores internos.
+      security: []
+      parameters:
+        - { name: code, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Insignia valida o revocada }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /admin/badges/{id}/revoke:
+    post:
+      tags: [badges]
+      summary: Revocar una insignia (administrador)
+      parameters: [{ $ref: "#/components/parameters/PathId" }]
+      responses:
+        "200": { description: Insignia revocada }
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Token opaco de sesion, revocable en cualquier momento.
+
+  parameters:
+    PathId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - validation_error
+                - unauthorized
+                - forbidden
+                - not_found
+                - conflict
+                - rate_limited
+                - unprocessable
+                - payload_too_large
+                - internal_error
+            message: { type: string }
+            details: {}
+            request_id: { type: string }
+
+  responses:
+    BadRequest:
+      description: Peticion invalida
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Falta la sesion o es invalida
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: El rol no permite la operacion
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: No existe, o existe pero no es tuyo
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
