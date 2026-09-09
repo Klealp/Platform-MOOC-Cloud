@@ -13,6 +13,7 @@
 #   9000  MinIO (API S3)      9001  MinIO (consola web)
 #   1025  Mailpit (SMTP)      8025  Mailpit (bandeja web)
 #   9090  Prometheus          3000  Grafana
+#   16686 Jaeger (trazas)      4318  OTLP/HTTP (colector de Jaeger)
 # =====================================================================
 
 services:
@@ -34,6 +35,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     restart: unless-stopped
 
   # ------------------------------------------------------------------
@@ -52,6 +55,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      jaeger:
+        condition: service_started
     restart: unless-stopped
 
   # ------------------------------------------------------------------
@@ -148,10 +153,27 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./deploy/grafana:/etc/grafana/provisioning/datasources:ro
+      # provisioning/ trae la fuente de datos (uid fijo) y el proveedor de
+      # dashboards; dashboards/ son los .json que Grafana carga al arrancar.
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafanadata:/var/lib/grafana
     depends_on:
       - prometheus
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Jaeger: recibe las trazas OpenTelemetry (OTLP) de la API y los
+  # workers y las muestra en su interfaz. all-in-one guarda en memoria:
+  # perfecto para la demostracion, no para produccion.
+  # ------------------------------------------------------------------
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"   # interfaz web
+      - "4318:4318"     # OTLP/HTTP (donde exportan api y worker)
     restart: unless-stopped
 
 volumes:

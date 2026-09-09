@@ -66,6 +66,10 @@ paths:
                 email: { type: string, format: email }
                 password: { type: string, minLength: 10 }
                 full_name: { type: string }
+            example:
+              email: estudiante@mooc.local
+              password: Estudiante2026
+              full_name: Estudiante Demo
       responses:
         "202": { description: Solicitud aceptada }
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -84,6 +88,8 @@ paths:
               required: [token]
               properties:
                 token: { type: string }
+            example:
+              token: "pega-aqui-el-dev_verification_token-del-registro"
       responses:
         "200": { description: Cuenta verificada }
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -103,6 +109,9 @@ paths:
               properties:
                 email: { type: string, format: email }
                 password: { type: string }
+            example:
+              email: admin@mooc.local
+              password: Admin123!
       responses:
         "200":
           description: Sesion creada
@@ -176,6 +185,23 @@ paths:
     post:
       tags: [admin]
       summary: Crear un usuario (unica via para crear profesores)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, full_name, password, role]
+              properties:
+                email: { type: string, format: email }
+                full_name: { type: string }
+                password: { type: string, minLength: 10 }
+                role: { type: string, enum: [teacher, admin], default: teacher }
+            example:
+              email: profesora@mooc.local
+              full_name: Profesora Demo
+              password: Profesor2026
+              role: teacher
       responses:
         "201": { description: Usuario creado }
         "409": { description: El correo ya existe }
@@ -203,6 +229,24 @@ paths:
     post:
       tags: [authoring]
       summary: Crear un curso (crea tambien su version 1 en borrador)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+                summary: { type: string }
+                category: { type: string }
+                level: { type: string, enum: [beginner, intermediate, advanced] }
+                language: { type: string, default: es }
+            example:
+              title: Fundamentos de la nube
+              summary: Curso de prueba
+              category: cloud
+              level: beginner
       responses:
         "201": { description: Curso creado }
     get:
@@ -257,6 +301,17 @@ paths:
       tags: [authoring]
       summary: Crear un modulo
       parameters: [{ $ref: "#/components/parameters/PathId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+            example:
+              title: Modulo 1
       responses:
         "201": { description: Modulo creado }
         "409": { description: La version esta publicada y es inmutable }
@@ -266,6 +321,17 @@ paths:
       tags: [authoring]
       summary: Crear una unidad
       parameters: [{ $ref: "#/components/parameters/PathId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string }
+            example:
+              title: Unidad 1
       responses:
         "201": { description: Unidad creada }
 
@@ -292,6 +358,11 @@ paths:
                 content_md: { type: string }
                 external_url: { type: string }
                 asset_id: { type: string, format: uuid }
+            example:
+              type: rich_text
+              title: Lectura inicial
+              content_md: "# Hola\n\nContenido de prueba."
+              required: true
       responses:
         "201": { description: Recurso creado }
 
@@ -425,6 +496,17 @@ paths:
       description: |
         La reinscripcion reactiva la MISMA fila, de modo que el progreso y los
         intentos de quiz anteriores se conservan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slug]
+              properties:
+                slug: { type: string }
+            example:
+              slug: fundamentos-de-la-nube
       responses:
         "201": { description: Inscripcion activa }
         "404": { description: Curso no encontrado o no publicado }
@@ -473,6 +555,11 @@ paths:
                 event_type: { type: string, enum: [open, heartbeat, complete] }
                 position_secs: { type: integer }
                 delta_secs: { type: integer, maximum: 60 }
+            example:
+              enrollment_id: 00000000-0000-0000-0000-000000000000
+              resource_stable_id: 00000000-0000-0000-0000-000000000000
+              event_type: heartbeat
+              delta_secs: 30
       responses:
         "200": { description: Senal registrada y progreso recalculado }
         "422": { description: Senal rechazada }
@@ -517,6 +604,12 @@ paths:
                       text: { type: string }
                       is_correct: { type: boolean }
                       feedback: { type: string }
+            example:
+              prompt: "Que significa que la API sea sin estado?"
+              options:
+                - { text: "Que no guarda datos en el contenedor entre peticiones", is_correct: true }
+                - { text: "Que no usa base de datos", is_correct: false }
+                - { text: "Que no responde nada", is_correct: false }
       responses:
         "201": { description: Pregunta creada }
         "400": { description: Menos de dos opciones o sin respuesta correcta }

@@ -1,0 +1,16 @@
+# Proveedor de dashboards: Grafana carga al arrancar todos los .json que
+# encuentre en la carpeta indicada. Asi el tablero de la plataforma queda listo
+# sin importarlo a mano y viaja versionado en el repositorio.
+apiVersion: 1
+
+providers:
+  - name: MOOC
+    orgId: 1
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

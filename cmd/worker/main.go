@@ -10,11 +10,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/hibiken/asynq"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -26,6 +28,7 @@ import (
 	"mooc-platform/internal/queue"
 	"mooc-platform/internal/storage"
 	"mooc-platform/internal/tasks"
+	"mooc-platform/internal/telemetry"
 )
 
 func main() {
@@ -34,6 +37,19 @@ func main() {
 
 	cfg := config.Load()
 	log.Printf("iniciando: %s", cfg.Describe())
+
+	// Trazas OpenTelemetry para el worker: cada trabajo abre su propio span y
+	// las consultas SQL cuelgan de el. Apagado si no hay endpoint configurado.
+	shutdownTracing, err := telemetry.Init(context.Background(), "mooc-worker", cfg.OTelEndpoint, cfg.OTelSampleRatio)
+	if err != nil {
+		log.Printf("telemetria: %v (se continua sin trazas)", err)
+		shutdownTracing = func(context.Context) error { return nil }
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = shutdownTracing(ctx)
+	}()
 
 	db, err := database.OpenPostgres(cfg.DatabaseURL)
 	if err != nil {

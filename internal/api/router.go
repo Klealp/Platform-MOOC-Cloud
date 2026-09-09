@@ -20,6 +20,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 
 	"mooc-platform/internal/audit"
 	"mooc-platform/internal/auth"
@@ -59,11 +60,23 @@ func (s *Server) Router() *gin.Engine {
 	r.Use(recovery(), requestIDMiddleware(), observability(), securityHeaders())
 
 	// --- Operacion ---
-	r.GET("/healthz", s.handleHealth)   // el proceso vive
-	r.GET("/readyz", s.handleReady)     // ademas sus dependencias responden
+	r.GET("/healthz", s.handleHealth) // el proceso vive
+	r.GET("/readyz", s.handleReady)   // ademas sus dependencias responden
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
+	// --- Documentacion viva del contrato ---
+	// El spec OpenAPI se sirve crudo y se pinta con Swagger UI. Ambos van fuera
+	// de /api/v1 y sin sesion: son documentacion, no parte de la API versionada.
+	r.GET("/openapi.yaml", s.handleOpenAPISpec)
+	r.GET("/docs", s.handleDocs)
+
 	v1 := r.Group("/api/v1")
+	// El trazado OTel se aplica SOLO a la API versionada: asi el span del
+	// servidor envuelve el handler y sus consultas SQL, pero se evitan las
+	// trazas de ruido de /metrics (que Prometheus raspa cada 15s), /healthz y
+	// /docs. Usa el TracerProvider global; si las trazas estan apagadas, no hace
+	// nada.
+	v1.Use(otelgin.Middleware("mooc-api"))
 
 	// =================================================================
 	// PUBLICO (sin sesion)

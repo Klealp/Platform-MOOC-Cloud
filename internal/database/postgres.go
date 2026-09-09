@@ -7,14 +7,23 @@ import (
 	"log"
 	"time"
 
+	"github.com/XSAM/otelsql"
 	_ "github.com/lib/pq" // driver de PostgreSQL registrado por su efecto secundario
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 )
 
 // OpenPostgres espera a que la base este lista. Docker Compose arranca los
 // contenedores casi al mismo tiempo, asi que la API puede intentar conectarse
 // antes de que Postgres termine de inicializarse; por eso reintentamos.
 func OpenPostgres(url string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", url)
+	// otelsql envuelve el driver "postgres": cada consulta que reciba un context
+	// con un span activo (el de la peticion HTTP o el del trabajo del worker)
+	// abre un span hijo con la sentencia SQL. Si las trazas estan apagadas, el
+	// coste es nulo. No cambia el API de database/sql: sigue siendo un *sql.DB.
+	db, err := otelsql.Open("postgres", url,
+		otelsql.WithAttributes(semconv.DBSystemPostgreSQL),
+		otelsql.WithSpanOptions(otelsql.SpanOptions{OmitConnResetSession: true, OmitRows: true}),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("abrir postgres: %w", err)
 	}

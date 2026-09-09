@@ -1,7 +1,7 @@
 # ---------- Etapa 1: compilacion ----------
 # Se compila dentro de Docker para que el binario no dependa de lo que haya
 # instalado en tu maquina. Esto es lo que hace el despliegue reproducible.
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /src
 RUN apk add --no-cache git

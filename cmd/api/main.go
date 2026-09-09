@@ -22,6 +22,7 @@ import (
 	"mooc-platform/internal/database"
 	"mooc-platform/internal/queue"
 	"mooc-platform/internal/storage"
+	"mooc-platform/internal/telemetry"
 )
 
 func main() {
@@ -30,6 +31,20 @@ func main() {
 
 	cfg := config.Load()
 	log.Printf("iniciando: %s", cfg.Describe())
+
+	// Trazas OpenTelemetry: se inicia ANTES que Postgres para que el pool ya
+	// quede envuelto por el proveedor global. Si OTEL_EXPORTER_OTLP_ENDPOINT
+	// esta vacio, no exporta nada y no falla.
+	shutdownTracing, err := telemetry.Init(context.Background(), "mooc-api", cfg.OTelEndpoint, cfg.OTelSampleRatio)
+	if err != nil {
+		log.Printf("telemetria: %v (se continua sin trazas)", err)
+		shutdownTracing = func(context.Context) error { return nil }
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_ = shutdownTracing(ctx)
+	}()
 
 	db, err := database.OpenPostgres(cfg.DatabaseURL)
 	if err != nil {

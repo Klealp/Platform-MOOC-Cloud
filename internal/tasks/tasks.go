@@ -27,6 +27,9 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 
 	"mooc-platform/internal/audit"
 	"mooc-platform/internal/config"
@@ -35,6 +38,11 @@ import (
 	"mooc-platform/internal/queue"
 	"mooc-platform/internal/storage"
 )
+
+// tracer emite los spans de los trabajos del worker. Cada job es la raiz de su
+// propia traza (la entrega de la cola es asincrona: la API ya respondio), y las
+// consultas SQL que haga el handler cuelgan de ese span.
+var tracer = otel.Tracer("mooc-worker")
 
 type Deps struct {
 	Cfg    config.Config
@@ -60,6 +68,15 @@ type handlerFunc func(context.Context, *asynq.Task) error
 // repetir el mismo codigo en los cinco handlers.
 func (d *Deps) instrument(name string, fn handlerFunc) handlerFunc {
 	return func(ctx context.Context, t *asynq.Task) error {
+		ctx, span := tracer.Start(ctx, "job "+name)
+		span.SetAttributes(
+			attribute.String("messaging.system", "asynq"),
+			attribute.String("messaging.destination", name),
+		)
+		if id, ok := asynq.GetTaskID(ctx); ok {
+			span.SetAttributes(attribute.String("messaging.message.id", id))
+		}
+
 		start := time.Now()
 		err := fn(ctx, t)
 		metrics.JobDuration.WithLabelValues(name).Observe(time.Since(start).Seconds())
@@ -67,8 +84,12 @@ func (d *Deps) instrument(name string, fn handlerFunc) handlerFunc {
 		status := "success"
 		if err != nil {
 			status = "retry"
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
 		}
 		metrics.JobsProcessed.WithLabelValues(name, status).Inc()
+		span.SetAttributes(attribute.String("job.status", status))
+		span.End()
 
 		if err != nil {
 			log.Printf("worker: %s fallo: %v", name, err)

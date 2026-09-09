@@ -1,9 +1,14 @@
 # Provisionamiento por archivo: Grafana queda con la fuente de datos
 # configurada al arrancar, sin pasos manuales en la interfaz.
+#
+# El uid es FIJO (prometheus) a proposito: los paneles de los dashboards
+# provisionados apuntan a la fuente por ese uid, no por su nombre. Sin un uid
+# estable, cada arranque generaria uno nuevo y los paneles quedarian huerfanos.
 apiVersion: 1
 
 datasources:
   - name: Prometheus
+    uid: prometheus
     type: prometheus
     access: proxy
     url: http://prometheus:9090

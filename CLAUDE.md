@@ -67,7 +67,7 @@ internal/
   storage/        cliente del almacenamiento de objetos (API S3 / MinIO)
   tasks/          handlers de los workers
 db/init.sql       esquema completo. Solo se ejecuta al CREAR el volumen
-api/openapi.yaml  contrato de la API
+internal/openapi/ contrato de la API (openapi.yaml embebido; se sirve en /docs y /openapi.yaml)
 deploy/           configuracion de Prometheus y Grafana
 testdata/         smoke.sh y el archivo EICAR. No agregar mas archivos de prueba
 ```
@@ -121,7 +121,11 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
 
 - El antimalware es un stub que detecta EICAR. La interfaz permite enchufar
   ClamAV mas adelante.
-- No hay trazas distribuidas (OpenTelemetry). Hay `X-Request-ID` y metricas.
+- Hay trazas OpenTelemetry (OTLP -> Jaeger) en la API (otelgin), el worker
+  (un span por trabajo) y Postgres (otelsql), ademas de `X-Request-ID` y
+  metricas. Pendiente: propagar el `traceparent` de la API dentro del trabajo
+  encolado para unir en una sola traza la peticion HTTP y su procesamiento en
+  el worker (hoy el span del worker es la raiz de su propia traza).
 - El `Markdown extendido canonico` se normaliza (finales de linea y espacios).
   La biyeccion completa con el AST del editor es trabajo del frontend.
 - El CDN no existe en local: `CDN_BASE_URL` vacio significa "firma contra

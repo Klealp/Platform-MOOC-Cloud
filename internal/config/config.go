@@ -69,6 +69,12 @@ type Config struct {
 	// --- Bootstrap del administrador ---
 	AdminEmail    string
 	AdminPassword string
+
+	// --- Observabilidad (OpenTelemetry) ---
+	// OTelEndpoint: host:puerto del colector OTLP/HTTP (Jaeger en local).
+	// Vacio = trazas apagadas. OTelSampleRatio: fraccion muestreada (0..1).
+	OTelEndpoint    string
+	OTelSampleRatio float64
 }
 
 func Load() Config {
@@ -110,6 +116,9 @@ func Load() Config {
 
 		AdminEmail:    env("ADMIN_EMAIL", "admin@mooc.local"),
 		AdminPassword: env("ADMIN_PASSWORD", "Admin123!"),
+
+		OTelEndpoint:    env("OTEL_EXPORTER_OTLP_ENDPOINT", ""),
+		OTelSampleRatio: envFloat("OTEL_SAMPLE_RATIO", 1.0),
 	}
 	return cfg
 }
@@ -140,6 +149,19 @@ func envInt(key string, def int) int {
 		return def
 	}
 	return n
+}
+
+func envFloat(key string, def float64) float64 {
+	v := os.Getenv(key)
+	if v == "" {
+		return def
+	}
+	f, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		log.Printf("config: %s='%s' no es un numero, se usa %g", key, v, def)
+		return def
+	}
+	return f
 }
 
 func envBool(key string, def bool) bool {
