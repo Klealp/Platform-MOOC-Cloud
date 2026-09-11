@@ -10,9 +10,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"strings"
 
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/hibiken/asynq"
 
 	"mooc-platform/internal/audit"
@@ -23,6 +23,11 @@ import (
 // que TODOS los antivirus del mundo reconocen como si fuera un virus. Existe
 // justamente para poder probar la cadena de deteccion sin usar malware real.
 const eicarSignature = `X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*`
+
+// sniffLen es cuantos bytes iniciales se leen para detectar el tipo real. 3072
+// es el limite por defecto de mimetype y sobra para el box "ftyp" de mp4/mov y
+// para el resto de firmas.
+const sniffLen = 3072
 
 // mimePermitido por tipo de asset. Rechazar aqui es importante: el cliente
 // declara un MIME al iniciar la carga, pero un atacante puede declarar
@@ -93,7 +98,7 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 	defer reader.Close()
 
 	hasher := sha256.New()
-	head := make([]byte, 0, 512)
+	head := make([]byte, 0, sniffLen)
 	infected := false
 	// Ventana solapada: la firma podria quedar partida entre dos bloques.
 	var tail []byte
@@ -104,8 +109,8 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 		if n > 0 {
 			chunk := buf[:n]
 			hasher.Write(chunk)
-			if len(head) < 512 {
-				head = append(head, chunk[:min(len(chunk), 512-len(head))]...)
+			if len(head) < sniffLen {
+				head = append(head, chunk[:min(len(chunk), sniffLen-len(head))]...)
 			}
 			if !infected {
 				window := append(tail, chunk...)
@@ -128,7 +133,11 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 	}
 
 	checksum := hex.EncodeToString(hasher.Sum(nil))
-	detectedMIME := http.DetectContentType(head)
+	// http.DetectContentType de Go es demasiado estricto con mp4 (solo reconoce
+	// marcas que contengan "mp4" en el box ftyp) y falla con .mov y muchos .mp4
+	// reales, devolviendo application/octet-stream. mimetype identifica el tipo
+	// por las firmas de los primeros bytes de forma mucho mas amplia.
+	detectedMIME := mimetype.Detect(head).String()
 
 	if declaredChecksum != "" && declaredChecksum != checksum {
 		return d.failAsset(ctx, p.AssetID, jobKey,

@@ -96,12 +96,19 @@ done
 # 3. Carga multipart REAL del video
 # =====================================================================
 say "5. Iniciar la carga multipart del video"
-FILE_SIZE=$(stat -c%s "$VIDEO_PATH")
+# Tamano del archivo, portable: wc -c funciona igual en macOS (BSD) y Linux (GNU),
+# a diferencia de stat, que usa -f%z en macOS y -c%s en Linux.
+FILE_SIZE=$(wc -c < "$VIDEO_PATH" | tr -d ' ')
 FILE_NAME=$(basename "$VIDEO_PATH")
 echo "archivo: $FILE_NAME ($((FILE_SIZE / 1024 / 1024)) MB)"
 
 echo "calculando checksum SHA-256 (para demostrar la verificacion de integridad)..."
-CHECKSUM=$(sha256sum "$VIDEO_PATH" | awk '{print $1}')
+# macOS no trae sha256sum; usa shasum -a 256. Se detecta cual esta disponible.
+if command -v sha256sum >/dev/null 2>&1; then
+  CHECKSUM=$(sha256sum "$VIDEO_PATH" | awk '{print $1}')
+else
+  CHECKSUM=$(shasum -a 256 "$VIDEO_PATH" | awk '{print $1}')
+fi
 
 INIT=$(curl -sS -X POST "$API/uploads" \
   -H "Authorization: Bearer $TEACHER_TOKEN" -H 'Content-Type: application/json' \
