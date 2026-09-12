@@ -69,7 +69,15 @@ internal/
 db/init.sql       esquema completo. Solo se ejecuta al CREAR el volumen
 internal/openapi/ contrato de la API (openapi.yaml embebido; se sirve en /docs y /openapi.yaml)
 deploy/           configuracion de Prometheus y Grafana
-testdata/         smoke.sh y el archivo EICAR. No agregar mas archivos de prueba
+testdata/         smoke.sh, otros smoke_*.sh (cada uno demuestra un
+                  comportamiento concreto: un formato de archivo, un
+                  camino de falla, una regla de negocio) y eicar.txt.
+                  Agregar un smoke_*.sh nuevo esta bien cuando cubre un
+                  comportamiento que los demas no cubren; no crear
+                  variantes redundantes de uno ya existente ni agregar
+                  binarios de prueba sueltos sin un script que los use.
+                  Mantener testdata/README.md al dia con la tabla de
+                  que hace cada script.
 ```
 
 ## Convenciones de codigo
