@@ -1,0 +1,10 @@
+# Proxy inverso del Web Server. DOMAIN viene de /etc/mooc/web.env.
+{$DOMAIN} {
+	encode gzip
+
+	# /metrics es para Prometheus por la red privada, no para Internet.
+	@interno path /metrics
+	respond @interno 404
+
+	reverse_proxy api:8080
+}

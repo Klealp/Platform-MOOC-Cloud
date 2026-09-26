@@ -7,6 +7,19 @@ Monolito modular + workers asincronos, todo en contenedores.
 > La documentacion detallada de la arquitectura y de cada archivo esta en
 > [`DOCUMENTACION.md`](./DOCUMENTACION.md).
 
+## Entrega 2 - Despliegue en Google Cloud
+
+| Que | Donde |
+|---|---|
+| Documento de arquitectura del despliegue | [`docs/entrega2/`](docs/entrega2/README.md) |
+| Informe de capacidad | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
+| Aprovisionamiento, compose por VM y migracion | [`deploy/gcp/`](deploy/gcp/) |
+| URL de la aplicacion | PENDIENTE (`https://<ip>.sslip.io`) |
+| Video de sustentacion | PENDIENTE |
+
+Las credenciales de acceso para el equipo docente se entregan por el canal
+privado del curso, nunca en este repositorio.
+
 ## Requisitos
 
 - Docker y Docker Compose (probado con Docker 29.x / Docker Desktop 4.76)
