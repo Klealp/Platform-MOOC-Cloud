@@ -1,0 +1,55 @@
+# =====================================================================
+# Override de observabilidad para el analisis de capacidad (Entrega 2).
+#
+# Anade tres exportadores Prometheus que cubren las metricas de
+# infraestructura y dependencias que exige el enunciado y que la app no
+# expone por si sola: CPU/memoria/disco (node), conexiones y carga de
+# PostgreSQL (postgres) y profundidad de la cola asynq en Redis (redis).
+#
+# USO LOCAL (se fusiona con el compose base):
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.metrics.yml up -d
+#
+# EN LA NUBE estos exportadores NO van en un compose unico: se instalan en
+# la VM correspondiente y Prometheus los raspa por su IP privada.
+#   - node_exporter  -> en Web Server Y en Worker Server (uno por VM)
+#   - postgres_exporter -> apuntando al endpoint privado del servicio
+#                          administrado de PostgreSQL
+#   - redis_exporter -> en Worker Server, junto al contenedor de Redis
+# Ajustar entonces los targets en deploy/prometheus.yml a esas IPs.
+# =====================================================================
+
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: mooc-node-exporter
+    # Config portable: arranca tambien en Docker Desktop (macOS/Windows),
+    # donde reporta metricas de la VM de Docker (referencia limitada en local).
+    #
+    # EN LAS VMs LINUX de la nube, para medir el host real, usar en su lugar:
+    #   pid: host
+    #   command: ['--path.rootfs=/host']
+    #   volumes: ['/:/host:ro,rslave']
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: mooc-postgres-exporter
+    environment:
+      # En local apunta al Postgres del compose. En la nube, cambiar por el
+      # endpoint privado del servicio administrado (y su usuario/clave).
+      DATA_SOURCE_NAME: "postgresql://mooc:mooc@postgres:5432/mooc?sslmode=disable"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: mooc-redis-exporter
+    command:
+      - '--redis.addr=redis://redis:6379'
+      # Exporta el tamano de las llaves de asynq (pending/active/scheduled/
+      # retry/archived) como redis_key_size -> profundidad de la cola.
+      - '--check-keys=asynq:*'
+    depends_on:
+      - redis
+    restart: unless-stopped

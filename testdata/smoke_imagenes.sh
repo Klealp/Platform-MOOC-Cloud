@@ -319,7 +319,12 @@ echo "$OUTLINE" | jq '{modulos: (.modules | length),
 STUDENT_QUIZ_ID=$(echo "$OUTLINE" | jq -r '.modules[0].units[] | .resources[]? | select(.type=="quiz") | .quiz_id')
 STUDENT_ASSET1=$(echo "$OUTLINE" | jq -r '.modules[0].units[] | .resources[]? | select(.type=="image") | .asset_id' | head -1)
 TEXT_STABLE=$(echo "$OUTLINE" | jq -r '.modules[0].units[] | .resources[]? | select(.type=="rich_text") | .stable_id')
-mapfile -t IMAGE_STABLES < <(echo "$OUTLINE" | jq -r '.modules[0].units[] | .resources[]? | select(.type=="image") | .stable_id')
+# mapfile (bash 4+) no existe en el bash 3.2 que trae macOS; se llena el
+# arreglo con un while-read para que el script corra igual en macOS y Linux.
+IMAGE_STABLES=()
+while IFS= read -r stable; do
+  [ -n "$stable" ] && IMAGE_STABLES+=("$stable")
+done < <(echo "$OUTLINE" | jq -r '.modules[0].units[] | .resources[]? | select(.type=="image") | .stable_id')
 
 say "14. El estudiante obtiene una URL firmada de la primera imagen"
 curl -sS "$API/assets/$STUDENT_ASSET1/url" -H "Authorization: Bearer $STUDENT_TOKEN" \

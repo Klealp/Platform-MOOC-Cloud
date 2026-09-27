@@ -22,3 +22,24 @@ scrape_configs:
   - job_name: prometheus
     static_configs:
       - targets: ["localhost:9090"]
+
+  # -------------------------------------------------------------------
+  # Exportadores para el analisis de capacidad (Entrega 2).
+  # Solo responden cuando se levanta el override deploy/docker-compose.metrics.yml
+  # (en local) o cuando estan instalados en las VMs (en la nube). Si no
+  # existen, Prometheus los marca "down" sin afectar al resto.
+  # En la nube: reemplazar los nombres de servicio por las IPs privadas
+  # (node-exporter en cada VM; postgres-exporter contra el servicio
+  # administrado; redis-exporter en Worker Server).
+  # -------------------------------------------------------------------
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
