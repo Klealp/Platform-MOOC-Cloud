@@ -1,0 +1,7 @@
+ts_ms,task_id,tipo,cola,evento
+1790534146552,scan:878c170a-6502-4ec7-a6d1-9bb9d6b4ec10,media:scan,default,pendiente_visto
+1790534148552,hls:878c170a-6502-4ec7-a6d1-9bb9d6b4ec10,media:transcode,low,activo_visto
+1790534208531,hls:e312c929-abff-488e-92e3-01fa575ea28e,media:transcode,low,activo_visto
+1790534268505,scan:26d84eb9-5ddc-4140-b3e9-69bef120adb3,media:scan,default,pendiente_visto
+1790534270504,hls:26d84eb9-5ddc-4140-b3e9-69bef120adb3,media:transcode,low,pendiente_visto
+1790534272504,hls:26d84eb9-5ddc-4140-b3e9-69bef120adb3,media:transcode,low,activo_visto
