@@ -22,7 +22,7 @@ import (
 // eicarSignature es el patron del archivo de prueba EICAR: un texto inofensivo
 // que TODOS los antivirus del mundo reconocen como si fuera un virus. Existe
 // justamente para poder probar la cadena de deteccion sin usar malware real.
-const eicarSignature = `X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*`
+const eicarSignature = `X5O!P%@AP[4\PZX54(P^)7CC)7}$` + `EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*`
 
 // sniffLen es cuantos bytes iniciales se leen para detectar el tipo real. 3072
 // es el limite por defecto de mimetype y sobra para el box "ftyp" de mp4/mov y
