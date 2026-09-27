@@ -30,7 +30,10 @@ set -euo pipefail
 API="${API:-http://localhost:8080/api/v1}"
 ADMIN_EMAIL="${ADMIN_EMAIL:-admin@mooc.local}"
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-Admin123!}"
-EICAR_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/eicar.txt"
+EICAR_PATH="$(mktemp)"
+# La firma va partida en dos para que ningun archivo del repo la contenga completa
+printf '%s%s' 'X5O!P%@AP[4\PZX54(P^)7CC)7}$' 'EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > "$EICAR_PATH"
+trap 'rm -f "$EICAR_PATH"' EXIT
 STAMP="$(date +%s)"
 
 say() { printf '\n\033[1;36m== %s\033[0m\n' "$1"; }
