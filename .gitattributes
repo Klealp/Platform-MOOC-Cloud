@@ -1,0 +1,6 @@
+# Los scripts y configuraciones corren en Linux (VMs, contenedores): con
+# CRLF, bash falla con "$'\r': command not found".
+*.sh             text eol=lf
+*.yml            text eol=lf
+*.env.example    text eol=lf
+Caddyfile        text eol=lf

@@ -1,3 +1,17 @@
 # Resultados de pruebas de carga: pueden ser muy grandes, no versionar
 capacity-planning/resultados/e1_local.json
 capacity-planning/resultados/*.local.json
+
+# Configuracion con secretos: solo se versionan las plantillas *.example
+.env
+*.env
+!*.env.example
+.env.*
+!.env.example
+
+# Volcados y secretos generados por deploy/gcp
+*.dump
+.mooc-secrets/
+
+# Artefactos de Windows al copiar archivos descargados
+*:Zone.Identifier
