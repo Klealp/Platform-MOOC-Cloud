@@ -1,0 +1,3 @@
+# Resultados de pruebas de carga: pueden ser muy grandes, no versionar
+capacity-planning/resultados/e1_local.json
+capacity-planning/resultados/*.local.json
