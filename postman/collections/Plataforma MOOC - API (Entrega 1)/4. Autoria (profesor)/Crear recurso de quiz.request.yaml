@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/units/{{unitId}}/resources"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "type": "quiz",
+      "title": "Quiz de cierre",
+      "required": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      if(j.quiz_id){pm.collectionVariables.set('quizId', j.quiz_id);}
+    language: text/javascript
+order: 12000

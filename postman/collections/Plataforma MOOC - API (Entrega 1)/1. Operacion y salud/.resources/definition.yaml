@@ -1,0 +1,7 @@
+$kind: collection
+description: Endpoints operativos y publicos. No requieren sesion.
+auth:
+  - id: ""
+    type: noauth
+    name: No Auth
+order: 1000

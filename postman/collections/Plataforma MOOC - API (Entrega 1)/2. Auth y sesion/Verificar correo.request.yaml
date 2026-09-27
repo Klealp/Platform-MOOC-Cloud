@@ -1,0 +1,15 @@
+$kind: http-request
+description: Usa el dev_verification_token capturado en el registro (solo en APP_ENV=dev).
+url: "{{baseUrl}}/api/v1/auth/verify-email"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "token": "{{verifyToken}}"
+    }
+auth:
+  type: noauth
+order: 3000

@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/modules/{{moduleId}}/units"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Unidad 1"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('unitId', j.id);
+    language: text/javascript
+order: 9000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/resources/{{resourceId}}/content"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "content_md": "# Hola\n\nContenido guardado.",
+      "expected_revision": 1
+    }
+order: 14000

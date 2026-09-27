@@ -1,0 +1,5 @@
+$kind: http-request
+description: Series que raspa Prometheus. Tambien hay /metrics del worker en :9100.
+url: "{{baseUrl}}/metrics"
+method: GET
+order: 3000

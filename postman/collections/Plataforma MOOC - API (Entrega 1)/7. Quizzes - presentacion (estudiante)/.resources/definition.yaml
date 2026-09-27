@@ -1,0 +1,9 @@
+$kind: collection
+description: Presentacion, guardado parcial y envio idempotente. Usa studentToken.
+auth:
+  - id: 6d02b387-83e7-4af8-a61c-7b910819286e
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{studentToken}}"
+order: 7000

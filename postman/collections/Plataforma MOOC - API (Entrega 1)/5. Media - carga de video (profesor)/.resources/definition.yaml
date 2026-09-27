@@ -1,0 +1,10 @@
+$kind: collection
+name: 5. Media / carga de video (profesor)
+description: "Carga multipart directa a MinIO con URL prefirmada. El binario NO pasa por la API. Orden: 1 init -> 2 PUT parte(s) -> 4 complete -> 6 esperar 'ready'."
+auth:
+  - id: 7b1c6fa4-e16f-433a-9430-ed5bfd141920
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{teacherToken}}"
+order: 5000

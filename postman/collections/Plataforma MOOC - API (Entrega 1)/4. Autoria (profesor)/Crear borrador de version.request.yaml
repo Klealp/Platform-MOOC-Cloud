@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/courses/{{courseId}}/versions"
+method: POST
+order: 6000

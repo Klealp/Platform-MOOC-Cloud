@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/admin/users"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      const arr=Array.isArray(j)?j:(j.data||[]);
+      if(arr[0]&&arr[0].id){pm.collectionVariables.set('userId', arr[0].id);}
+    language: text/javascript
+order: 2000

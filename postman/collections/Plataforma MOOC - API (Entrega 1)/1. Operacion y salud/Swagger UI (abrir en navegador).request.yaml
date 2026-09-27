@@ -1,0 +1,5 @@
+$kind: http-request
+description: Abre http://localhost:8080/docs en el navegador para la UI interactiva.
+url: "{{baseUrl}}/docs"
+method: GET
+order: 5000

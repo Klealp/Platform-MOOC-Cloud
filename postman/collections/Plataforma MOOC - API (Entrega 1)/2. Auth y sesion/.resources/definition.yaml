@@ -1,0 +1,7 @@
+$kind: collection
+description: Registro, verificacion, login por rol y manejo de sesiones. Corre 'Login (admin)' primero.
+auth:
+  - id: ""
+    type: noauth
+    name: No Auth
+order: 2000

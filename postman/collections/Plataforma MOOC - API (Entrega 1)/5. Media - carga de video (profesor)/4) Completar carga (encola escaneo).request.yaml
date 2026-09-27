@@ -1,0 +1,5 @@
+$kind: http-request
+description: La API ensambla el objeto y encola media:scan. El worker escanea y luego transcodifica a HLS.
+url: "{{baseUrl}}/api/v1/uploads/{{uploadId}}/complete"
+method: POST
+order: 4000

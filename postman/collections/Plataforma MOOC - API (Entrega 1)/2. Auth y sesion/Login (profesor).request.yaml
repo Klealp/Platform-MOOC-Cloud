@@ -1,0 +1,23 @@
+$kind: http-request
+description: Requiere haber creado el profesor antes (carpeta 3. Admin).
+url: "{{baseUrl}}/api/v1/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{teacherEmail}}",
+      "password": "{{teacherPassword}}"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('teacherToken', j.access_token);
+      pm.test('login teacher', ()=>pm.expect(j.access_token).to.be.a('string'));
+    language: text/javascript
+order: 5000

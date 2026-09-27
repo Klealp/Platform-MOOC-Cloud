@@ -1,0 +1,11 @@
+# Use this workspace to collaborate
+workspace:
+  id: 79daf0b4-d013-4ba0-851e-e27a83a4855e
+
+localResources:
+  specs:
+    - ../internal/openapi/openapi.yaml
+
+cloudResources:
+  collections:
+    ../postman/collections/Plataforma MOOC - API (Entrega 1): 5cf0be4d-1c8e-4a21-861a-b71625261b46

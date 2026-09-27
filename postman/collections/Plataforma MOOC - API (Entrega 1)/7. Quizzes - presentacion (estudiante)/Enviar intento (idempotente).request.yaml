@@ -1,0 +1,7 @@
+$kind: http-request
+description: Exige la cabecera Idempotency-Key (aqui un {{$guid}}). La calificacion se calcula en el servidor.
+url: "{{baseUrl}}/api/v1/attempts/{{attemptId}}/submit"
+method: POST
+headers:
+  Idempotency-Key: "{{$guid}}"
+order: 4000

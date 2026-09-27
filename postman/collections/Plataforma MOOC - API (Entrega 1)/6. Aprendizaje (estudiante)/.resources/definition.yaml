@@ -1,0 +1,9 @@
+$kind: collection
+description: Inscripcion, progreso validado por servidor e insignias. Usa studentToken.
+auth:
+  - id: fe0dab83-426f-4e91-8f59-cbf0438dd4bf
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{studentToken}}"
+order: 6000
