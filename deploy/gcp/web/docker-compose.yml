@@ -1,0 +1,43 @@
+# =====================================================================
+# Web Server (Entrega 2): API + proxy inverso con HTTPS.
+#
+#   cd ~/Platform-MOOC-Cloud
+#   sudo docker compose -f deploy/gcp/web/docker-compose.yml up -d --build
+#
+# La configuracion sensible vive en /etc/mooc/web.env (fuera del repo, 600).
+# Postgres es Cloud SQL y Redis corre en el Worker Server: aqui no hay
+# ningun estado local.
+# =====================================================================
+name: mooc-web
+
+services:
+  api:
+    build:
+      context: ../../..
+      dockerfile: Dockerfile.api
+    image: mooc-api:local
+    env_file: /etc/mooc/web.env
+    # Publicado en la VM solo para que Prometheus (maquina "monitor") lo
+    # raspe por la red privada; el firewall no abre 8080 hacia Internet.
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # Caddy termina TLS con un certificado de Let's Encrypt emitido para
+  # DOMAIN (p. ej. 34-1-2-3.sslip.io, que resuelve a la IP publica sin
+  # tener que comprar un dominio) y renueva solo.
+  caddy:
+    image: caddy:2.8-alpine
+    env_file: /etc/mooc/web.env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  caddydata:

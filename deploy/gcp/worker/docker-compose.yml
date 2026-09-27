@@ -1,0 +1,53 @@
+# =====================================================================
+# Worker Server (Entrega 2): worker + Redis (cola asynq) + Mailpit.
+#
+#   cd ~/Platform-MOOC-Cloud
+#   sudo docker compose -f deploy/gcp/worker/docker-compose.yml up -d --build
+#
+# Esta VM no tiene IP publica. Redis se publica en 6379 para que la API lo
+# alcance por la red privada; el firewall solo admite ese puerto desde las
+# VMs con la etiqueta web-server.
+# =====================================================================
+name: mooc-worker
+
+services:
+  redis:
+    image: redis:7-alpine
+    env_file: /etc/mooc/worker.env
+    # appendonly: la cola sobrevive a un reinicio del contenedor o de la VM.
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\""]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ../../..
+      dockerfile: Dockerfile.worker
+    image: mooc-worker:local
+    env_file: /etc/mooc/worker.env
+    # Metricas del worker (:9100/metrics) para Prometheus por la red privada.
+    ports:
+      - "9100:9100"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # La bandeja solo escucha en localhost: se abre con un tunel IAP.
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "127.0.0.1:8025:8025"
+    restart: unless-stopped
+
+volumes:
+  redisdata:

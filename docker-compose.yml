@@ -104,7 +104,11 @@ services:
   # Aqui viven los originales, los derivados HLS y las insignias.
   # ------------------------------------------------------------------
   minio:
-    image: minio/minio:latest
+    # MinIO dejo de publicar imagenes publicas: minio/minio ya no existe en
+    # Docker Hub y quay.io/minio/minio exige autenticacion. pgsty/minio es un
+    # fork comunitario del mismo servidor. Version fija para que el despliegue
+    # no cambie solo.
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
       MINIO_ROOT_USER: minioadmin

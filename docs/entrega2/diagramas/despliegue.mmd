@@ -1,0 +1,62 @@
+%% Modelo de despliegue de la Entrega 2 en Google Cloud.
+%% Iconos: paquetes Iconify "gcp" (oficiales de Google Cloud) y "logos".
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i despliegue.mmd -o despliegue.svg --iconPacks @iconify-json/gcp @iconify-json/logos
+flowchart LR
+    user@{ icon: "gcp:cloud-network", form: "circle", label: "Cliente HTTP<br>(scripts, k6, Postman)", pos: "b", h: 48 }
+    admin@{ icon: "gcp:identity-aware-proxy", form: "circle", label: "Equipo<br>SSH por IAP", pos: "b", h: 40 }
+
+    subgraph gcp["Proyecto dsc-uniandes-20262 · region us-central1 · zona us-central1-a"]
+        direction LR
+
+        subgraph vpc["VPC mooc-vpc (modo custom)"]
+            direction LR
+
+            subgraph snweb["Subred mooc-web 10.20.1.0/24 · acceso publico"]
+                direction TB
+                ipweb@{ icon: "gcp:cloud-external-ip-addresses", form: "square", label: "IP estatica mooc-web-ip<br>tcp 80/443", pos: "b", h: 40 }
+                subgraph web["Web Server · e2-highcpu-2 · 30 GB · 10.20.1.10"]
+                    direction TB
+                    caddy@{ icon: "gcp:certificate-manager", form: "square", label: "Caddy (proxy inverso)<br>HTTPS Let's Encrypt", pos: "b", h: 40 }
+                    api@{ icon: "logos:go", form: "square", label: "API Go :8080", pos: "b", h: 40 }
+                    caddy --> api
+                end
+                ipweb --> caddy
+            end
+
+            subgraph snworker["Subred mooc-worker 10.20.2.0/24 · sin IP publica"]
+                direction TB
+                subgraph wrk["Worker Server · e2-highcpu-2 · 30 GB · 10.20.2.10"]
+                    direction TB
+                    redis@{ icon: "logos:redis", form: "square", label: "Redis :6379<br>cola asynq (AOF)", pos: "b", h: 40 }
+                    worker@{ icon: "logos:go", form: "square", label: "Worker Go<br>ffmpeg, escaneo, insignias<br>concurrencia 2", pos: "b", h: 40 }
+                    mail@{ icon: "gcp:cloud-network", form: "square", label: "Mailpit :1025", pos: "b", h: 40 }
+                    redis -- "desencola" --> worker
+                    worker --> mail
+                end
+            end
+
+            nat@{ icon: "gcp:cloud-nat", form: "square", label: "Cloud Router + NAT<br>salida del worker", pos: "b", h: 40 }
+            fw@{ icon: "gcp:cloud-firewall-rules", form: "square", label: "Firewall<br>80/443 publico · 22 solo IAP<br>6379 web→worker", pos: "b", h: 40 }
+        end
+
+        subgraph psa["Private Service Access · rango mooc-psa /20"]
+            sql@{ icon: "gcp:cloud-sql", form: "square", label: "Cloud SQL mooc-pg<br>PostgreSQL 16 · db-custom-1-3840<br>zonal · IP privada · TLS", pos: "b", h: 48 }
+        end
+
+        gcs@{ icon: "gcp:cloud-storage", form: "square", label: "Cloud Storage<br>gs://mooc-PROYECTO<br>originals/ hls/ badges/", pos: "b", h: 48 }
+        mon@{ icon: "gcp:cloud-monitoring", form: "square", label: "Cloud Monitoring<br>Ops Agent: CPU, RAM, disco", pos: "b", h: 40 }
+    end
+
+    user -- "HTTPS" --> ipweb
+    user -. "PUT/GET HTTPS con URL firmada<br>(los archivos no pasan por la API)" .-> gcs
+    admin -. "tcp 22 desde 35.235.240.0/20" .-> web
+    admin -.-> wrk
+
+    api -- "encola :6379 (privado)" --> redis
+    api -- "SQL :5432 TLS" --> sql
+    worker -- "SQL :5432 TLS" --> sql
+    api -- "HMAC mooc-api<br>crear, leer, firmar" --> gcs
+    worker -- "HMAC mooc-worker<br>leer, escribir, borrar<br>(Private Google Access)" --> gcs
+    wrk -. "apt, docker pull" .-> nat
+    web -.-> mon
+    wrk -.-> mon
