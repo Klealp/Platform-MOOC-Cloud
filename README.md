@@ -14,7 +14,7 @@ Monolito modular + workers asincronos, todo en contenedores.
 | Documento de arquitectura del despliegue | [`docs/entrega2/`](docs/entrega2/README.md) |
 | Informe de capacidad | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
 | Aprovisionamiento, compose por VM y migracion | [`deploy/gcp/`](deploy/gcp/) |
-| URL de la aplicacion | PENDIENTE (`https://<ip>.sslip.io`) |
+| URL de la aplicacion | (`https://<ip>.sslip.io`)](https://136-114-53-21.sslip.io) |
 | Video de sustentacion | PENDIENTE |
 
 Las credenciales de acceso para el equipo docente se entregan por el canal
