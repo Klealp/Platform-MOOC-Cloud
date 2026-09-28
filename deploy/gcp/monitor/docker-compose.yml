@@ -1,0 +1,68 @@
+# =====================================================================
+# Monitoreo para el analisis de capacidad (Entrega 2), en el Web Server.
+#
+#   cd ~/Platform-MOOC-Cloud
+#   sudo docker compose -f deploy/gcp/monitor/docker-compose.yml up -d
+#
+# Por que aqui y no en una maquina aparte: la cuota del proyecto es de 12
+# vCPU (CPUS_ALL_REGIONS) y esta llena. El Web Server es el unico que ya
+# alcanza todo lo que hay que medir (API local, worker:9100 con el tag
+# monitor, Redis:6379 y Cloud SQL por la red privada). No va en el Worker
+# Server porque en el escenario 2 ffmpeg satura esa maquina.
+# Costo medido de este compose: ver docs/entrega2 (se reporta en el informe
+# de capacidad como ajuste frente a una maquina de monitoreo dedicada).
+#
+# Prometheus se publica en el puerto 9090 de la IP publica (regla de
+# firewall mooc-allow-prometheus) para que el equipo lo consulte sin tunel.
+# DECISION ACEPTADA CON RIESGO: Prometheus no tiene autenticacion; cualquiera
+# puede leer las metricas y, con el remote-write activo, escribir series.
+# Mitigaciones: tope de memoria, limite de tiempo y de muestras por consulta.
+# Cerrar el puerto (o borrar la regla) al terminar las pruebas de carga.
+# Los exportadores siguen sin publicarse: solo Prometheus los alcanza.
+#
+# Grafana NO corre aqui: corre en el PC de quien analiza
+# (deploy/gcp/monitor/grafana-local.yml) y apunta a http://<ip-publica>:9090.
+# =====================================================================
+name: mooc-monitor
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+      # k6 envia sus metricas aqui (-o experimental-prometheus-rw): latencia
+      # del cliente y de la API en un solo eje.
+      - --web.enable-remote-write-receiver
+      # Con el puerto publico, una consulta pesada no debe poder acaparar la
+      # CPU ni la memoria que comparte con la API.
+      - --query.timeout=30s
+      - --query.max-samples=5000000
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - promdata:/prometheus
+    # Tope explicito: si Prometheus crece, que no le quite memoria a la API.
+    mem_limit: 400m
+    restart: unless-stopped
+
+  # Profundidad de la cola asynq: redis_key_size{key=~"asynq:.*"}.
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.92.0
+    env_file: /etc/mooc/monitor.env
+    command:
+      - --check-keys=asynq:*
+    mem_limit: 64m
+    restart: unless-stopped
+
+  # Conexiones, transacciones y bloqueos dentro de Cloud SQL (pg_stat_*).
+  # CPU y memoria de la instancia vienen de Cloud Monitoring.
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
+    env_file: /etc/mooc/monitor.env
+    mem_limit: 64m
+    restart: unless-stopped
+
+volumes:
+  promdata:

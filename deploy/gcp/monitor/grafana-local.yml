@@ -1,0 +1,33 @@
+# =====================================================================
+# Grafana en el PC de quien analiza, leyendo el Prometheus del Web Server
+# por un tunel IAP. No consume recursos de las VMs medidas ni cuota de GCP.
+#
+#   1. Tunel (dejar la terminal abierta):
+#        gcloud compute ssh web-server --zone=us-central1-a --tunnel-through-iap \
+#          -- -N -L 9090:localhost:9090
+#   2. Grafana:
+#        docker compose -f deploy/gcp/monitor/grafana-local.yml up -d
+#   3. Abrir http://localhost:3000 (admin / admin) -> dashboard "MOOC overview".
+# =====================================================================
+name: mooc-grafana
+
+services:
+  grafana:
+    image: grafana/grafana:13.2.2
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "127.0.0.1:3000:3000"
+    # La fuente de datos provisionada apunta a http://prometheus:9090. Aqui
+    # "prometheus" resuelve al PC anfitrion, donde escucha el tunel IAP; asi
+    # se reutiliza el mismo provisionamiento que en local sin tocarlo.
+    extra_hosts:
+      - "prometheus:host-gateway"
+    volumes:
+      - ../../grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../../grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafanadata:/var/lib/grafana
+
+volumes:
+  grafanadata:
