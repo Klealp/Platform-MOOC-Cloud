@@ -17,7 +17,7 @@ Este documento describe la solucion **efectivamente desplegada** en Google Cloud
 | Acceso publico | `http://localhost:8080` | `https://<IP>.sslip.io` con certificado Let's Encrypt (Caddy) |
 | Secretos | `.env` versionado | `/etc/mooc/*.env` fuera del repo (permisos 600); en git solo plantillas `*.env.example` |
 | Credenciales de objetos | Una sola (`minioadmin`) | Una cuenta de servicio y una llave HMAC **por componente** |
-| Observabilidad | Prometheus, Grafana, Jaeger en el mismo host | Cloud Monitoring con Ops Agent en las VMs + metricas de Cloud SQL; Prometheus fuera de las VMs de la app |
+| Observabilidad | Prometheus, Grafana, Jaeger en el mismo host | Cloud Monitoring con Ops Agent en las VMs + metricas de Cloud SQL; Prometheus y exportadores en el Web Server (solo localhost); Grafana en el PC del analista por tunel IAP |
 
 **Cambios de codigo: ninguno.** La API y el worker ya leian toda su configuracion de variables de entorno (`internal/config`) y hablaban S3 con `minio-go`. Pasar de MinIO a Cloud Storage y de un Postgres local a Cloud SQL es solo configuracion.
 
@@ -97,7 +97,7 @@ Todo el trafico entrante que no aparece aqui queda bloqueado por la regla implic
 | `mooc-allow-web-https` | `0.0.0.0/0` | tag `web-server` | tcp 80, 443 | Unico punto publico (80 solo redirige a 443) |
 | `mooc-allow-iap-ssh` | `35.235.240.0/20` (IAP) | `web-server`, `worker-server` | tcp 22 | Administracion sin exponer SSH |
 | `mooc-allow-web-to-redis` | tag `web-server` | tag `worker-server` | tcp 6379 | La API encola; nadie mas llega a Redis |
-| `mooc-allow-monitor` | tag `monitor` | `web-server`, `worker-server` | tcp 8080, 9100 | Prometheus en la maquina de carga |
+| `mooc-allow-monitor` | tag `monitor` (el Web Server) | `web-server`, `worker-server` | tcp 8080, 9100 | Prometheus raspa las metricas de la API y del worker |
 
 Cloud SQL no admite conexiones fuera de la VPC (`--no-assign-ip`) y exige TLS (`--ssl-mode=ENCRYPTED_ONLY`).
 
@@ -145,7 +145,9 @@ Una URL firmada actua con los permisos de quien la firma, asi que el cliente nun
 
 **Workers.** Concurrencia fija en 2 (`WORKER_CONCURRENCY`) durante todas las corridas, para no saturar 2 vCPU con dos ffmpeg simultaneos. Reintentos: 3 (`MAX_RETRIES`).
 
-**Observabilidad.** Jaeger y Grafana no caben en 2 GiB junto a la aplicacion. Las trazas se apagan en la nube (`OTEL_EXPORTER_OTLP_ENDPOINT` vacio) y Prometheus corre en la maquina de generacion de carga (tag `monitor`), que raspa `:8080/metrics` y `:9100/metrics` por la red privada. CPU, memoria y disco de las VMs vienen del Ops Agent; conexiones y carga de la BD, de las metricas de Cloud SQL.
+**Observabilidad.** Jaeger no cabe en 2 GiB junto a la aplicacion, asi que las trazas se apagan en la nube (`OTEL_EXPORTER_OTLP_ENDPOINT` vacio). CPU, memoria, disco y red de las VMs vienen del Ops Agent (Cloud Monitoring), y CPU y memoria de Cloud SQL de sus metricas nativas. Para las metricas de aplicacion y de la cola, Prometheus, `redis-exporter` y `postgres-exporter` corren en el Web Server ([`deploy/gcp/monitor/`](../../deploy/gcp/monitor/)), escuchando solo en localhost; el tag `monitor` le permite raspar `worker:9100`. Grafana no corre en la nube: corre en el PC de quien analiza y lee Prometheus por un tunel IAP.
+
+*Ajuste frente a una maquina de monitoreo dedicada.* La cuota del proyecto es de 12 vCPU (`CPUS_ALL_REGIONS`) y estaba llena, asi que no se pudo crear una tercera VM. Se eligio el Web Server y no el Worker Server porque en el escenario 2 ffmpeg satura el worker. Costo medido en reposo: 76 MB de RAM y menos del 1% de CPU entre los tres contenedores, con topes de memoria de 400 MB (Prometheus) y 64 MB (cada exportador). En el informe de capacidad se reporta su consumo durante cada corrida para acotar su efecto sobre la API.
 
 **Diferencias frente a la arquitectura objetivo del proyecto.**
 

@@ -63,20 +63,36 @@ Consultas PromQL utiles para el informe:
 
 ## 2. Correr en la NUBE (numeros validos del informe)
 
-Ejecutar k6 desde una **tercera maquina fuera de Web Server y Worker Server**
-(tu equipo u otra VM pequena), apuntando a la URL publica HTTPS:
+El monitoreo ya esta desplegado en el Web Server ([`deploy/gcp/monitor/`](../deploy/gcp/monitor/)):
+Prometheus + `redis-exporter` (cola asynq) + `postgres-exporter` (Cloud SQL), raspando la
+API y el worker por la red privada. CPU/RAM/disco de las VMs y de Cloud SQL: Cloud Monitoring.
+
+**1. Tunel a Prometheus** (dejar la terminal abierta):
 
 ```bash
-BASE_URL=https://<web-server-publico>/api/v1 \
-ADMIN_EMAIL=admin@mooc.local ADMIN_PASSWORD='***' \
-N_STUDENTS=20 \
-k6 run --out json=capacity-planning/resultados/e1_nube_nivel3.json \
-  capacity-planning/k6/escenario1_actividad_academica.js
+gcloud compute ssh web-server --zone=us-central1-a --tunnel-through-iap -- -N -L 9090:localhost:9090
 ```
 
-En la nube, ajustar en `deploy/prometheus.yml` los targets `node`, `postgres`
-y `redis` a las IPs privadas de las VMs y del servicio administrado, e instalar
-cada exportador en su VM (ver cabecera de `deploy/docker-compose.metrics.yml`).
+**2. Grafana local** (Docker Desktop abierto) -> http://localhost:3000 (admin / admin):
+
+```bash
+docker compose -f deploy/gcp/monitor/grafana-local.yml up -d
+```
+
+**3. Corrida de k6** desde una maquina FUERA de Web Server y Worker Server. `k6.sh` usa k6
+nativo o la imagen de Docker, y guarda `raw.json.gz`, `summary.json` y `condiciones.txt` en
+`capacity-planning/resultados/<corrida>/`:
+
+```bash
+export BASE_URL=https://136-114-53-21.sslip.io/api/v1
+export ADMIN_PASSWORD="$(cat ~/.mooc-secrets/dsc-uniandes-20262/admin_password)"
+# opcional, para ver la latencia de k6 en Grafana junto a la de la API:
+export PROM_RW_URL=http://host.docker.internal:9090/api/v1/write   # (k6 nativo: http://localhost:9090/api/v1/write)
+N_STUDENTS=20 ./deploy/gcp/monitor/k6.sh capacity-planning/k6/escenario1_actividad_academica.js e1-nivel1
+```
+
+Estado del limitador durante las pruebas: `RATE_LIMIT_PER_MIN=10000000000` (desactivado para
+rutas autenticadas y catalogo); las rutas publicas (login, registro) siguen en 30/min por IP.
 
 ## Parametros (variables de entorno)
 
