@@ -3,7 +3,7 @@
 Analisis de capacidad de la plataforma MOOC sobre el despliegue basico en la
 nube publica. Sigue el formato exigido por el enunciado.
 
-## 0. Resumen ejecutivo
+## Resumen 
 
 - Capacidad sostenida (Escenario 1): la plataforma responde con latencia baja y
   recursos holgados en los niveles bajo y medio (hasta ~50 usuarios/s de
