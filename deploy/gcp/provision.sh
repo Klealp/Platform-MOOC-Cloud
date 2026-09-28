@@ -114,6 +114,17 @@ paso_firewall() {
     --source-tags=monitor --target-tags=web-server,worker-server
 }
 
+paso_abrir_prometheus() {
+  say "Publicando Prometheus (tcp 9090) en la IP del Web Server"
+  # Decision del equipo para consultar las metricas sin tunel durante las
+  # pruebas de carga. Prometheus no tiene autenticacion: cerrar al terminar
+  # con   gcloud compute firewall-rules delete mooc-allow-prometheus
+  regla() { local n="$1"; shift; existe gcloud compute firewall-rules describe "$n" ||
+    gcloud compute firewall-rules create "$n" --network="$NET" --direction=INGRESS "$@"; }
+  regla mooc-allow-prometheus --action=ALLOW --rules=tcp:9090 \
+    --source-ranges="${PROMETHEUS_SOURCE:-0.0.0.0/0}" --target-tags=web-server
+}
+
 paso_sql() {
   say "Cloud SQL $DB_INSTANCE (PostgreSQL 16, una zona, sin IP publica)"
   if ! existe gcloud sql instances describe "$DB_INSTANCE"; then

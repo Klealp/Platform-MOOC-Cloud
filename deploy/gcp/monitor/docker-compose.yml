@@ -12,11 +12,16 @@
 # Costo medido de este compose: ver docs/entrega2 (se reporta en el informe
 # de capacidad como ajuste frente a una maquina de monitoreo dedicada).
 #
-# Todo escucha solo en localhost. Grafana NO corre aqui: corre en el PC de
-# quien analiza (deploy/gcp/monitor/grafana-local.yml) y lee Prometheus por
-# un tunel IAP:
-#   gcloud compute ssh web-server --zone=us-central1-a --tunnel-through-iap \
-#     -- -N -L 9090:localhost:9090
+# Prometheus se publica en el puerto 9090 de la IP publica (regla de
+# firewall mooc-allow-prometheus) para que el equipo lo consulte sin tunel.
+# DECISION ACEPTADA CON RIESGO: Prometheus no tiene autenticacion; cualquiera
+# puede leer las metricas y, con el remote-write activo, escribir series.
+# Mitigaciones: tope de memoria, limite de tiempo y de muestras por consulta.
+# Cerrar el puerto (o borrar la regla) al terminar las pruebas de carga.
+# Los exportadores siguen sin publicarse: solo Prometheus los alcanza.
+#
+# Grafana NO corre aqui: corre en el PC de quien analiza
+# (deploy/gcp/monitor/grafana-local.yml) y apunta a http://<ip-publica>:9090.
 # =====================================================================
 name: mooc-monitor
 
@@ -26,11 +31,15 @@ services:
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.retention.time=30d
-      # k6 puede enviar sus metricas aqui (-o experimental-prometheus-rw) por
-      # el mismo tunel: latencia del cliente y de la API en un solo eje.
+      # k6 envia sus metricas aqui (-o experimental-prometheus-rw): latencia
+      # del cliente y de la API en un solo eje.
       - --web.enable-remote-write-receiver
+      # Con el puerto publico, una consulta pesada no debe poder acaparar la
+      # CPU ni la memoria que comparte con la API.
+      - --query.timeout=30s
+      - --query.max-samples=5000000
     ports:
-      - "127.0.0.1:9090:9090"
+      - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - promdata:/prometheus
