@@ -44,6 +44,11 @@ const N_STUDENTS = parseInt(__ENV.N_STUDENTS || '20', 10);
 const RATE_SCALE = parseFloat(__ENV.RATE_SCALE || '1');
 const rate = (x) => Math.max(1, Math.round(x * RATE_SCALE));
 
+// Duracion de cada tramo. Por defecto = corrida "real" (~10 min). Para una
+// corrida corta de practica: STAGE_DUR=25s BASE_DUR=15s.
+const DUR = __ENV.STAGE_DUR || '2m';   // cada nivel de carga
+const DUR_BASE = __ENV.BASE_DUR || '1m'; // linea base y enfriamiento
+
 // Preguntas del quiz sintetico. La opcion correcta SIEMPRE empieza por 'OK-'
 // y las distractoras por 'NO-', asi el VU responde correcto sin conocer la
 // clave (que nunca sale al cliente): elige la opcion cuyo texto empieza 'OK-'.
@@ -56,11 +61,22 @@ const N_PREGUNTAS = 5;
 // ---------------------------------------------------------------------
 const erroresFuncionales = new Counter('errores_funcionales');   // fallos reales (5xx, estado inesperado)
 const rechazosNegocio = new Counter('rechazos_negocio');         // 4xx esperados por reglas de negocio
+const timeouts = new Counter('timeouts');                        // peticiones que expiraron
 const tasaRateLimited = new Rate('tasa_rate_limited');           // proporcion de 429
 const quizCalificadoOk = new Rate('quiz_calificado_correcto');   // el submit devolvio la nota esperada
 const dupSinDobleCalif = new Rate('idempotencia_sin_doble_calificacion');
 const tProgreso = new Trend('t_progreso_ms', true);
-const tQuizSubmit = new Trend('t_quiz_submit_ms', true);
+
+// Latencia por endpoint (para responder "que operacion concentra la latencia").
+// Se llenan en clasificar() usando el tag name de cada peticion.
+const T = {
+  catalog_list: new Trend('t_catalog_list', true),
+  catalog_detail: new Trend('t_catalog_detail', true),
+  outline: new Trend('t_outline', true),
+  progress_event: new Trend('t_progress_event', true),
+  quiz_start: new Trend('t_quiz_start', true),
+  quiz_submit: new Trend('t_quiz_submit', true),
+};
 
 // ---------------------------------------------------------------------
 // Definicion de la carga: linea base + 3 niveles crecientes + repeticion
@@ -90,12 +106,12 @@ export const options = {
       maxVUs: parseInt(__ENV.MAX_VUS || '300', 10),
       startTime: '10s', // deja terminar el chequeo de integridad
       stages: [
-        { target: rate(5), duration: '1m' },  // nivel 0 - linea base
-        { target: rate(20), duration: '2m' }, // nivel 1
-        { target: rate(50), duration: '2m' }, // nivel 2
-        { target: rate(90), duration: '2m' }, // nivel 3 - cerca del limite
-        { target: rate(90), duration: '2m' }, // repeticion cerca del limite (estabilidad)
-        { target: rate(5), duration: '1m' },  // enfriamiento
+        { target: rate(5), duration: DUR_BASE }, // nivel 0 - linea base
+        { target: rate(20), duration: DUR },     // nivel 1
+        { target: rate(50), duration: DUR },     // nivel 2
+        { target: rate(90), duration: DUR },     // nivel 3 - cerca del limite
+        { target: rate(90), duration: DUR },     // repeticion cerca del limite (estabilidad)
+        { target: rate(5), duration: DUR_BASE }, // enfriamiento
       ],
       exec: 'actividadAcademica',
       tags: { scenario: 'academica' },
@@ -133,10 +149,16 @@ function parse(res) {
 
 // login con reintento: el scope publico esta limitado a 30/min por IP.
 function login(email, password) {
+  let lastStatus = -1;
+  let lastBody = '';
+  let lastError = '';
   for (let intento = 0; intento < 6; intento++) {
     const res = http.post(`${BASE}/auth/login`,
       JSON.stringify({ email, password }),
       { headers: jsonHeaders(), tags: { name: 'setup_login' } });
+    lastStatus = res.status;
+    lastBody = (res.body || '').toString().slice(0, 200);
+    lastError = res.error || '';
     if (res.status === 200) {
       const b = parse(res);
       if (b && b.access_token) return b.access_token;
@@ -144,7 +166,11 @@ function login(email, password) {
     if (res.status === 429) { sleep(2.5); continue; } // esperar la ventana
     sleep(1);
   }
-  throw new Error(`login fallido para ${email}`);
+  // Diagnostico: status 0 casi siempre = no se pudo conectar / TLS / URL mala.
+  throw new Error(
+    `login fallido para ${email} | URL=${BASE}/auth/login | status=${lastStatus}` +
+    (lastError ? ` | error=${lastError}` : '') +
+    ` | body=${lastBody || '(vacio)'}`);
 }
 
 // Registra el resultado de una peticion clasificando el tipo de fallo.
@@ -152,6 +178,8 @@ function login(email, password) {
 function clasificar(res, name, esEscritura) {
   const ok = res.status >= 200 && res.status < 300;
   tasaRateLimited.add(res.status === 429);
+  if (T[name]) T[name].add(res.timings.duration);   // latencia por endpoint
+  if (res.error_code === 1050) timeouts.add(1, { name }); // 1050 = request timeout
   if (!ok) {
     if (res.status === 429) {
       // limite de tasa: rechazo esperado, no fallo funcional.
@@ -159,7 +187,7 @@ function clasificar(res, name, esEscritura) {
       // 4xx: rechazo de negocio (p. ej. intentos agotados, secuencia invalida).
       rechazosNegocio.add(1, { name });
     } else {
-      // 5xx u otro: fallo real.
+      // 5xx, status 0 (conexion/timeout) u otro: fallo real.
       erroresFuncionales.add(1, { name });
     }
   }
@@ -337,12 +365,10 @@ export function actividadAcademica(data) {
       if (correcta) answers[q.stable_id] = [correcta.stable_id];
     }
 
-    const t0 = Date.now();
     const submit = http.post(`${BASE}/attempts/${attempt.id}/submit`,
       JSON.stringify({ answers }),
       { headers: Object.assign({ 'Idempotency-Key': `e1-${attempt.id}` }, h), tags: { name: 'quiz_submit' } });
-    tQuizSubmit.add(Date.now() - t0);
-    const okSubmit = clasificar(submit, 'quiz_submit', true);
+    const okSubmit = clasificar(submit, 'quiz_submit', true); // latencia -> T.quiz_submit
 
     if (okSubmit) {
       const b = parse(submit);
@@ -391,37 +417,92 @@ export function integridadIdempotencia(data) {
 }
 
 // ---------------------------------------------------------------------
-// Guarda un resumen JSON reproducible junto al texto en consola.
+// Al terminar, k6 escribe:
+//   - un reporte de TEXTO PLANO con todas las metricas que k6 puede medir
+//     (throughput, latencias globales y por endpoint, errores, timeouts,
+//      integridad). Nombre configurable con REPORT_FILE.
+//   - el JSON completo (por si quieres graficar despues).
+//   - el mismo texto por consola.
+// OJO: CPU/memoria/disco de las VMs y conexiones de la BD NO salen de aqui
+// (k6 corre en otra maquina); esos se capturan en las VMs / consola.
 // ---------------------------------------------------------------------
 export function handleSummary(data) {
-  return {
-    stdout: textSummary(data),
-    'capacity-planning/resultados/escenario1_summary.json': JSON.stringify(data, null, 2),
-  };
+  const txt = textSummary(data);
+  const reportFile = __ENV.REPORT_FILE || 'capacity-planning/resultados/escenario1_reporte.txt';
+  const jsonFile = __ENV.JSON_FILE || 'capacity-planning/resultados/escenario1_summary.json';
+  const out = { stdout: txt };
+  out[reportFile] = txt;
+  out[jsonFile] = JSON.stringify(data, null, 2);
+  return out;
 }
 
-// Resumen de texto minimo (evita dependencias externas de jslib).
 function textSummary(data) {
   const m = data.metrics || {};
-  const g = (name, stat) => {
+  const val = (name, stat, def) => {
     const v = m[name] && m[name].values;
-    if (!v) return 'n/a';
-    return (v[stat] !== undefined ? v[stat] : v.count !== undefined ? v.count : v.rate);
+    if (!v || v[stat] === undefined) return def;
+    return v[stat];
   };
-  const dur = (m['http_req_duration'] && m['http_req_duration'].values) || {};
-  return [
-    '',
-    '==== Escenario 1 - resumen ====',
-    `throughput (reqs):        ${g('http_reqs', 'count')} (${(m['http_reqs'] && m['http_reqs'].values && m['http_reqs'].values.rate || 0).toFixed(2)}/s)`,
-    `http_req_duration p50:    ${(dur['med'] || 0).toFixed(1)} ms`,
-    `http_req_duration p95:    ${(dur['p(95)'] || 0).toFixed(1)} ms`,
-    `http_req_duration p99:    ${(dur['p(99)'] || 0).toFixed(1)} ms`,
-    `errores_funcionales:      ${g('errores_funcionales', 'count')}`,
-    `rechazos_negocio:         ${g('rechazos_negocio', 'count')}`,
-    `tasa_rate_limited:        ${((m['tasa_rate_limited'] && m['tasa_rate_limited'].values && m['tasa_rate_limited'].values.rate || 0) * 100).toFixed(2)}%`,
-    `quiz_calificado_correcto: ${((m['quiz_calificado_correcto'] && m['quiz_calificado_correcto'].values && m['quiz_calificado_correcto'].values.rate || 0) * 100).toFixed(2)}%`,
-    `idempotencia_ok:          ${((m['idempotencia_sin_doble_calificacion'] && m['idempotencia_sin_doble_calificacion'].values && m['idempotencia_sin_doble_calificacion'].values.rate || 0) * 100).toFixed(2)}%`,
-    '================================',
-    '',
-  ].join('\n');
+  const num = (x, d) => (typeof x === 'number' ? x.toFixed(d) : 'n/a');
+  const ms = (name, stat) => num(val(name, stat, undefined), 1);
+  const pct = (name) => num(val(name, 'rate', 0) * 100, 2);
+  const cnt = (name) => {
+    const v = m[name] && m[name].values;
+    return v && v.count !== undefined ? v.count : 0;
+  };
+
+  const dur = 'http_req_duration';
+  const reqs = m['http_reqs'] && m['http_reqs'].values ? m['http_reqs'].values : {};
+
+  const L = [];
+  L.push('==================================================================');
+  L.push(' ESCENARIO 1 - Actividad academica concurrente - reporte de k6');
+  L.push('==================================================================');
+  L.push(`Fecha: ${new Date().toISOString()}`);
+  L.push(`BASE_URL: ${BASE}`);
+  L.push(`Config: N_STUDENTS=${N_STUDENTS}  RATE_SCALE=${RATE_SCALE}  STAGE_DUR=${DUR}  BASE_DUR=${DUR_BASE}`);
+  L.push('');
+  L.push('--- GLOBAL (lo que ve el usuario) ---------------------------------');
+  L.push(`Peticiones totales......: ${reqs.count || 0}`);
+  L.push(`Throughput (req/s)......: ${num(reqs.rate || 0, 2)}`);
+  L.push(`Latencia p50 (ms).......: ${ms(dur, 'med')}`);
+  L.push(`Latencia p90 (ms).......: ${ms(dur, 'p(90)')}`);
+  L.push(`Latencia p95 (ms).......: ${ms(dur, 'p(95)')}`);
+  L.push(`Latencia p99 (ms).......: ${ms(dur, 'p(99)')}`);
+  L.push(`Latencia max (ms).......: ${ms(dur, 'max')}`);
+  L.push('');
+  L.push('--- RESULTADO FUNCIONAL (clasificado) -----------------------------');
+  L.push(`Errores funcionales.....: ${cnt('errores_funcionales')}   (fallos reales: 5xx / conexion)`);
+  L.push(`Rechazos de negocio.....: ${cnt('rechazos_negocio')}   (4xx esperados)`);
+  L.push(`Timeouts................: ${cnt('timeouts')}`);
+  L.push(`Rate-limited (429)......: ${pct('tasa_rate_limited')}%`);
+  L.push(`Quiz calificado correcto: ${pct('quiz_calificado_correcto')}%`);
+  L.push(`Idempotencia (dup sin doble calif): ${pct('idempotencia_sin_doble_calificacion')}%`);
+  L.push(`Checks superados........: ${pct('checks')}%`);
+  L.push('');
+  L.push('--- LATENCIA POR ENDPOINT (ms) ------------------------------------');
+  L.push('endpoint              avg      p95      p99      max');
+  const eps = [
+    ['catalog_list', 't_catalog_list'],
+    ['catalog_detail', 't_catalog_detail'],
+    ['outline', 't_outline'],
+    ['progress_event', 't_progress_event'],
+    ['quiz_start', 't_quiz_start'],
+    ['quiz_submit', 't_quiz_submit'],
+  ];
+  for (const [label, metric] of eps) {
+    const v = m[metric] && m[metric].values;
+    const avg = v ? num(v.avg, 1) : 'n/a';
+    const p95 = v ? num(v['p(95)'], 1) : 'n/a';
+    const p99 = v ? num(v['p(99)'], 1) : 'n/a';
+    const mx = v ? num(v.max, 1) : 'n/a';
+    L.push(`${label.padEnd(18)}  ${String(avg).padStart(7)}  ${String(p95).padStart(7)}  ${String(p99).padStart(7)}  ${String(mx).padStart(7)}`);
+  }
+  L.push('');
+  L.push('--- METRICAS QUE FALTAN (capturar EN LAS VMs / consola) -----------');
+  L.push('CPU/mem/disco Web y Worker : uptime, free -m, top, df -h  (o monitor_vm.sh)');
+  L.push('Conexiones y CPU de la BD  : consola del proveedor o psql');
+  L.push('Profundidad de la cola     : redis-cli (Escenario 1: ~0, es sincrono)');
+  L.push('==================================================================');
+  return L.join('\n') + '\n';
 }
