@@ -1,0 +1,1048 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: escenario2.js
+ web dashboard: http://127.0.0.1:5665
+        output: -
+
+     scenarios: (100.00%) 2 scenarios, 15 max VUs, 18m30s max duration (incl. graceful stop):
+              * espectadores: Up to 10 looping VUs for 3m30s over 2 stages (gracefulRampDown: 10s, exec: espectador, gracefulStop: 20s)
+              * profesores: 0.02 iterations/s for 3m0s (maxVUs: 5, exec: profesor, startTime: 30s, gracefulStop: 15m0s)
+
+
+running (00m01.0s), 00/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   0% ] 00/10 VUs  0m01.0s/3m30.0s
+profesores   • [   0% ] waiting    29.0s
+
+running (00m02.0s), 00/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   1% ] 00/10 VUs  0m02.0s/3m30.0s
+profesores   • [   0% ] waiting    28.0s
+
+running (00m03.0s), 00/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   1% ] 00/10 VUs  0m03.0s/3m30.0s
+profesores   • [   0% ] waiting    27.0s
+
+running (00m04.0s), 01/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   2% ] 01/10 VUs  0m04.0s/3m30.0s
+profesores   • [   0% ] waiting    26.0s
+
+running (00m05.0s), 01/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   2% ] 01/10 VUs  0m05.0s/3m30.0s
+profesores   • [   0% ] waiting    25.0s
+
+running (00m06.0s), 01/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   3% ] 01/10 VUs  0m06.0s/3m30.0s
+profesores   • [   0% ] waiting    24.0s
+
+running (00m07.0s), 02/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   3% ] 02/10 VUs  0m07.0s/3m30.0s
+profesores   • [   0% ] waiting    23.0s
+
+running (00m08.0s), 02/15 VUs, 0 complete and 0 interrupted iterations
+espectadores   [   4% ] 02/10 VUs  0m08.0s/3m30.0s
+profesores   • [   0% ] waiting    22.0s
+
+running (00m09.0s), 02/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   4% ] 02/10 VUs  0m09.0s/3m30.0s
+profesores   • [   0% ] waiting    21.0s
+
+running (00m10.0s), 03/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   5% ] 03/10 VUs  0m10.0s/3m30.0s
+profesores   • [   0% ] waiting    20.0s
+
+running (00m11.0s), 03/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   5% ] 03/10 VUs  0m11.0s/3m30.0s
+profesores   • [   0% ] waiting    19.0s
+
+running (00m12.0s), 03/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   6% ] 03/10 VUs  0m12.0s/3m30.0s
+profesores   • [   0% ] waiting    18.0s
+
+running (00m13.0s), 04/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   6% ] 04/10 VUs  0m13.0s/3m30.0s
+profesores   • [   0% ] waiting    17.0s
+
+running (00m14.0s), 04/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   7% ] 04/10 VUs  0m14.0s/3m30.0s
+profesores   • [   0% ] waiting    16.0s
+
+running (00m15.0s), 04/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   7% ] 04/10 VUs  0m15.0s/3m30.0s
+profesores   • [   0% ] waiting    15.0s
+
+running (00m16.0s), 05/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   8% ] 05/10 VUs  0m16.0s/3m30.0s
+profesores   • [   0% ] waiting    14.0s
+
+running (00m17.0s), 05/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   8% ] 05/10 VUs  0m17.0s/3m30.0s
+profesores   • [   0% ] waiting    13.0s
+
+running (00m18.0s), 05/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   9% ] 05/10 VUs  0m18.0s/3m30.0s
+profesores   • [   0% ] waiting    12.0s
+
+running (00m19.0s), 06/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [   9% ] 06/10 VUs  0m19.0s/3m30.0s
+profesores   • [   0% ] waiting    11.0s
+
+running (00m20.0s), 06/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  10% ] 06/10 VUs  0m20.0s/3m30.0s
+profesores   • [   0% ] waiting    10.0s
+
+running (00m21.0s), 06/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  10% ] 06/10 VUs  0m21.0s/3m30.0s
+profesores   • [   0% ] waiting    09.0s
+
+running (00m22.0s), 07/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  10% ] 07/10 VUs  0m22.0s/3m30.0s
+profesores   • [   0% ] waiting    08.0s
+
+running (00m23.0s), 07/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  11% ] 07/10 VUs  0m23.0s/3m30.0s
+profesores   • [   0% ] waiting    07.0s
+
+running (00m24.0s), 07/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  11% ] 07/10 VUs  0m24.0s/3m30.0s
+profesores   • [   0% ] waiting    06.0s
+
+running (00m25.0s), 08/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  12% ] 08/10 VUs  0m25.0s/3m30.0s
+profesores   • [   0% ] waiting    05.0s
+
+running (00m26.0s), 08/15 VUs, 1 complete and 0 interrupted iterations
+espectadores   [  12% ] 08/10 VUs  0m26.0s/3m30.0s
+profesores   • [   0% ] waiting    04.0s
+
+running (00m27.0s), 08/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  13% ] 08/10 VUs  0m27.0s/3m30.0s
+profesores   • [   0% ] waiting    03.0s
+
+running (00m28.0s), 09/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  13% ] 09/10 VUs  0m28.0s/3m30.0s
+profesores   • [   0% ] waiting    02.0s
+
+running (00m29.0s), 09/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  14% ] 09/10 VUs  0m29.0s/3m30.0s
+profesores   • [   0% ] waiting    01.0s
+
+running (00m30.0s), 09/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  14% ] 09/10 VUs  0m30.0s/3m30.0s
+profesores   • [   0% ] waiting    00.0s
+
+running (00m31.0s), 11/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  15% ] 10/10 VUs  0m31.0s/3m30.0s
+profesores     [   1% ] 1/5 VUs    0m01.0s/3m0s  0.02 iters/s
+
+running (00m32.0s), 11/15 VUs, 2 complete and 0 interrupted iterations
+espectadores   [  15% ] 10/10 VUs  0m32.0s/3m30.0s
+profesores     [   1% ] 1/5 VUs    0m02.0s/3m0s  0.02 iters/s
+
+running (00m33.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  16% ] 10/10 VUs  0m33.0s/3m30.0s
+profesores     [   2% ] 1/5 VUs    0m03.0s/3m0s  0.02 iters/s
+
+running (00m34.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  16% ] 10/10 VUs  0m34.0s/3m30.0s
+profesores     [   2% ] 1/5 VUs    0m04.0s/3m0s  0.02 iters/s
+
+running (00m35.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  17% ] 10/10 VUs  0m35.0s/3m30.0s
+profesores     [   3% ] 1/5 VUs    0m05.0s/3m0s  0.02 iters/s
+
+running (00m36.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  17% ] 10/10 VUs  0m36.0s/3m30.0s
+profesores     [   3% ] 1/5 VUs    0m06.0s/3m0s  0.02 iters/s
+
+running (00m37.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  18% ] 10/10 VUs  0m37.0s/3m30.0s
+profesores     [   4% ] 1/5 VUs    0m07.0s/3m0s  0.02 iters/s
+
+running (00m38.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  18% ] 10/10 VUs  0m38.0s/3m30.0s
+profesores     [   4% ] 1/5 VUs    0m08.0s/3m0s  0.02 iters/s
+
+running (00m39.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  19% ] 10/10 VUs  0m39.0s/3m30.0s
+profesores     [   5% ] 1/5 VUs    0m09.0s/3m0s  0.02 iters/s
+
+running (00m40.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  19% ] 10/10 VUs  0m40.0s/3m30.0s
+profesores     [   6% ] 1/5 VUs    0m10.0s/3m0s  0.02 iters/s
+
+running (00m41.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  20% ] 10/10 VUs  0m41.0s/3m30.0s
+profesores     [   6% ] 1/5 VUs    0m11.0s/3m0s  0.02 iters/s
+
+running (00m42.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  20% ] 10/10 VUs  0m42.0s/3m30.0s
+profesores     [   7% ] 1/5 VUs    0m12.0s/3m0s  0.02 iters/s
+
+running (00m43.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  20% ] 10/10 VUs  0m43.0s/3m30.0s
+profesores     [   7% ] 1/5 VUs    0m13.0s/3m0s  0.02 iters/s
+
+running (00m44.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  21% ] 10/10 VUs  0m44.0s/3m30.0s
+profesores     [   8% ] 1/5 VUs    0m14.0s/3m0s  0.02 iters/s
+
+running (00m45.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  21% ] 10/10 VUs  0m45.0s/3m30.0s
+profesores     [   8% ] 1/5 VUs    0m15.0s/3m0s  0.02 iters/s
+
+running (00m46.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  22% ] 10/10 VUs  0m46.0s/3m30.0s
+profesores     [   9% ] 1/5 VUs    0m16.0s/3m0s  0.02 iters/s
+
+running (00m47.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  22% ] 10/10 VUs  0m47.0s/3m30.0s
+profesores     [   9% ] 1/5 VUs    0m17.0s/3m0s  0.02 iters/s
+
+running (00m48.0s), 11/15 VUs, 3 complete and 0 interrupted iterations
+espectadores   [  23% ] 10/10 VUs  0m48.0s/3m30.0s
+profesores     [  10% ] 1/5 VUs    0m18.0s/3m0s  0.02 iters/s
+
+running (00m49.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  23% ] 10/10 VUs  0m49.0s/3m30.0s
+profesores     [  11% ] 0/5 VUs    0m19.0s/3m0s  0.02 iters/s
+
+running (00m50.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  24% ] 10/10 VUs  0m50.0s/3m30.0s
+profesores     [  11% ] 0/5 VUs    0m20.0s/3m0s  0.02 iters/s
+
+running (00m51.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  24% ] 10/10 VUs  0m51.0s/3m30.0s
+profesores     [  12% ] 0/5 VUs    0m21.0s/3m0s  0.02 iters/s
+
+running (00m52.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  25% ] 10/10 VUs  0m52.0s/3m30.0s
+profesores     [  12% ] 0/5 VUs    0m22.0s/3m0s  0.02 iters/s
+
+running (00m53.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  25% ] 10/10 VUs  0m53.0s/3m30.0s
+profesores     [  13% ] 0/5 VUs    0m23.0s/3m0s  0.02 iters/s
+
+running (00m54.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  26% ] 10/10 VUs  0m54.0s/3m30.0s
+profesores     [  13% ] 0/5 VUs    0m24.0s/3m0s  0.02 iters/s
+
+running (00m55.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  26% ] 10/10 VUs  0m55.0s/3m30.0s
+profesores     [  14% ] 0/5 VUs    0m25.0s/3m0s  0.02 iters/s
+
+running (00m56.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  27% ] 10/10 VUs  0m56.0s/3m30.0s
+profesores     [  14% ] 0/5 VUs    0m26.0s/3m0s  0.02 iters/s
+
+running (00m57.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  27% ] 10/10 VUs  0m57.0s/3m30.0s
+profesores     [  15% ] 0/5 VUs    0m27.0s/3m0s  0.02 iters/s
+
+running (00m58.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  28% ] 10/10 VUs  0m58.0s/3m30.0s
+profesores     [  16% ] 0/5 VUs    0m28.0s/3m0s  0.02 iters/s
+
+running (00m59.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  28% ] 10/10 VUs  0m59.0s/3m30.0s
+profesores     [  16% ] 0/5 VUs    0m29.0s/3m0s  0.02 iters/s
+
+running (01m00.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  29% ] 10/10 VUs  1m00.0s/3m30.0s
+profesores     [  17% ] 0/5 VUs    0m30.0s/3m0s  0.02 iters/s
+
+running (01m01.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  29% ] 10/10 VUs  1m01.0s/3m30.0s
+profesores     [  17% ] 0/5 VUs    0m31.0s/3m0s  0.02 iters/s
+
+running (01m02.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  30% ] 10/10 VUs  1m02.0s/3m30.0s
+profesores     [  18% ] 0/5 VUs    0m32.0s/3m0s  0.02 iters/s
+
+running (01m03.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  30% ] 10/10 VUs  1m03.0s/3m30.0s
+profesores     [  18% ] 0/5 VUs    0m33.0s/3m0s  0.02 iters/s
+
+running (01m04.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  30% ] 10/10 VUs  1m04.0s/3m30.0s
+profesores     [  19% ] 0/5 VUs    0m34.0s/3m0s  0.02 iters/s
+
+running (01m05.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  31% ] 10/10 VUs  1m05.0s/3m30.0s
+profesores     [  19% ] 0/5 VUs    0m35.0s/3m0s  0.02 iters/s
+
+running (01m06.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  31% ] 10/10 VUs  1m06.0s/3m30.0s
+profesores     [  20% ] 0/5 VUs    0m36.0s/3m0s  0.02 iters/s
+
+running (01m07.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  32% ] 10/10 VUs  1m07.0s/3m30.0s
+profesores     [  21% ] 0/5 VUs    0m37.0s/3m0s  0.02 iters/s
+
+running (01m08.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  32% ] 10/10 VUs  1m08.0s/3m30.0s
+profesores     [  21% ] 0/5 VUs    0m38.0s/3m0s  0.02 iters/s
+
+running (01m09.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  33% ] 10/10 VUs  1m09.0s/3m30.0s
+profesores     [  22% ] 0/5 VUs    0m39.0s/3m0s  0.02 iters/s
+
+running (01m10.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  33% ] 10/10 VUs  1m10.0s/3m30.0s
+profesores     [  22% ] 0/5 VUs    0m40.0s/3m0s  0.02 iters/s
+
+running (01m11.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  34% ] 10/10 VUs  1m11.0s/3m30.0s
+profesores     [  23% ] 0/5 VUs    0m41.0s/3m0s  0.02 iters/s
+
+running (01m12.0s), 10/15 VUs, 4 complete and 0 interrupted iterations
+espectadores   [  34% ] 10/10 VUs  1m12.0s/3m30.0s
+profesores     [  23% ] 0/5 VUs    0m42.0s/3m0s  0.02 iters/s
+
+running (01m13.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  35% ] 10/10 VUs  1m13.0s/3m30.0s
+profesores     [  24% ] 0/5 VUs    0m43.0s/3m0s  0.02 iters/s
+
+running (01m14.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  35% ] 10/10 VUs  1m14.0s/3m30.0s
+profesores     [  24% ] 0/5 VUs    0m44.0s/3m0s  0.02 iters/s
+
+running (01m15.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  36% ] 10/10 VUs  1m15.0s/3m30.0s
+profesores     [  25% ] 0/5 VUs    0m45.0s/3m0s  0.02 iters/s
+
+running (01m16.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  36% ] 10/10 VUs  1m16.0s/3m30.0s
+profesores     [  26% ] 0/5 VUs    0m46.0s/3m0s  0.02 iters/s
+
+running (01m17.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  37% ] 10/10 VUs  1m17.0s/3m30.0s
+profesores     [  26% ] 0/5 VUs    0m47.0s/3m0s  0.02 iters/s
+
+running (01m18.0s), 10/15 VUs, 6 complete and 0 interrupted iterations
+espectadores   [  37% ] 10/10 VUs  1m18.0s/3m30.0s
+profesores     [  27% ] 0/5 VUs    0m48.0s/3m0s  0.02 iters/s
+
+running (01m19.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  38% ] 10/10 VUs  1m19.0s/3m30.0s
+profesores     [  27% ] 0/5 VUs    0m49.0s/3m0s  0.02 iters/s
+
+running (01m20.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  38% ] 10/10 VUs  1m20.0s/3m30.0s
+profesores     [  28% ] 0/5 VUs    0m50.0s/3m0s  0.02 iters/s
+
+running (01m21.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  39% ] 10/10 VUs  1m21.0s/3m30.0s
+profesores     [  28% ] 0/5 VUs    0m51.0s/3m0s  0.02 iters/s
+
+running (01m22.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  39% ] 10/10 VUs  1m22.0s/3m30.0s
+profesores     [  29% ] 0/5 VUs    0m52.0s/3m0s  0.02 iters/s
+
+running (01m23.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  40% ] 10/10 VUs  1m23.0s/3m30.0s
+profesores     [  29% ] 0/5 VUs    0m53.0s/3m0s  0.02 iters/s
+
+running (01m24.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  40% ] 10/10 VUs  1m24.0s/3m30.0s
+profesores     [  30% ] 0/5 VUs    0m54.0s/3m0s  0.02 iters/s
+
+running (01m25.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  40% ] 10/10 VUs  1m25.0s/3m30.0s
+profesores     [  31% ] 0/5 VUs    0m55.0s/3m0s  0.02 iters/s
+
+running (01m26.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  41% ] 10/10 VUs  1m26.0s/3m30.0s
+profesores     [  31% ] 0/5 VUs    0m56.0s/3m0s  0.02 iters/s
+
+running (01m27.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  41% ] 10/10 VUs  1m27.0s/3m30.0s
+profesores     [  32% ] 0/5 VUs    0m57.0s/3m0s  0.02 iters/s
+
+running (01m28.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  42% ] 10/10 VUs  1m28.0s/3m30.0s
+profesores     [  32% ] 0/5 VUs    0m58.0s/3m0s  0.02 iters/s
+
+running (01m29.0s), 10/15 VUs, 7 complete and 0 interrupted iterations
+espectadores   [  42% ] 10/10 VUs  1m29.0s/3m30.0s
+profesores     [  33% ] 0/5 VUs    0m59.0s/3m0s  0.02 iters/s
+
+running (01m30.0s), 10/15 VUs, 8 complete and 0 interrupted iterations
+espectadores   [  43% ] 10/10 VUs  1m30.0s/3m30.0s
+profesores     [  33% ] 0/5 VUs    1m00.0s/3m0s  0.02 iters/s
+
+running (01m31.0s), 11/15 VUs, 8 complete and 0 interrupted iterations
+espectadores   [  43% ] 10/10 VUs  1m31.0s/3m30.0s
+profesores     [  34% ] 1/5 VUs    1m01.0s/3m0s  0.02 iters/s
+
+running (01m32.0s), 11/15 VUs, 8 complete and 0 interrupted iterations
+espectadores   [  44% ] 10/10 VUs  1m32.0s/3m30.0s
+profesores     [  34% ] 1/5 VUs    1m02.0s/3m0s  0.02 iters/s
+
+running (01m33.0s), 11/15 VUs, 8 complete and 0 interrupted iterations
+espectadores   [  44% ] 10/10 VUs  1m33.0s/3m30.0s
+profesores     [  35% ] 1/5 VUs    1m03.0s/3m0s  0.02 iters/s
+
+running (01m34.0s), 11/15 VUs, 9 complete and 0 interrupted iterations
+espectadores   [  45% ] 10/10 VUs  1m34.0s/3m30.0s
+profesores     [  36% ] 1/5 VUs    1m04.0s/3m0s  0.02 iters/s
+
+running (01m35.0s), 11/15 VUs, 9 complete and 0 interrupted iterations
+espectadores   [  45% ] 10/10 VUs  1m35.0s/3m30.0s
+profesores     [  36% ] 1/5 VUs    1m05.0s/3m0s  0.02 iters/s
+
+running (01m36.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  46% ] 10/10 VUs  1m36.0s/3m30.0s
+profesores     [  37% ] 1/5 VUs    1m06.0s/3m0s  0.02 iters/s
+
+running (01m37.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  46% ] 10/10 VUs  1m37.0s/3m30.0s
+profesores     [  37% ] 1/5 VUs    1m07.0s/3m0s  0.02 iters/s
+
+running (01m38.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  47% ] 10/10 VUs  1m38.0s/3m30.0s
+profesores     [  38% ] 1/5 VUs    1m08.0s/3m0s  0.02 iters/s
+
+running (01m39.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  47% ] 10/10 VUs  1m39.0s/3m30.0s
+profesores     [  38% ] 1/5 VUs    1m09.0s/3m0s  0.02 iters/s
+
+running (01m40.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  48% ] 10/10 VUs  1m40.0s/3m30.0s
+profesores     [  39% ] 1/5 VUs    1m10.0s/3m0s  0.02 iters/s
+
+running (01m41.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  48% ] 10/10 VUs  1m41.0s/3m30.0s
+profesores     [  39% ] 1/5 VUs    1m11.0s/3m0s  0.02 iters/s
+
+running (01m42.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  49% ] 10/10 VUs  1m42.0s/3m30.0s
+profesores     [  40% ] 1/5 VUs    1m12.0s/3m0s  0.02 iters/s
+
+running (01m43.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  49% ] 10/10 VUs  1m43.0s/3m30.0s
+profesores     [  41% ] 1/5 VUs    1m13.0s/3m0s  0.02 iters/s
+
+running (01m44.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  50% ] 10/10 VUs  1m44.0s/3m30.0s
+profesores     [  41% ] 1/5 VUs    1m14.0s/3m0s  0.02 iters/s
+
+running (01m45.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  50% ] 10/10 VUs  1m45.0s/3m30.0s
+profesores     [  42% ] 1/5 VUs    1m15.0s/3m0s  0.02 iters/s
+
+running (01m46.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  50% ] 10/10 VUs  1m46.0s/3m30.0s
+profesores     [  42% ] 1/5 VUs    1m16.0s/3m0s  0.02 iters/s
+
+running (01m47.0s), 11/15 VUs, 10 complete and 0 interrupted iterations
+espectadores   [  51% ] 10/10 VUs  1m47.0s/3m30.0s
+profesores     [  43% ] 1/5 VUs    1m17.0s/3m0s  0.02 iters/s
+
+running (01m48.0s), 11/15 VUs, 11 complete and 0 interrupted iterations
+espectadores   [  51% ] 10/10 VUs  1m48.0s/3m30.0s
+profesores     [  43% ] 1/5 VUs    1m18.0s/3m0s  0.02 iters/s
+
+running (01m49.0s), 11/15 VUs, 11 complete and 0 interrupted iterations
+espectadores   [  52% ] 10/10 VUs  1m49.0s/3m30.0s
+profesores     [  44% ] 1/5 VUs    1m19.0s/3m0s  0.02 iters/s
+
+running (01m50.0s), 11/15 VUs, 11 complete and 0 interrupted iterations
+espectadores   [  52% ] 10/10 VUs  1m50.0s/3m30.0s
+profesores     [  44% ] 1/5 VUs    1m20.0s/3m0s  0.02 iters/s
+
+running (01m51.0s), 11/15 VUs, 11 complete and 0 interrupted iterations
+espectadores   [  53% ] 10/10 VUs  1m51.0s/3m30.0s
+profesores     [  45% ] 1/5 VUs    1m21.0s/3m0s  0.02 iters/s
+
+running (01m52.0s), 11/15 VUs, 11 complete and 0 interrupted iterations
+espectadores   [  53% ] 10/10 VUs  1m52.0s/3m30.0s
+profesores     [  46% ] 1/5 VUs    1m22.0s/3m0s  0.02 iters/s
+
+running (01m53.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  54% ] 10/10 VUs  1m53.0s/3m30.0s
+profesores     [  46% ] 1/5 VUs    1m23.0s/3m0s  0.02 iters/s
+
+running (01m54.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  54% ] 10/10 VUs  1m54.0s/3m30.0s
+profesores     [  47% ] 1/5 VUs    1m24.0s/3m0s  0.02 iters/s
+
+running (01m55.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  55% ] 10/10 VUs  1m55.0s/3m30.0s
+profesores     [  47% ] 1/5 VUs    1m25.0s/3m0s  0.02 iters/s
+
+running (01m56.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  55% ] 10/10 VUs  1m56.0s/3m30.0s
+profesores     [  48% ] 1/5 VUs    1m26.0s/3m0s  0.02 iters/s
+
+running (01m57.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  56% ] 10/10 VUs  1m57.0s/3m30.0s
+profesores     [  48% ] 1/5 VUs    1m27.0s/3m0s  0.02 iters/s
+
+running (01m58.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  56% ] 10/10 VUs  1m58.0s/3m30.0s
+profesores     [  49% ] 1/5 VUs    1m28.0s/3m0s  0.02 iters/s
+
+running (01m59.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  57% ] 10/10 VUs  1m59.0s/3m30.0s
+profesores     [  49% ] 1/5 VUs    1m29.0s/3m0s  0.02 iters/s
+
+running (02m00.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  57% ] 10/10 VUs  2m00.0s/3m30.0s
+profesores     [  50% ] 1/5 VUs    1m30.0s/3m0s  0.02 iters/s
+
+running (02m01.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  58% ] 10/10 VUs  2m01.0s/3m30.0s
+profesores     [  51% ] 1/5 VUs    1m31.0s/3m0s  0.02 iters/s
+
+running (02m02.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  58% ] 10/10 VUs  2m02.0s/3m30.0s
+profesores     [  51% ] 1/5 VUs    1m32.0s/3m0s  0.02 iters/s
+
+running (02m03.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  59% ] 10/10 VUs  2m03.0s/3m30.0s
+profesores     [  52% ] 1/5 VUs    1m33.0s/3m0s  0.02 iters/s
+
+running (02m04.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  59% ] 10/10 VUs  2m04.0s/3m30.0s
+profesores     [  52% ] 1/5 VUs    1m34.0s/3m0s  0.02 iters/s
+
+running (02m05.0s), 11/15 VUs, 12 complete and 0 interrupted iterations
+espectadores   [  60% ] 10/10 VUs  2m05.0s/3m30.0s
+profesores     [  53% ] 1/5 VUs    1m35.0s/3m0s  0.02 iters/s
+
+running (02m06.0s), 11/15 VUs, 13 complete and 0 interrupted iterations
+espectadores   [  60% ] 10/10 VUs  2m06.0s/3m30.0s
+profesores     [  53% ] 1/5 VUs    1m36.0s/3m0s  0.02 iters/s
+
+running (02m07.0s), 11/15 VUs, 13 complete and 0 interrupted iterations
+espectadores   [  60% ] 10/10 VUs  2m07.0s/3m30.0s
+profesores     [  54% ] 1/5 VUs    1m37.0s/3m0s  0.02 iters/s
+
+running (02m08.0s), 11/15 VUs, 13 complete and 0 interrupted iterations
+espectadores   [  61% ] 10/10 VUs  2m08.0s/3m30.0s
+profesores     [  54% ] 1/5 VUs    1m38.0s/3m0s  0.02 iters/s
+
+running (02m09.0s), 11/15 VUs, 13 complete and 0 interrupted iterations
+espectadores   [  61% ] 10/10 VUs  2m09.0s/3m30.0s
+profesores     [  55% ] 1/5 VUs    1m39.0s/3m0s  0.02 iters/s
+
+running (02m10.0s), 11/15 VUs, 13 complete and 0 interrupted iterations
+espectadores   [  62% ] 10/10 VUs  2m10.0s/3m30.0s
+profesores     [  56% ] 1/5 VUs    1m40.0s/3m0s  0.02 iters/s
+
+running (02m11.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  62% ] 10/10 VUs  2m11.0s/3m30.0s
+profesores     [  56% ] 1/5 VUs    1m41.0s/3m0s  0.02 iters/s
+
+running (02m12.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  63% ] 10/10 VUs  2m12.0s/3m30.0s
+profesores     [  57% ] 1/5 VUs    1m42.0s/3m0s  0.02 iters/s
+
+running (02m13.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  63% ] 10/10 VUs  2m13.0s/3m30.0s
+profesores     [  57% ] 1/5 VUs    1m43.0s/3m0s  0.02 iters/s
+
+running (02m14.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  64% ] 10/10 VUs  2m14.0s/3m30.0s
+profesores     [  58% ] 1/5 VUs    1m44.0s/3m0s  0.02 iters/s
+
+running (02m15.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  64% ] 10/10 VUs  2m15.0s/3m30.0s
+profesores     [  58% ] 1/5 VUs    1m45.0s/3m0s  0.02 iters/s
+
+running (02m16.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  65% ] 10/10 VUs  2m16.0s/3m30.0s
+profesores     [  59% ] 1/5 VUs    1m46.0s/3m0s  0.02 iters/s
+
+running (02m17.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  65% ] 10/10 VUs  2m17.0s/3m30.0s
+profesores     [  59% ] 1/5 VUs    1m47.0s/3m0s  0.02 iters/s
+
+running (02m18.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  66% ] 10/10 VUs  2m18.0s/3m30.0s
+profesores     [  60% ] 1/5 VUs    1m48.0s/3m0s  0.02 iters/s
+
+running (02m19.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  66% ] 10/10 VUs  2m19.0s/3m30.0s
+profesores     [  61% ] 1/5 VUs    1m49.0s/3m0s  0.02 iters/s
+
+running (02m20.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  67% ] 10/10 VUs  2m20.0s/3m30.0s
+profesores     [  61% ] 1/5 VUs    1m50.0s/3m0s  0.02 iters/s
+
+running (02m21.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  67% ] 10/10 VUs  2m21.0s/3m30.0s
+profesores     [  62% ] 1/5 VUs    1m51.0s/3m0s  0.02 iters/s
+
+running (02m22.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  68% ] 10/10 VUs  2m22.0s/3m30.0s
+profesores     [  62% ] 1/5 VUs    1m52.0s/3m0s  0.02 iters/s
+
+running (02m23.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  68% ] 10/10 VUs  2m23.0s/3m30.0s
+profesores     [  63% ] 1/5 VUs    1m53.0s/3m0s  0.02 iters/s
+
+running (02m24.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  69% ] 10/10 VUs  2m24.0s/3m30.0s
+profesores     [  63% ] 1/5 VUs    1m54.0s/3m0s  0.02 iters/s
+
+running (02m25.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  69% ] 10/10 VUs  2m25.0s/3m30.0s
+profesores     [  64% ] 1/5 VUs    1m55.0s/3m0s  0.02 iters/s
+
+running (02m26.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  70% ] 10/10 VUs  2m26.0s/3m30.0s
+profesores     [  64% ] 1/5 VUs    1m56.0s/3m0s  0.02 iters/s
+
+running (02m27.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  70% ] 10/10 VUs  2m27.0s/3m30.0s
+profesores     [  65% ] 1/5 VUs    1m57.0s/3m0s  0.02 iters/s
+
+running (02m28.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  70% ] 10/10 VUs  2m28.0s/3m30.0s
+profesores     [  66% ] 1/5 VUs    1m58.0s/3m0s  0.02 iters/s
+
+running (02m29.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  71% ] 10/10 VUs  2m29.0s/3m30.0s
+profesores     [  66% ] 1/5 VUs    1m59.0s/3m0s  0.02 iters/s
+
+running (02m30.0s), 11/15 VUs, 14 complete and 0 interrupted iterations
+espectadores   [  71% ] 10/10 VUs  2m30.0s/3m30.0s
+profesores     [  67% ] 1/5 VUs    2m00.0s/3m0s  0.02 iters/s
+
+running (02m31.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  72% ] 10/10 VUs  2m31.0s/3m30.0s
+profesores     [  67% ] 2/5 VUs    2m01.0s/3m0s  0.02 iters/s
+
+running (02m32.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  72% ] 10/10 VUs  2m32.0s/3m30.0s
+profesores     [  68% ] 2/5 VUs    2m02.0s/3m0s  0.02 iters/s
+
+running (02m33.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  73% ] 10/10 VUs  2m33.0s/3m30.0s
+profesores     [  68% ] 2/5 VUs    2m03.0s/3m0s  0.02 iters/s
+
+running (02m34.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  73% ] 10/10 VUs  2m34.0s/3m30.0s
+profesores     [  69% ] 2/5 VUs    2m04.0s/3m0s  0.02 iters/s
+
+running (02m35.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  74% ] 10/10 VUs  2m35.0s/3m30.0s
+profesores     [  69% ] 2/5 VUs    2m05.0s/3m0s  0.02 iters/s
+
+running (02m36.0s), 12/15 VUs, 15 complete and 0 interrupted iterations
+espectadores   [  74% ] 10/10 VUs  2m36.0s/3m30.0s
+profesores     [  70% ] 2/5 VUs    2m06.0s/3m0s  0.02 iters/s
+
+running (02m37.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  75% ] 10/10 VUs  2m37.0s/3m30.0s
+profesores     [  71% ] 2/5 VUs    2m07.0s/3m0s  0.02 iters/s
+
+running (02m38.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  75% ] 10/10 VUs  2m38.0s/3m30.0s
+profesores     [  71% ] 2/5 VUs    2m08.0s/3m0s  0.02 iters/s
+
+running (02m39.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  76% ] 10/10 VUs  2m39.0s/3m30.0s
+profesores     [  72% ] 2/5 VUs    2m09.0s/3m0s  0.02 iters/s
+
+running (02m40.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  76% ] 10/10 VUs  2m40.0s/3m30.0s
+profesores     [  72% ] 2/5 VUs    2m10.0s/3m0s  0.02 iters/s
+
+running (02m41.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  77% ] 10/10 VUs  2m41.0s/3m30.0s
+profesores     [  73% ] 2/5 VUs    2m11.0s/3m0s  0.02 iters/s
+
+running (02m42.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  77% ] 10/10 VUs  2m42.0s/3m30.0s
+profesores     [  73% ] 2/5 VUs    2m12.0s/3m0s  0.02 iters/s
+
+running (02m43.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  78% ] 10/10 VUs  2m43.0s/3m30.0s
+profesores     [  74% ] 2/5 VUs    2m13.0s/3m0s  0.02 iters/s
+
+running (02m44.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  78% ] 10/10 VUs  2m44.0s/3m30.0s
+profesores     [  74% ] 2/5 VUs    2m14.0s/3m0s  0.02 iters/s
+
+running (02m45.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  79% ] 10/10 VUs  2m45.0s/3m30.0s
+profesores     [  75% ] 2/5 VUs    2m15.0s/3m0s  0.02 iters/s
+
+running (02m46.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  79% ] 10/10 VUs  2m46.0s/3m30.0s
+profesores     [  76% ] 2/5 VUs    2m16.0s/3m0s  0.02 iters/s
+
+running (02m47.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  80% ] 10/10 VUs  2m47.0s/3m30.0s
+profesores     [  76% ] 2/5 VUs    2m17.0s/3m0s  0.02 iters/s
+
+running (02m48.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  80% ] 10/10 VUs  2m48.0s/3m30.0s
+profesores     [  77% ] 2/5 VUs    2m18.0s/3m0s  0.02 iters/s
+
+running (02m49.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  80% ] 10/10 VUs  2m49.0s/3m30.0s
+profesores     [  77% ] 2/5 VUs    2m19.0s/3m0s  0.02 iters/s
+
+running (02m50.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  81% ] 10/10 VUs  2m50.0s/3m30.0s
+profesores     [  78% ] 2/5 VUs    2m20.0s/3m0s  0.02 iters/s
+
+running (02m51.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  81% ] 10/10 VUs  2m51.0s/3m30.0s
+profesores     [  78% ] 2/5 VUs    2m21.0s/3m0s  0.02 iters/s
+
+running (02m52.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  82% ] 10/10 VUs  2m52.0s/3m30.0s
+profesores     [  79% ] 2/5 VUs    2m22.0s/3m0s  0.02 iters/s
+
+running (02m53.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  82% ] 10/10 VUs  2m53.0s/3m30.0s
+profesores     [  79% ] 2/5 VUs    2m23.0s/3m0s  0.02 iters/s
+
+running (02m54.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  83% ] 10/10 VUs  2m54.0s/3m30.0s
+profesores     [  80% ] 2/5 VUs    2m24.0s/3m0s  0.02 iters/s
+
+running (02m55.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  83% ] 10/10 VUs  2m55.0s/3m30.0s
+profesores     [  81% ] 2/5 VUs    2m25.0s/3m0s  0.02 iters/s
+
+running (02m56.0s), 12/15 VUs, 16 complete and 0 interrupted iterations
+espectadores   [  84% ] 10/10 VUs  2m56.0s/3m30.0s
+profesores     [  81% ] 2/5 VUs    2m26.0s/3m0s  0.02 iters/s
+
+running (02m57.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  84% ] 10/10 VUs  2m57.0s/3m30.0s
+profesores     [  82% ] 2/5 VUs    2m27.0s/3m0s  0.02 iters/s
+
+running (02m58.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  85% ] 10/10 VUs  2m58.0s/3m30.0s
+profesores     [  82% ] 2/5 VUs    2m28.0s/3m0s  0.02 iters/s
+
+running (02m59.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  85% ] 10/10 VUs  2m59.0s/3m30.0s
+profesores     [  83% ] 2/5 VUs    2m29.0s/3m0s  0.02 iters/s
+
+running (03m00.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  86% ] 10/10 VUs  3m00.0s/3m30.0s
+profesores     [  83% ] 2/5 VUs    2m30.0s/3m0s  0.02 iters/s
+
+running (03m01.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  86% ] 10/10 VUs  3m01.0s/3m30.0s
+profesores     [  84% ] 2/5 VUs    2m31.0s/3m0s  0.02 iters/s
+
+running (03m02.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  87% ] 10/10 VUs  3m02.0s/3m30.0s
+profesores     [  84% ] 2/5 VUs    2m32.0s/3m0s  0.02 iters/s
+
+running (03m03.0s), 12/15 VUs, 17 complete and 0 interrupted iterations
+espectadores   [  87% ] 10/10 VUs  3m03.0s/3m30.0s
+profesores     [  85% ] 2/5 VUs    2m33.0s/3m0s  0.02 iters/s
+
+running (03m04.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  88% ] 10/10 VUs  3m04.0s/3m30.0s
+profesores     [  86% ] 1/5 VUs    2m34.0s/3m0s  0.02 iters/s
+
+running (03m05.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  88% ] 10/10 VUs  3m05.0s/3m30.0s
+profesores     [  86% ] 1/5 VUs    2m35.0s/3m0s  0.02 iters/s
+
+running (03m06.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  89% ] 10/10 VUs  3m06.0s/3m30.0s
+profesores     [  87% ] 1/5 VUs    2m36.0s/3m0s  0.02 iters/s
+
+running (03m07.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  89% ] 10/10 VUs  3m07.0s/3m30.0s
+profesores     [  87% ] 1/5 VUs    2m37.0s/3m0s  0.02 iters/s
+
+running (03m08.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  90% ] 10/10 VUs  3m08.0s/3m30.0s
+profesores     [  88% ] 1/5 VUs    2m38.0s/3m0s  0.02 iters/s
+
+running (03m09.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  90% ] 10/10 VUs  3m09.0s/3m30.0s
+profesores     [  88% ] 1/5 VUs    2m39.0s/3m0s  0.02 iters/s
+
+running (03m10.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  90% ] 10/10 VUs  3m10.0s/3m30.0s
+profesores     [  89% ] 1/5 VUs    2m40.0s/3m0s  0.02 iters/s
+
+running (03m11.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  91% ] 10/10 VUs  3m11.0s/3m30.0s
+profesores     [  89% ] 1/5 VUs    2m41.0s/3m0s  0.02 iters/s
+
+running (03m12.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  91% ] 10/10 VUs  3m12.0s/3m30.0s
+profesores     [  90% ] 1/5 VUs    2m42.0s/3m0s  0.02 iters/s
+
+running (03m13.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  92% ] 10/10 VUs  3m13.0s/3m30.0s
+profesores     [  91% ] 1/5 VUs    2m43.0s/3m0s  0.02 iters/s
+
+running (03m14.0s), 11/15 VUs, 18 complete and 0 interrupted iterations
+espectadores   [  92% ] 10/10 VUs  3m14.0s/3m30.0s
+profesores     [  91% ] 1/5 VUs    2m44.0s/3m0s  0.02 iters/s
+
+running (03m15.0s), 11/15 VUs, 19 complete and 0 interrupted iterations
+espectadores   [  93% ] 10/10 VUs  3m15.0s/3m30.0s
+profesores     [  92% ] 1/5 VUs    2m45.0s/3m0s  0.02 iters/s
+
+running (03m16.0s), 11/15 VUs, 19 complete and 0 interrupted iterations
+espectadores   [  93% ] 10/10 VUs  3m16.0s/3m30.0s
+profesores     [  92% ] 1/5 VUs    2m46.0s/3m0s  0.02 iters/s
+
+running (03m17.0s), 11/15 VUs, 19 complete and 0 interrupted iterations
+espectadores   [  94% ] 10/10 VUs  3m17.0s/3m30.0s
+profesores     [  93% ] 1/5 VUs    2m47.0s/3m0s  0.02 iters/s
+
+running (03m18.0s), 11/15 VUs, 19 complete and 0 interrupted iterations
+espectadores   [  94% ] 10/10 VUs  3m18.0s/3m30.0s
+profesores     [  93% ] 1/5 VUs    2m48.0s/3m0s  0.02 iters/s
+
+running (03m19.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  95% ] 10/10 VUs  3m19.0s/3m30.0s
+profesores     [  94% ] 0/5 VUs    2m49.0s/3m0s  0.02 iters/s
+
+running (03m20.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  95% ] 10/10 VUs  3m20.0s/3m30.0s
+profesores     [  94% ] 0/5 VUs    2m50.0s/3m0s  0.02 iters/s
+
+running (03m21.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  96% ] 10/10 VUs  3m21.0s/3m30.0s
+profesores     [  95% ] 0/5 VUs    2m51.0s/3m0s  0.02 iters/s
+
+running (03m22.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  96% ] 10/10 VUs  3m22.0s/3m30.0s
+profesores     [  96% ] 0/5 VUs    2m52.0s/3m0s  0.02 iters/s
+
+running (03m23.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  97% ] 10/10 VUs  3m23.0s/3m30.0s
+profesores     [  96% ] 0/5 VUs    2m53.0s/3m0s  0.02 iters/s
+
+running (03m24.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  97% ] 10/10 VUs  3m24.0s/3m30.0s
+profesores     [  97% ] 0/5 VUs    2m54.0s/3m0s  0.02 iters/s
+
+running (03m25.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  98% ] 10/10 VUs  3m25.0s/3m30.0s
+profesores     [  97% ] 0/5 VUs    2m55.0s/3m0s  0.02 iters/s
+
+running (03m26.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  98% ] 10/10 VUs  3m26.0s/3m30.0s
+profesores     [  98% ] 0/5 VUs    2m56.0s/3m0s  0.02 iters/s
+
+running (03m27.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  99% ] 10/10 VUs  3m27.0s/3m30.0s
+profesores     [  98% ] 0/5 VUs    2m57.0s/3m0s  0.02 iters/s
+
+running (03m28.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [  99% ] 10/10 VUs  3m28.0s/3m30.0s
+profesores     [  99% ] 0/5 VUs    2m58.0s/3m0s  0.02 iters/s
+
+running (03m29.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [ 100% ] 10/10 VUs  3m29.0s/3m30.0s
+profesores     [  99% ] 0/5 VUs    2m59.0s/3m0s  0.02 iters/s
+
+running (03m30.0s), 10/15 VUs, 20 complete and 0 interrupted iterations
+espectadores   [ 100% ] 10/10 VUs  3m30.0s/3m30.0s
+profesores     [ 100% ] 0/5 VUs    3m00.0s/3m0s  0.02 iters/s
+
+running (03m31.0s), 10/15 VUs, 21 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m32.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m33.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m34.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m35.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m36.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m37.0s), 09/15 VUs, 22 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m38.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m39.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m40.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m41.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m42.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m43.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m44.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m45.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m46.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m47.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m48.0s), 08/15 VUs, 23 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ↓ [ 100% ] 1/5 VUs    3m0s  0.02 iters/s
+
+running (03m49.0s), 06/15 VUs, 25 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ✓ [ 100% ] 0/5 VUs    3m0s  0.02 iters/s
+
+running (03m50.0s), 06/15 VUs, 25 complete and 0 interrupted iterations
+espectadores ↓ [ 100% ] 10/10 VUs  3m30s
+profesores   ✓ [ 100% ] 0/5 VUs    3m0s  0.02 iters/s
+
+
+  █ THRESHOLDS 
+
+    e2_api_firma_ms
+    ✓ 'p(95)<1000' p(95)=67.32ms
+
+    e2_carga_exitosa
+    ✓ 'rate>0.99' rate=100.00%
+
+    e2_manifiesto_ms{fase:medicion}
+    ✓ 'p(95)<1000' p(95)=91.36ms
+
+    e2_riesgo_corte{fase:medicion}
+    ✓ 'rate<0.01' rate=0.00%
+
+    e2_segmento_ms{fase:medicion}
+    ✓ 'p(95)<2000' p(95)=82.59ms
+
+    http_req_duration{name:GET /assets/:id (consultar estado)}
+    ✓ 'p(95)<500' p(95)=5.62ms
+
+    http_req_duration{name:POST /units/:id/resources}
+    ✓ 'p(95)<1000' p(95)=10.13ms
+
+    http_req_duration{name:POST /uploads (autorizar y firmar)}
+    ✓ 'p(95)<1000' p(95)=67.32ms
+
+    http_req_duration{name:POST /uploads/:id/complete (confirmar)}
+    ✓ 'p(95)<1000' p(95)=145.2ms
+
+    http_req_duration{name:PUT parte (almacenamiento)}
+    ✓ 'p(95)<30000' p(95)=192.09ms
+
+    http_req_failed{tipo:consumo_api,fase:medicion}
+    ✓ 'rate<0.01' rate=0.00%
+
+    http_req_failed{tipo:consumo,fase:medicion}
+    ✓ 'rate<0.01' rate=0.00%
+
+    http_req_failed{tipo:control,fase:medicion}
+    ✓ 'rate<0.01' rate=0.00%
+
+    http_req_failed{tipo:transferencia,fase:medicion}
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 441     1.917384/s
+    checks_succeeded...: 100.00% 441 out of 441
+    checks_failed......: 0.00%   0 out of 441
+
+    ✓ master 200 + #EXTM3U
+    ✓ variante 200 + #EXTM3U
+    ✓ segmento 200 con datos
+    ✓ init 2xx
+    ✓ parte 200
+    ✓ complete 2xx
+    ✓ recurso 2xx
+    ✓ hls_available
+    ✓ duracion coincide (+-2 s)
+    ✓ rendiciones esperadas
+
+    CUSTOM
+    e2_api_firma_ms.....................................: avg=59.21ms    min=53.89ms   med=56.94ms    p(90)=65.57ms    p(95)=67.32ms    p(99)=68.72ms    max=69.07ms     count=4  
+    e2_carga_a_ready_ms.................................: avg=44.34s     min=18.04s    med=25.56s     p(90)=1m25s      p(95)=1m36s      p(99)=1m45s      max=1m48s       count=4  
+    e2_carga_exitosa....................................: 100.00% 4 out of 4
+    e2_confirmacion_ms..................................: avg=140.29ms   min=134.75ms  med=140.24ms   p(90)=144.46ms   p(95)=145.2ms    p(99)=145.79ms   max=145.94ms    count=4  
+    e2_espera_hasta_procesar_ms.........................: avg=3.01s      min=3.01s     med=3.01s      p(90)=3.01s      p(95)=3.01s      p(99)=3.01s      max=3.01s       count=4  
+    e2_extremo_a_extremo_ms.............................: avg=44.68s     min=18.32s    med=25.91s     p(90)=1m26s      p(95)=1m37s      p(99)=1m46s      max=1m48s       count=4  
+    e2_manifiesto_ms....................................: avg=51.14ms    min=29.96ms   med=42.76ms    p(90)=83.26ms    p(95)=97.66ms    p(99)=114.19ms   max=115.02ms    count=54 
+      { fase:medicion }.................................: avg=48.71ms    min=29.96ms   med=40.61ms    p(90)=82.34ms    p(95)=91.36ms    p(99)=108.62ms   max=115.02ms    count=32 
+    e2_riesgo_corte.....................................: 0.00%   0 out of 278
+      { fase:medicion }.................................: 0.00%   0 out of 256
+    e2_segmento_mbps....................................: avg=336.670826 min=10.220033 med=302.227352 p(90)=711.908383 p(95)=792.391637 p(99)=935.462318 max=1008.288736 count=359
+    e2_segmento_ms......................................: avg=52.12ms    min=21ms      med=45.72ms    p(90)=65.38ms    p(95)=81.29ms    p(99)=188.09ms   max=615.84ms    count=359
+      { fase:medicion }.................................: avg=52.7ms     min=21ms      med=45.84ms    p(90)=65.1ms     p(95)=82.59ms    p(99)=198.86ms   max=615.84ms    count=304
+    e2_transferencia_mbps...............................: avg=134.118417 min=59.720791 med=100.561309 p(90)=232.375691 p(95)=254.002976 p(99)=271.304804 max=275.630261  count=4  
+    e2_transferencia_ms.................................: avg=132.75ms   min=78ms      med=123ms      p(90)=191.4ms    p(95)=199.2ms    p(99)=205.44ms   max=207ms       count=4  
+
+    HTTP
+    http_req_duration...................................: avg=47.29ms    min=3.81ms    med=42.96ms    p(90)=67.82ms    p(95)=94.79ms    p(99)=181.62ms   max=615.84ms    count=492
+      { expected_response:true }........................: avg=47.29ms    min=3.81ms    med=42.96ms    p(90)=67.82ms    p(95)=94.79ms    p(99)=181.62ms   max=615.84ms    count=492
+      { name:GET /assets/:id (consultar estado) }.......: avg=4.92ms     min=3.81ms    med=4.93ms     p(90)=5.35ms     p(95)=5.62ms     p(99)=7.2ms      max=7.93ms      count=59 
+      { name:POST /units/:id/resources }................: avg=8.99ms     min=7.89ms    med=8.89ms     p(90)=9.95ms     p(95)=10.13ms    p(99)=10.27ms    max=10.3ms      count=4  
+      { name:POST /uploads (autorizar y firmar) }.......: avg=59.21ms    min=53.89ms   med=56.94ms    p(90)=65.57ms    p(95)=67.32ms    p(99)=68.72ms    max=69.07ms     count=4  
+      { name:POST /uploads/:id/complete (confirmar) }...: avg=140.29ms   min=134.75ms  med=140.24ms   p(90)=144.46ms   p(95)=145.2ms    p(99)=145.79ms   max=145.94ms    count=4  
+      { name:PUT parte (almacenamiento) }...............: avg=126.65ms   min=71.98ms   med=117.47ms   p(90)=184.5ms    p(95)=192.09ms   p(99)=198.16ms   max=199.68ms    count=4  
+    http_req_failed.....................................: 0.00%   0 out of 492
+      { tipo:consumo_api,fase:medicion }................: 0.00%   0 out of 32
+      { tipo:consumo,fase:medicion }....................: 0.00%   0 out of 304
+      { tipo:control,fase:medicion }....................: 0.00%   0 out of 75
+      { tipo:transferencia,fase:medicion }..............: 0.00%   0 out of 4
+    http_reqs...........................................: 492     2.139123/s
+
+    EXECUTION
+    iteration_duration..................................: avg=1m10s      min=5.23s     med=1m3s       p(90)=2m18s      p(95)=2m18s      p(99)=2m18s      max=2m18s       count=25 
+    iterations..........................................: 25      0.108695/s
+    vus.................................................: 6       min=0        max=12
+    vus_max.............................................: 15      min=15       max=15
+
+    NETWORK
+    data_received.......................................: 796 MB  3.5 MB/s
+    data_sent...........................................: 16 MB   69 kB/s
+
+
+
+
+running (03m50.0s), 00/15 VUs, 25 complete and 6 interrupted iterations
+espectadores ✓ [ 100% ] 03/10 VUs  3m30s
+profesores   ✓ [ 100% ] 0/5 VUs    3m0s  0.02 iters/s
