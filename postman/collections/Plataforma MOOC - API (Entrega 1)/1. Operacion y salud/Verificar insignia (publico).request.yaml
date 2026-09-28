@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/public/badges/{{badgeCode}}"
+method: GET
+order: 8000

@@ -1,0 +1,15 @@
+ts_ms,task_id,tipo,cola,evento
+1790534720999,hls:846f76ce-5268-4678-b84e-ff10ff4d69b0,media:transcode,low,pendiente_visto
+1790534723000,hls:846f76ce-5268-4678-b84e-ff10ff4d69b0,media:transcode,low,activo_visto
+1790534836936,scan:ec78f16c-72c7-4667-9963-c3f526b95df1,media:scan,default,activo_visto
+1790534838983,hls:ec78f16c-72c7-4667-9963-c3f526b95df1,media:transcode,low,activo_visto
+1790534956847,scan:21c4d356-c223-466d-a802-b237d198a654,media:scan,default,pendiente_visto
+1790534958873,hls:21c4d356-c223-466d-a802-b237d198a654,media:transcode,low,activo_visto
+1790535074772,scan:4dbbc44b-825c-439c-ad1b-19d34c9b22c4,media:scan,default,pendiente_visto
+1790535076785,scan:4dbbc44b-825c-439c-ad1b-19d34c9b22c4,media:scan,default,activo_visto
+1790535078777,hls:4dbbc44b-825c-439c-ad1b-19d34c9b22c4,media:transcode,low,activo_visto
+1790535206472,hls:3b67d34b-648a-401e-adbc-8318bf89dfa7,media:transcode,low,activo_visto
+1790535320372,scan:0f4bca88-db3f-4b5f-89a4-9e347196c194,media:scan,default,pendiente_visto
+1790535322375,hls:0f4bca88-db3f-4b5f-89a4-9e347196c194,media:transcode,low,activo_visto
+1790535370388,a0e5f63e-df0a-4618-8729-3c16107fc6f0,maintenance:reap,low,pendiente_visto
+1790535380356,a0e5f63e-df0a-4618-8729-3c16107fc6f0,maintenance:reap,low,activo_visto

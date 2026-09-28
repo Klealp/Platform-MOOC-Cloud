@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/modules/{{moduleId}}"
+method: DELETE
+order: 22000

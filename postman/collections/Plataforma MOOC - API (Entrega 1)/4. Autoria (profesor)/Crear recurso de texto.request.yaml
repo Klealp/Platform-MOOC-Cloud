@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/units/{{unitId}}/resources"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "type": "rich_text",
+      "title": "Lectura inicial",
+      "content_md": "# Hola\n\nContenido de prueba.",
+      "required": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('resourceId', j.id);
+    language: text/javascript
+order: 11000

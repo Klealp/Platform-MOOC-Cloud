@@ -1,0 +1,77 @@
+{
+  "origen": "Cantos bajo la Luna.mp4",
+  "generado": "2026-09-27T13:04:58-05:00",
+  "tamano_parte_bytes": 8388608,
+  "perfiles": [
+    {
+      "id": "P1",
+      "archivo": "p1_corto_480p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 30,
+      "ancho": 854,
+      "alto": 480,
+      "bitrate_kbps": 180,
+      "tamano_bytes": 679324,
+      "partes_multipart": 1,
+      "sha256": "6722927b7b816e11856d9f649ed918181edb7c9e4a1b269fa4780495532ab425",
+      "rendiciones_esperadas": [
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "P2",
+      "archivo": "p2_medio_720p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 90,
+      "ancho": 1280,
+      "alto": 720,
+      "bitrate_kbps": 226,
+      "tamano_bytes": 2546812,
+      "partes_multipart": 1,
+      "sha256": "744424ac5151aa1065323796aa8e4c06699593173dc7afe835bd4a5952887c44",
+      "rendiciones_esperadas": [
+        "v720",
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "P3",
+      "archivo": "p3_largo_1080p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 178,
+      "ancho": 1920,
+      "alto": 1080,
+      "bitrate_kbps": 2340,
+      "tamano_bytes": 52336926,
+      "partes_multipart": 7,
+      "sha256": "57275ded77187961a7645f615bf1f087b2d73f5e5a9cccca42072b234c95734b",
+      "rendiciones_esperadas": [
+        "v1080",
+        "v720",
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "A1",
+      "archivo": "a1_audio.m4a",
+      "kind": "audio",
+      "mime": "audio/mp4",
+      "duracion_s": 178,
+      "ancho": 0,
+      "alto": 0,
+      "bitrate_kbps": 318,
+      "tamano_bytes": 7131933,
+      "partes_multipart": 1,
+      "sha256": "a1c582c6a9a90655f135f6a1391d470c332b3cd806a6f684a537962651526ad8",
+      "rendiciones_esperadas": [
+        "a128"
+      ]
+    }
+  ]
+}

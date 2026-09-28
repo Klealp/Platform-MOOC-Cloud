@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/assets/{{assetId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.test('estado', ()=>pm.expect(j.status).to.be.a('string'));
+      console.log('estado del asset:', j.status);
+    language: text/javascript
+order: 7000

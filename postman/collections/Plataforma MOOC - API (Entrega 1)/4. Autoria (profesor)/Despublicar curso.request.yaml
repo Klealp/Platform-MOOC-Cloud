@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/courses/{{courseId}}/unpublish"
+method: POST
+order: 25000

@@ -1,0 +1,4 @@
+iter,perfil,asset_id,tamano_bytes,partes,estado_final,motivo,api_firma_ms,transferencia_ms,mbps,confirmacion_ms,cola_y_escaneo_ms,espera_cola_hls_ms,transcodificacion_ms,hls_aproximado,carga_a_ready_ms,extremo_a_extremo_ms,reintentos,t_inicio_ms
+0,P1,878c170a-6502-4ec7-a6d1-9bb9d6b4ec10,679324,1,ready,,95,193,28.2,75,0,2552,17448,false,23360,23734,0,1790534146031
+1,P2,e312c929-abff-488e-92e3-01fa575ea28e,2546812,1,ready,,188,761,26.8,99,0,1531,72469,false,75247,76344,0,1790534206025
+2,A1,26d84eb9-5ddc-4140-b3e9-69bef120adb3,7131933,1,ready,,240,1926,29.6,79,727,3504,6496,false,12103,14384,0,1790534265992

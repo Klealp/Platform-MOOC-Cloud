@@ -1,0 +1,9 @@
+$kind: collection
+description: Gestion de usuarios, auditoria e insignias. Usa adminToken.
+auth:
+  - id: 05de049a-f63d-4258-9ab9-fd7dff7fe437
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{adminToken}}"
+order: 3000

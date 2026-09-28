@@ -1,0 +1,8 @@
+$kind: http-request
+name: 2) Subir parte -> MinIO (binario, sin auth)
+description: "Va DIRECTO a MinIO con la URL prefirmada (localhost:9000), no a la API. En Postman: pestana Body -> binary -> selecciona tu .mp4. El header lo pone la firma; no agregues Authorization."
+url: ""
+method: PUT
+auth:
+  type: noauth
+order: 2000

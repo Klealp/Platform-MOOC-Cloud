@@ -1,0 +1,65 @@
+{
+  "_leeme": "Configuracion de los niveles de carga del Escenario 2. k6 lee este archivo (NIVEL=<nombre>). Mantener FIJO entre corridas que se comparan; cualquier cambio es una configuracion diferente y se reporta aparte.",
+
+  "comun": {
+    "patron_perfiles": ["P1", "P2", "A1", "P1", "P3", "P2", "P1", "A1", "P2", "P1"],
+    "_patron": "Orden deterministico de los archivos que suben los profesores (se repite): 40% P1, 30% P2, 20% A1, 10% P3. Igual en todos los niveles.",
+    "poll_estado_s": 3,
+    "timeout_ready_s": 1800,
+    "segmentos_por_sesion": 20,
+    "prebuffer_segmentos": 3,
+    "pausa_entre_videos_s": 5,
+    "_consumo": "Cada espectador: pide el master .m3u8, elige una rendicion (rotando por usuario virtual), pre-carga 3 segmentos y luego pide cada segmento al ritmo de reproduccion (EXTINF) manteniendo 3 segmentos de ventaja. Ve hasta 20 segmentos (~2.8 min), pausa 5 s y pasa al siguiente contenido."
+  },
+
+  "niveles": {
+    "humo": {
+      "descripcion": "Solo para validar que los scripts funcionan (local). No se reporta.",
+      "calentamiento": "20s",
+      "duracion": "2m",
+      "cargas_por_min": 1,
+      "espectadores": 2,
+      "drenaje_max": "15m"
+    },
+    "base": {
+      "descripcion": "Linea base con baja carga.",
+      "calentamiento": "1m",
+      "duracion": "10m",
+      "cargas_por_min": 0.5,
+      "espectadores": 5,
+      "drenaje_max": "30m"
+    },
+    "n1": {
+      "descripcion": "Nivel 1: actividad prevista.",
+      "calentamiento": "1m",
+      "duracion": "10m",
+      "cargas_por_min": 1,
+      "espectadores": 25,
+      "drenaje_max": "30m"
+    },
+    "n2": {
+      "descripcion": "Nivel 2: el doble; cerca de la capacidad estimada del worker (2 vCPU, concurrencia 4).",
+      "calentamiento": "1m",
+      "duracion": "10m",
+      "cargas_por_min": 2,
+      "espectadores": 50,
+      "drenaje_max": "40m"
+    },
+    "n3": {
+      "descripcion": "Nivel 3: por encima de la capacidad estimada; se espera que la cola crezca.",
+      "calentamiento": "1m",
+      "duracion": "10m",
+      "cargas_por_min": 3,
+      "espectadores": 100,
+      "drenaje_max": "60m"
+    },
+    "estres": {
+      "descripcion": "Aproximacion controlada al estres: buscar el punto de saturacion.",
+      "calentamiento": "1m",
+      "duracion": "10m",
+      "cargas_por_min": 5,
+      "espectadores": 150,
+      "drenaje_max": "90m"
+    }
+  }
+}

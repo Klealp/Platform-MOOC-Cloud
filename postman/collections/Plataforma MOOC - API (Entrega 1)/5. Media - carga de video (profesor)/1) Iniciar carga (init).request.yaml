@@ -1,0 +1,26 @@
+$kind: http-request
+description: size_bytes debe ser > 0. Para un solo archivo pequeno (< 8 MB) basta un valor aproximado; para multipart real usa el tamano exacto.
+url: "{{baseUrl}}/api/v1/uploads"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "original_name": "video1.mp4",
+      "size_bytes": "{{videoSize}}",
+      "kind": "video",
+      "declared_mime": "video/mp4",
+      "checksum_sha256": ""
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('uploadId', j.upload_id);
+      pm.collectionVariables.set('assetId', j.asset_id);
+      if(j.parts&&j.parts[0]){pm.collectionVariables.set('partUrl', j.parts[0].url);}
+      pm.test('1 parte para archivo pequeno', ()=>pm.expect(j.total_parts).to.be.a('number'));
+    language: text/javascript
+order: 1000

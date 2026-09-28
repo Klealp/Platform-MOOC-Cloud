@@ -1,0 +1,45 @@
+$kind: collection
+description: |-
+  Coleccion de la API MOOC (Go). Flujo sugerido:
+  1) Auth > Login (admin)
+  2) Admin > Crear profesor
+  3) Auth > Login (profesor)
+  4) Autoria > crear curso/modulo/unidad/recurso/quiz
+  5) Media > cargar video (init -> PUT parte -> complete -> esperar ready)
+  6) Autoria > Publicar version
+  7) Auth > Registrar estudiante + Verificar correo + Login (estudiante)
+  8) Aprendizaje > inscribirse, progreso
+  9) Quizzes > presentar
+
+  Los tokens y los IDs se capturan solos con scripts de test. Importa tambien el environment 'Platform MOOC - Local' o usa las variables de la coleccion.
+variables:
+  baseUrl: http://localhost:8080
+  adminEmail: admin@mooc.local
+  adminPassword: Admin123!
+  teacherPassword: Profesor2026
+  studentPassword: Estudiante2026
+  videoSize: "6000000"
+  adminToken: ""
+  teacherToken: ""
+  studentToken: ""
+  teacherEmail: ""
+  studentEmail: ""
+  verifyToken: ""
+  courseId: ""
+  slug: ""
+  versionId: ""
+  moduleId: ""
+  unitId: ""
+  resourceId: ""
+  quizId: ""
+  questionId: ""
+  uploadId: ""
+  assetId: ""
+  partUrl: ""
+  enrollmentId: ""
+  resourceStable: ""
+  attemptId: ""
+  userId: ""
+  sessionId: ""
+  badgeId: ""
+  badgeCode: ""

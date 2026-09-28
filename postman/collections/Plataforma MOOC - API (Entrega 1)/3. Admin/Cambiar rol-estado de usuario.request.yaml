@@ -1,0 +1,13 @@
+$kind: http-request
+name: Cambiar rol/estado de usuario
+url: "{{baseUrl}}/api/v1/admin/users/{{userId}}"
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "suspended"
+    }
+order: 3000

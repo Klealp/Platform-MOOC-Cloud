@@ -1,0 +1,20 @@
+$kind: http-request
+description: Ajusta el formato de answers al que espera tu API (ver GET del intento).
+url: "{{baseUrl}}/api/v1/attempts/{{attemptId}}"
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "answers": [
+        {
+          "question_id": "{{questionId}}",
+          "option_indexes": [
+            0
+          ]
+        }
+      ]
+    }
+order: 3000

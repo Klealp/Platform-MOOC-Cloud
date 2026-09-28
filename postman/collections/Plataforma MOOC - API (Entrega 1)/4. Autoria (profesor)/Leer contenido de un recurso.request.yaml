@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/resources/{{resourceId}}/content"
+method: GET
+order: 13000

@@ -1,0 +1,15 @@
+$kind: http-request
+name: "Reportar avance: completar"
+url: "{{baseUrl}}/api/v1/progress/events"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "enrollment_id": "{{enrollmentId}}",
+      "resource_stable_id": "{{resourceStable}}",
+      "event_type": "complete"
+    }
+order: 7000

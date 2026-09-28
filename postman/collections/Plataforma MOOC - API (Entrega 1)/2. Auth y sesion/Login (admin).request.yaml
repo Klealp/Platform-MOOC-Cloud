@@ -1,0 +1,23 @@
+$kind: http-request
+description: "Ejecutalo PRIMERO: guarda adminToken para el resto de la coleccion."
+url: "{{baseUrl}}/api/v1/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{adminEmail}}",
+      "password": "{{adminPassword}}"
+    }
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('adminToken', j.access_token);
+      pm.test('login admin', ()=>pm.expect(j.access_token).to.be.a('string'));
+    language: text/javascript
+order: 1000

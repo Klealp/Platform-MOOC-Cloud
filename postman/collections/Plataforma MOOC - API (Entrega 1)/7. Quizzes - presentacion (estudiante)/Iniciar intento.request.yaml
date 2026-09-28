@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/quizzes/{{quizId}}/attempts"
+method: POST
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('attemptId', j.id);
+      pm.test('sin is_correct en el cliente', ()=>{pm.expect(JSON.stringify(j)).to.not.include('is_correct');});
+    language: text/javascript
+order: 1000

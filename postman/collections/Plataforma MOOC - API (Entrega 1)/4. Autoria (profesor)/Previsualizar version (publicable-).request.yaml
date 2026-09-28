@@ -1,0 +1,5 @@
+$kind: http-request
+name: Previsualizar version (publicable?)
+url: "{{baseUrl}}/api/v1/versions/{{versionId}}"
+method: GET
+order: 24000

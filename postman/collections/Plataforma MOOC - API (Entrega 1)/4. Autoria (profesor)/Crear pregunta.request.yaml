@@ -1,0 +1,32 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/quizzes/{{quizId}}/questions"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "prompt": "Que significa que la API sea sin estado?",
+      "options": [
+        {
+          "text": "Que no guarda datos en el contenedor entre peticiones",
+          "is_correct": true
+        },
+        {
+          "text": "Que no usa base de datos",
+          "is_correct": false
+        },
+        {
+          "text": "Que no responde nada",
+          "is_correct": false
+        }
+      ]
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      if(j.id){pm.collectionVariables.set('questionId', j.id);}
+    language: text/javascript
+order: 19000

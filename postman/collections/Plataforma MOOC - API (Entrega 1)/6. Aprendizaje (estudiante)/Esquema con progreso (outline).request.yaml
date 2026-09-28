@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/enrollments/{{enrollmentId}}/outline"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      try{const r=j.modules[0].units[0].resources.find(x=>x.type==='rich_text');if(r){pm.collectionVariables.set('resourceStable', r.stable_id);}}catch(e){}
+    language: text/javascript
+order: 4000

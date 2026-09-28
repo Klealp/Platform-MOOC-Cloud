@@ -1,0 +1,14 @@
+name: Platform MOOC - Nube (GCP)
+values:
+  - key: baseUrl
+    value: 'https://CAMBIAR-por-la-URL-publica-de-la-API'
+  - key: adminEmail
+    value: admin@mooc.local
+  - key: adminPassword
+    value: ''
+  - key: teacherPassword
+    value: Profesor2026
+  - key: studentPassword
+    value: Estudiante2026
+  - key: videoSize
+    value: '6000000'

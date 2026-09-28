@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/catalog?q=nube"
+method: GET
+queryParams:
+  q: nube
+order: 6000

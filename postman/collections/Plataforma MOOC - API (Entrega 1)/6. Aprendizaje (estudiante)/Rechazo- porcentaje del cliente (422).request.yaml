@@ -1,0 +1,17 @@
+$kind: http-request
+name: "Rechazo: porcentaje del cliente (422)"
+description: El servidor rechaza con 422 cualquier progreso dictado por el cliente y lo audita.
+url: "{{baseUrl}}/api/v1/progress/events"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "enrollment_id": "{{enrollmentId}}",
+      "resource_stable_id": "{{resourceStable}}",
+      "event_type": "heartbeat",
+      "progress_pct": 100
+    }
+order: 8000

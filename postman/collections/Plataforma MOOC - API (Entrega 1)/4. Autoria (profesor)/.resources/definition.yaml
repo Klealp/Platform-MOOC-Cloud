@@ -1,0 +1,9 @@
+$kind: collection
+description: Jerarquia Curso -> Modulo -> Unidad -> Recurso, quizzes y publicacion. Usa teacherToken.
+auth:
+  - id: 31ec703f-b465-44e9-91fd-94b58e1c0488
+    type: bearer
+    name: bearer auth
+    credentials:
+      token: "{{teacherToken}}"
+order: 4000

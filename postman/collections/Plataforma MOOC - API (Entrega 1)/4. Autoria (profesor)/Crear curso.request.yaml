@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/courses"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Fundamentos de la nube",
+      "summary": "Curso de prueba",
+      "category": "cloud",
+      "level": "beginner"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const j=pm.response.json();
+      pm.collectionVariables.set('courseId', j.id);
+      pm.collectionVariables.set('slug', j.slug);
+      if(j.draft_version){pm.collectionVariables.set('versionId', j.draft_version.id);}
+    language: text/javascript
+order: 1000

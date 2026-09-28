@@ -1,0 +1,10 @@
+$kind: http-request
+description: Publica la version vigente. Debe tener metadatos, estructura minima y recursos visibles disponibles.
+url: "{{baseUrl}}/api/v1/versions/{{versionId}}/publish"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{}"
+order: 26000
