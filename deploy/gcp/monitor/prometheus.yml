@@ -1,0 +1,31 @@
+# Prometheus en el Web Server. Las VMs se raspan por su IP privada fija
+# (provision.sh las asigna con --private-network-ip): este compose es un
+# proyecto aparte del de la API, asi que no comparte su red de Docker.
+global:
+  scrape_interval: 5s      # mas fino que en local: las corridas duran minutos
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: mooc-api
+    static_configs:
+      - targets: ["10.20.1.10:8080"]
+        labels: { vm: web-server }
+
+  - job_name: mooc-worker
+    static_configs:
+      - targets: ["10.20.2.10:9100"]
+        labels: { vm: worker-server }
+
+  - job_name: redis
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels: { vm: worker-server }
+
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+        labels: { servicio: cloud-sql }
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

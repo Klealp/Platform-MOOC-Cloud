@@ -14,6 +14,8 @@
 #   ./deploy/gcp/provision.sh <paso>        # un paso: apis red firewall
 #                                           # sql bucket cuentas vms config
 #                                           # presupuesto resumen
+#   ./deploy/gcp/provision.sh monitor       # opcional: Prometheus en el Web
+#                                           # Server (deploy/gcp/monitor/)
 #
 # Los secretos generados (contrasenas, llaves HMAC, .env completos) se
 # escriben en $SECRETS_DIR, FUERA del repositorio, con permisos 600.
@@ -37,6 +39,7 @@ BUCKET="${BUCKET:-mooc-$PROJECT}"
 SECRETS_DIR="${SECRETS_DIR:-$HOME/.mooc-secrets/$PROJECT}"
 BILLING_ACCOUNT="${BILLING_ACCOUNT:-}"   # opcional, para el presupuesto
 BUDGET_USD="${BUDGET_USD:-50}"
+RATE_LIMIT_PER_MIN="${RATE_LIMIT_PER_MIN:-120}"   # limite de tasa de la API
 
 AQUI="$(cd "$(dirname "$0")" && pwd)"
 SA_API="mooc-api@$PROJECT.iam.gserviceaccount.com"
@@ -105,7 +108,8 @@ paso_firewall() {
   # Redis/asynq: solo el Web Server (la API encola) llega al Worker Server.
   regla mooc-allow-web-to-redis --action=ALLOW --rules=tcp:6379 \
     --source-tags=web-server --target-tags=worker-server
-  # Metricas de la app (Prometheus) solo desde la maquina de monitoreo/carga.
+  # Metricas de la app: solo desde la VM con el tag monitor (el Web Server,
+  # donde corre Prometheus; ver paso "monitor").
   regla mooc-allow-monitor --action=ALLOW --rules=tcp:8080,tcp:9100 \
     --source-tags=monitor --target-tags=web-server,worker-server
 }
@@ -187,6 +191,14 @@ paso_vms() {
       --no-address --tags=worker-server
 }
 
+paso_monitor() {
+  say "Web Server como nodo de monitoreo (tag monitor)"
+  # Prometheus corre en el Web Server (deploy/gcp/monitor/): la cuota del
+  # proyecto (12 vCPU) no deja crear una maquina de monitoreo aparte. El tag
+  # monitor le permite raspar worker:9100; Redis y Cloud SQL ya los alcanzaba.
+  gcloud compute instances add-tags web-server --zone="$ZONE" --tags=monitor
+}
+
 paso_config() {
   say "Generando web.env y worker.env en $SECRETS_DIR"
   local ip_pub ip_db dominio
@@ -199,22 +211,26 @@ paso_config() {
   [ -f "$SECRETS_DIR/admin_password" ] || { echo "Adm$(secreto | cut -c1-16)1!" > "$SECRETS_DIR/admin_password"; privado "$SECRETS_DIR/admin_password"; }
 
   rellenar() {  # rellenar <plantilla> <componente> <destino>
-    read -r hk hs < <(tr -d '\r' < "$SECRETS_DIR/hmac_$2")
+    local hk="" hs=""
+    # El monitoreo no tiene llave HMAC: no toca el bucket.
+    [ -f "$SECRETS_DIR/hmac_$2" ] && read -r hk hs < <(tr -d '\r' < "$SECRETS_DIR/hmac_$2")
     # La plantilla tambien pasa por tr: si un editor de Windows la guardo con
     # CRLF, Docker leeria "sslmode=require\r" y la conexion fallaria.
     tr -d '\r' < "$1" | sed -e "s#<DOMINIO>#$dominio#g" -e "s#<IP_CLOUDSQL>#$ip_db#g" \
         -e "s#<IP_WORKER>#$IP_WORKER#g" -e "s#<BUCKET>#$BUCKET#g" \
         -e "s#<DB_PASSWORD>#$(cat "$SECRETS_DIR/db_password")#g" \
         -e "s#<REDIS_PASSWORD>#$(cat "$SECRETS_DIR/redis_password")#g" \
+        -e "s#<RATE_LIMIT_PER_MIN>#$RATE_LIMIT_PER_MIN#g" \
         -e "s#<ADMIN_PASSWORD>#$(cat "$SECRETS_DIR/admin_password")#g" \
         -e "s#<HMAC_ACCESS_ID>#$hk#g" -e "s#<HMAC_SECRET>#$hs#g" > "$3"
     privado "$3"
   }
   rellenar "$AQUI/web/web.env.example" api "$SECRETS_DIR/web.env"
   rellenar "$AQUI/worker/worker.env.example" worker "$SECRETS_DIR/worker.env"
+  rellenar "$AQUI/monitor/monitor.env.example" monitor "$SECRETS_DIR/monitor.env"
 
   say "Copiando la configuracion a /etc/mooc de cada VM (por IAP)"
-  for par in "web-server:web.env" "worker-server:worker.env"; do
+  for par in "web-server:web.env" "worker-server:worker.env" "web-server:monitor.env"; do
     vm="${par%%:*}"; f="${par##*:}"
     gcloud compute scp --zone="$ZONE" --tunnel-through-iap "$SECRETS_DIR/$f" "$vm:/tmp/$f"
     gcloud compute ssh "$vm" --zone="$ZONE" --tunnel-through-iap \
@@ -247,6 +263,6 @@ paso_resumen() {
 case "${1:-}" in
   todo) paso_apis; paso_red; paso_firewall; paso_sql; paso_bucket; paso_cuentas
         paso_vms; echo "Espera ~3 min a que las VMs instalen Docker antes de 'config'." ;;
-  apis|red|firewall|sql|bucket|cuentas|vms|config|presupuesto|resumen) "paso_$1" ;;
+  apis|red|firewall|sql|bucket|cuentas|vms|monitor|config|presupuesto|resumen) "paso_$1" ;;
   *) sed -n '2,21p' "$0"; exit 1 ;;
 esac

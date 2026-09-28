@@ -1,0 +1,59 @@
+# =====================================================================
+# Monitoreo para el analisis de capacidad (Entrega 2), en el Web Server.
+#
+#   cd ~/Platform-MOOC-Cloud
+#   sudo docker compose -f deploy/gcp/monitor/docker-compose.yml up -d
+#
+# Por que aqui y no en una maquina aparte: la cuota del proyecto es de 12
+# vCPU (CPUS_ALL_REGIONS) y esta llena. El Web Server es el unico que ya
+# alcanza todo lo que hay que medir (API local, worker:9100 con el tag
+# monitor, Redis:6379 y Cloud SQL por la red privada). No va en el Worker
+# Server porque en el escenario 2 ffmpeg satura esa maquina.
+# Costo medido de este compose: ver docs/entrega2 (se reporta en el informe
+# de capacidad como ajuste frente a una maquina de monitoreo dedicada).
+#
+# Todo escucha solo en localhost. Grafana NO corre aqui: corre en el PC de
+# quien analiza (deploy/gcp/monitor/grafana-local.yml) y lee Prometheus por
+# un tunel IAP:
+#   gcloud compute ssh web-server --zone=us-central1-a --tunnel-through-iap \
+#     -- -N -L 9090:localhost:9090
+# =====================================================================
+name: mooc-monitor
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
+      # k6 puede enviar sus metricas aqui (-o experimental-prometheus-rw) por
+      # el mismo tunel: latencia del cliente y de la API en un solo eje.
+      - --web.enable-remote-write-receiver
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - promdata:/prometheus
+    # Tope explicito: si Prometheus crece, que no le quite memoria a la API.
+    mem_limit: 400m
+    restart: unless-stopped
+
+  # Profundidad de la cola asynq: redis_key_size{key=~"asynq:.*"}.
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.92.0
+    env_file: /etc/mooc/monitor.env
+    command:
+      - --check-keys=asynq:*
+    mem_limit: 64m
+    restart: unless-stopped
+
+  # Conexiones, transacciones y bloqueos dentro de Cloud SQL (pg_stat_*).
+  # CPU y memoria de la instancia vienen de Cloud Monitoring.
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
+    env_file: /etc/mooc/monitor.env
+    mem_limit: 64m
+    restart: unless-stopped
+
+volumes:
+  promdata:
