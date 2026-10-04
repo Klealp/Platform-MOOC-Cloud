@@ -80,6 +80,32 @@ convierte con `marked` y **sanea con DOMPurify** antes de renderizar.
   de quizzes.
 - **Admin:** gestión de usuarios/roles, bitácora de auditoría, revocar insignias.
 
+## Despliegue en GCP
+
+En producción (Entrega 2) el frontend corre como un contenedor más en el
+**Web Server**, junto a `api` y `caddy`:
+
+- **Imagen:** `Dockerfile.web` (raíz del repo) — build multi-stage con salida
+  `standalone` de Next.js, imagen final mínima, usuario no-root.
+- **Enrutado:** Caddy sirve todo en un único dominio y reparte por ruta:
+  `/api/v1/*`, `/openapi.yaml`, `/docs`, `/healthz`, `/readyz` → API Go;
+  **todo lo demás** (páginas y Route Handlers `/api/*` del BFF) → frontend.
+  Compartir origen es lo que permite que la cookie HttpOnly funcione sin CORS.
+- **URL del backend:** `API_BASE_URL=http://api:8080/api/v1` — el nombre del
+  servicio en la red interna de Docker. El BFF habla con la API por la red
+  privada del host, sin pasar por Caddy ni salir a Internet.
+- **Cookie Secure:** con `NODE_ENV=production` y HTTPS real (Caddy), la cookie
+  de sesión se marca `Secure`.
+- **Config:** plantilla en `deploy/gcp/web/web-frontend.env.example`;
+  `provision.sh config` deja el resultado en `/etc/mooc/web-frontend.env`.
+- **Subida directa / HLS:** el navegador sube las partes y lee los segmentos
+  HLS directamente contra Cloud Storage (otro origen) usando las URLs firmadas
+  que emite la API; esto requiere el CORS del bucket (`deploy/gcp/cors.json`,
+  ya configurado para `GET/HEAD/PUT`).
+
+El `docker compose -f deploy/gcp/web/docker-compose.yml up -d --build` levanta
+`api`, `web` y `caddy` juntos.
+
 ## Gap conocido del backend
 
 `GET /resources/:id/content` está restringido a profesor/admin, de modo que un
