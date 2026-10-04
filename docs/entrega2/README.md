@@ -14,12 +14,13 @@ Este documento describe la solucion **efectivamente desplegada** en Google Cloud
 | PostgreSQL | Contenedor `postgres:16-alpine` | **Cloud SQL** PostgreSQL 16, IP privada, TLS obligatorio, una zona |
 | Objetos | MinIO en contenedor | **Cloud Storage**, bucket privado, acceso por API XML compatible con S3 |
 | Cola | Redis en contenedor | Igual (Redis + asynq), ahora en el Worker Server y alcanzable solo desde el Web Server |
+| Interfaz | Solo backend (sin frontend) | **Frontend Next.js (BFF)** servido en el mismo dominio; Caddy enruta `/api/v1/*` a la API y el resto al frontend |
 | Acceso publico | `http://localhost:8080` | `https://<IP>.sslip.io` con certificado Let's Encrypt (Caddy) |
 | Secretos | `.env` versionado | `/etc/mooc/*.env` fuera del repo (permisos 600); en git solo plantillas `*.env.example` |
 | Credenciales de objetos | Una sola (`minioadmin`) | Una cuenta de servicio y una llave HMAC **por componente** |
 | Observabilidad | Prometheus, Grafana, Jaeger en el mismo host | Cloud Monitoring con Ops Agent en las VMs + metricas de Cloud SQL; Prometheus y exportadores en el Web Server (solo localhost); Grafana en el PC del analista por tunel IAP |
 
-**Cambios de codigo: ninguno.** La API y el worker ya leian toda su configuracion de variables de entorno (`internal/config`) y hablaban S3 con `minio-go`. Pasar de MinIO a Cloud Storage y de un Postgres local a Cloud SQL es solo configuracion.
+**Cambios en el backend: ninguno.** La API y el worker ya leian toda su configuracion de variables de entorno (`internal/config`) y hablaban S3 con `minio-go`. Pasar de MinIO a Cloud Storage y de un Postgres local a Cloud SQL es solo configuracion. El unico codigo nuevo es el **frontend** (`frontend/`), que se despliega como un contenedor mas en el Web Server y no modifica el backend.
 
 ## 2. Correspondencia entre el enunciado y los servicios de GCP
 
@@ -66,7 +67,8 @@ flowchart LR
 | Redis + asynq | Cola con tres prioridades (critical 6, default 3, low 1), cache de sesion y limite de tasa | Solo red privada, con contrasena |
 | Cloud SQL | Fuente de verdad transaccional | TLS sobre IP privada |
 | Cloud Storage | Originales, derivados HLS, insignias | HTTPS; el cliente sube y descarga directamente |
-| Caddy | Proxy inverso y terminacion TLS; oculta `/metrics` | Unico servicio expuesto a Internet |
+| Frontend (`frontend/`, BFF Next.js) | Sirve la interfaz y actua como Backend For Frontend: guarda el token de sesion en una cookie HttpOnly y reenvia a la API por la red interna (`api:8080`) | El navegador solo habla con el; el BFF llama a la API sin salir a Internet |
+| Caddy | Proxy inverso y terminacion TLS; enruta `/api/v1/*` a la API y el resto al frontend; oculta `/metrics` | Unico servicio expuesto a Internet |
 
 La idempotencia se conserva en sus tres capas (`asynq.TaskID`, tabla `processed_jobs`, restricciones de integridad como `uniq_badge_alive`), ahora con la cola y la base en maquinas distintas.
 
@@ -105,7 +107,7 @@ Cloud SQL no admite conexiones fuera de la VPC (`--no-assign-ip`) y exige TLS (`
 
 | VM | Tipo | Disco | IP privada | IP publica | Contenedores |
 |---|---|---|---|---|---|
-| `web-server` | `e2-highcpu-2` (2 vCPU, 2 GiB) | 30 GB pd-balanced | `10.20.1.10` | estatica `mooc-web-ip` | `api`, `caddy` |
+| `web-server` | `e2-highcpu-2` (2 vCPU, 2 GiB) | 30 GB pd-balanced | `10.20.1.10` | estatica `mooc-web-ip` | `api`, `web` (frontend), `caddy` |
 | `worker-server` | `e2-highcpu-2` (2 vCPU, 2 GiB) | 30 GB pd-balanced | `10.20.2.10` | ninguna | `worker`, `redis`, `mailpit` |
 
 **Justificacion del tipo:** el enunciado fija 2 vCPU, 2 GiB y 30 GiB por VM. `e2-highcpu-2` es exactamente esa combinacion (2 vCPU, 2048 MB). Se descarto `e2-small`, que tambien anuncia 2 vCPU pero de nucleo compartido (0.5 vCPU sostenida con rafagas), porque haria que los resultados de carga dependieran de los creditos de rafaga; y `e2-medium`, que duplica la memoria. La configuracion efectiva coincide con la pedida, sin ajuste.
@@ -141,7 +143,7 @@ El tamano de Cloud SQL se eligio para que la BD no sea el cuello de botella arti
 
 Una URL firmada actua con los permisos de quien la firma, asi que el cliente nunca puede hacer mas de lo que la cuenta `mooc-api` permite.
 
-**HTTPS, cookies y CSRF.** Caddy termina TLS con un certificado de Let's Encrypt para `<IP-con-guiones>.sslip.io`, un dominio publico que resuelve a la IP embebida y evita comprar un dominio. La API no usa cookies: la sesion viaja en la cabecera `Authorization: Bearer`. Un formulario de otro sitio no puede anadir esa cabecera, asi que el diseno no es vulnerable a CSRF por construccion (ver `internal/api/middleware.go`). Por eso no hay cookies seguras ni token CSRF que conservar; el requisito se cumple por diseno.
+**HTTPS, cookies y CSRF.** Caddy termina TLS con un certificado de Let's Encrypt para `<IP-con-guiones>.sslip.io`, un dominio publico que resuelve a la IP embebida y evita comprar un dominio. La **API Go** sigue sin usar cookies: la sesion viaja en la cabecera `Authorization: Bearer`, por lo que la API no es vulnerable a CSRF por construccion (ver `internal/api/middleware.go`). El **frontend (BFF)** si usa una cookie, pero por un motivo de seguridad distinto: el token opaco se guarda en una cookie **HttpOnly** (ademas `Secure`, al servirse por HTTPS, y `SameSite=Lax`), de modo que el JavaScript del navegador no puede leerlo y un XSS no puede robar la sesion. El token nunca llega al almacenamiento del navegador. El BFF lee esa cookie en el servidor y la traduce a la cabecera `Authorization: Bearer` al llamar a la API. `SameSite=Lax` y el hecho de que las mutaciones vayan por Server Actions (POST) mitigan el CSRF a nivel del frontend. Las comprobaciones de autorizacion por rol se hacen en el servidor del frontend (ademas de en la API Go): defensa en profundidad.
 
 **Workers.** Concurrencia fija en 2 (`WORKER_CONCURRENCY`) durante todas las corridas, para no saturar 2 vCPU con dos ffmpeg simultaneos. Reintentos: 3 (`MAX_RETRIES`).
 
@@ -175,7 +177,7 @@ export PROJECT=dsc-uniandes-20262
 # En cada VM (gcloud compute ssh <vm> --zone=us-central1-a --tunnel-through-iap)
 git clone https://github.com/Klealp/Platform-MOOC-Cloud.git && cd Platform-MOOC-Cloud
 sudo docker compose -f deploy/gcp/worker/docker-compose.yml up -d --build   # worker-server, primero
-sudo docker compose -f deploy/gcp/web/docker-compose.yml up -d --build      # web-server
+sudo docker compose -f deploy/gcp/web/docker-compose.yml up -d --build      # web-server (api + frontend + caddy)
 
 # Solo en web-server, una vez
 ./deploy/gcp/migrate.sh init-db

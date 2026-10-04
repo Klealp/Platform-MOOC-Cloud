@@ -1,4 +1,13 @@
 # Proxy inverso del Web Server. DOMAIN viene de /etc/mooc/web.env.
+#
+# Enrutado por ruta en un UNICO dominio. Que todo comparta origen es lo que
+# permite que la cookie de sesion HttpOnly del BFF funcione sin fricciones.
+#
+#   Backend Go  -> SOLO el prefijo versionado /api/v1/* y utilidades del contrato
+#   Frontend    -> TODO lo demas, incluidos los Route Handlers del BFF, que
+#                  viven bajo /api/<recurso> SIN el /v1/ (p. ej. /api/progress,
+#                  /api/uploads, /api/assets/...). Por eso el matcher del
+#                  backend es /api/v1/* y NO /api/*: asi no se solapan.
 {$DOMAIN} {
 	encode gzip
 
@@ -6,5 +15,11 @@
 	@interno path /metrics
 	respond @interno 404
 
-	reverse_proxy api:8080
+	# Rutas que SIEMPRE sirve el backend Go. Se usa /api/v1/* (no /api/*) para
+	# no capturar los Route Handlers del BFF, que tambien cuelgan de /api.
+	@backend path /api/v1 /api/v1/* /openapi.yaml /openapi.yml /docs /docs/* /healthz /readyz
+	reverse_proxy @backend api:8080
+
+	# Resto del trafico (paginas del frontend y Route Handlers /api/* del BFF).
+	reverse_proxy web:3000
 }

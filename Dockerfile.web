@@ -1,0 +1,46 @@
+# ---------- Etapa 1: dependencias ----------
+# Se instalan solo con los manifiestos para aprovechar la cache de capas: si
+# package.json / package-lock.json no cambian, Docker no reinstala.
+FROM node:22-alpine AS deps
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+# ---------- Etapa 2: compilacion ----------
+# Se compila dentro de Docker para que el bundle no dependa de la maquina.
+# El resultado "standalone" (ver next.config.ts) deja en .next/standalone un
+# servidor Node autosuficiente.
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY frontend/ ./
+# API_BASE_URL NO se necesita en build: es server-side y se lee en runtime.
+# Se pasa un placeholder para que env.ts no falle durante el "collect data".
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# ---------- Etapa 3: imagen final ----------
+# Imagen minima: solo el servidor standalone, los estaticos y el usuario no-root.
+FROM node:22-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+RUN addgroup -g 10002 -S nodejs && adduser -S -u 10002 -G nodejs nextjs
+
+# El output standalone trae su propio node_modules reducido y server.js.
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
+USER nextjs
+EXPOSE 3000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=5 \
+    CMD wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1
+
+# server.js es el entrypoint que genera el modo standalone de Next.
+CMD ["node", "server.js"]
