@@ -1,0 +1,15 @@
+# Artefactos del frontend que NO deben entrar al contexto de build de Docker.
+# El build los regenera dentro de la imagen; incluirlos la haria enorme y lenta.
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/.env
+frontend/.env.local
+frontend/.env*.local
+
+# Git y metadatos
+.git
+.gitignore
+
+# Entorno local del backend
+.env

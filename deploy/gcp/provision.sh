@@ -239,9 +239,13 @@ paso_config() {
   rellenar "$AQUI/web/web.env.example" api "$SECRETS_DIR/web.env"
   rellenar "$AQUI/worker/worker.env.example" worker "$SECRETS_DIR/worker.env"
   rellenar "$AQUI/monitor/monitor.env.example" monitor "$SECRETS_DIR/monitor.env"
+  # El frontend (BFF) no tiene secretos ni marcadores: habla con la API por la
+  # red interna de Docker (api:8080). Pasa por rellenar() solo para normalizar
+  # finales de linea.
+  rellenar "$AQUI/web/web-frontend.env.example" monitor "$SECRETS_DIR/web-frontend.env"
 
   say "Copiando la configuracion a /etc/mooc de cada VM (por IAP)"
-  for par in "web-server:web.env" "worker-server:worker.env" "web-server:monitor.env"; do
+  for par in "web-server:web.env" "worker-server:worker.env" "web-server:monitor.env" "web-server:web-frontend.env"; do
     vm="${par%%:*}"; f="${par##*:}"
     gcloud compute scp --zone="$ZONE" --tunnel-through-iap "$SECRETS_DIR/$f" "$vm:/tmp/$f"
     gcloud compute ssh "$vm" --zone="$ZONE" --tunnel-through-iap \

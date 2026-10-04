@@ -23,6 +23,23 @@ services:
       - "8080:8080"
     restart: unless-stopped
 
+  # Frontend (BFF Next.js). El navegador solo habla con este servicio a traves
+  # de Caddy (mismo dominio); el BFF reenvia a la API por la red interna
+  # (api:8080). Imagen "standalone" para ocupar poca memoria en la VM de 2 GiB.
+  web:
+    build:
+      context: ../../..
+      dockerfile: Dockerfile.web
+    image: mooc-web:local
+    env_file: /etc/mooc/web-frontend.env
+    expose:
+      - "3000"
+    depends_on:
+      - api
+    # Tope de memoria: el Web Server tiene 2 GiB compartidos con api + caddy.
+    mem_limit: 384m
+    restart: unless-stopped
+
   # Caddy termina TLS con un certificado de Let's Encrypt emitido para
   # DOMAIN (p. ej. 34-1-2-3.sslip.io, que resuelve a la IP publica sin
   # tener que comprar un dominio) y renueva solo.
@@ -37,6 +54,7 @@ services:
       - caddydata:/data
     depends_on:
       - api
+      - web
     restart: unless-stopped
 
 volumes:
