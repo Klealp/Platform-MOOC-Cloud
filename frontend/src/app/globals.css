@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/*
+  Sistema de diseno BRUTALISTA (referencia visual: Platzi).
+  Rasgos: bordes negros gruesos, sombras duras sin desenfoque (offset solido),
+  colores saturados de alto contraste, tipografia pesada, cero gradientes
+  suaves. La paleta base es verde Platzi (#98CA3F) + acentos.
+*/
+
+@theme {
+  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Marca (verde estilo Platzi) */
+  --color-brand-50: #f3f9e6;
+  --color-brand-100: #e4f1c3;
+  --color-brand-200: #cfe694;
+  --color-brand-300: #b9db64;
+  --color-brand-400: #a8d348;
+  --color-brand-500: #98ca3f;
+  --color-brand-600: #7aa52f;
+  --color-brand-700: #5c7d23;
+  --color-brand-800: #3f5618;
+  --color-brand-900: #26330e;
+
+  /* Acentos brutalistas de alta saturacion */
+  --color-accent-yellow: #ffd43b;
+  --color-accent-pink: #ff6b9d;
+  --color-accent-blue: #4dabf7;
+  --color-accent-purple: #9775fa;
+  --color-accent-orange: #ff922b;
+
+  /* Semaforo de estado */
+  --color-ok: #37b24d;
+  --color-warn: #f59f00;
+  --color-danger: #e03131;
+
+  /* Neutros */
+  --color-ink: #0d0d0d;
+  --color-paper: #faf7f0;
+  --color-paper-dark: #121212;
+}
+
+:root {
+  --bg: var(--color-paper);
+  --fg: var(--color-ink);
+  --card: #ffffff;
+  --border-w: 3px;
+  --shadow-brutal: 6px 6px 0 0 var(--color-ink);
+  --shadow-brutal-sm: 4px 4px 0 0 var(--color-ink);
+  --shadow-brutal-lg: 10px 10px 0 0 var(--color-ink);
+}
+
+.dark {
+  --bg: var(--color-paper-dark);
+  --fg: #faf7f0;
+  --card: #1c1c1c;
+  --shadow-brutal: 6px 6px 0 0 #000000;
+  --shadow-brutal-sm: 4px 4px 0 0 #000000;
+  --shadow-brutal-lg: 10px 10px 0 0 #000000;
+}
+
+* {
+  border-color: var(--color-ink);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilidades brutalistas reutilizables */
+@utility brutal-border {
+  border: var(--border-w) solid var(--color-ink);
+}
+
+@utility brutal-shadow {
+  box-shadow: var(--shadow-brutal);
+}
+
+@utility brutal-shadow-sm {
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+@utility brutal-shadow-lg {
+  box-shadow: var(--shadow-brutal-lg);
+}
+
+/* Interaccion: la tarjeta/boton "se hunde" hacia su sombra al pulsar. */
+@utility brutal-press {
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+.brutal-press:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-brutal-lg);
+}
+.brutal-press:active {
+  transform: translate(3px, 3px);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+/* Barra de scroll acorde al estilo */
+::selection {
+  background: var(--color-brand-500);
+  color: var(--color-ink);
+}
