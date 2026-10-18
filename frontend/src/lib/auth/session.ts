@@ -22,7 +22,7 @@ export async function setSessionCookie(token: string, maxAgeSecs?: number) {
   const store = await cookies();
   store.set(env.sessionCookieName, token, {
     httpOnly: true,
-    secure: env.isProd,
+    secure: env.cookieSecure,
     sameSite: "lax",
     path: "/",
     maxAge: maxAgeSecs ?? SESSION_MAX_AGE,

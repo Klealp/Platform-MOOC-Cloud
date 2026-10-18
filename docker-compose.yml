@@ -7,8 +7,9 @@
 #                                      (necesario si cambias db/init.sql)
 #
 # Puertos publicados en el anfitrion:
+#   3001  Frontend (BFF Next.js) -> unica URL para el navegador
 #   8080  API
-#   5432  PostgreSQL
+#   5433  PostgreSQL (contenedor en 5432)
 #   6379  Redis
 #   9000  MinIO (API S3)      9001  MinIO (consola web)
 #   1025  Mailpit (SMTP)      8025  Mailpit (bandeja web)
@@ -36,6 +37,34 @@ services:
       minio:
         condition: service_healthy
       jaeger:
+        condition: service_started
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Frontend (BFF Next.js). Unico servicio con el que habla el navegador.
+  # Reenvia a la API por la red interna de Docker (api:8080); el token de
+  # sesion vive en una cookie HttpOnly y nunca llega al cliente.
+  #
+  # Se publica en el host en 3001 porque Grafana ya ocupa el 3000; dentro del
+  # contenedor Next escucha en 3000 (PORT del Dockerfile.web).
+  # ------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    environment:
+      # La API se resuelve por el nombre del servicio en la red de compose,
+      # no por localhost (que dentro del contenedor seria el propio contenedor).
+      API_BASE_URL: http://api:8080/api/v1
+      SESSION_COOKIE_NAME: mooc_session
+      # La imagen standalone se compila en modo production. En local se accede
+      # por http://localhost (sin TLS), asi que desactivamos el flag Secure de
+      # la cookie para que el login funcione. En la nube (HTTPS) se pone "true".
+      SESSION_COOKIE_SECURE: "false"
+    ports:
+      - "3001:3000"
+    depends_on:
+      api:
         condition: service_started
     restart: unless-stopped
 

@@ -1,11 +1,15 @@
 # Plataforma MOOC — Backend (Entrega 1)
 
-Backend en Go de una plataforma de cursos masivos abiertos en linea.
-Monolito modular + workers asincronos, todo en contenedores.
+Plataforma de cursos masivos abiertos en linea (MOOC).
+Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
+todo en contenedores.
 
-> Esta entrega es **solo backend**. No hay frontend.
 > La documentacion detallada de la arquitectura y de cada archivo esta en
 > [`DOCUMENTACION.md`](./DOCUMENTACION.md).
+>
+> **Despliegue local completo (backend + frontend) con un solo comando:**
+> `docker compose up --build` levanta la API, los workers, el frontend y todas
+> las dependencias. El **frontend queda en http://localhost:3001**.
 
 ## Entrega 2 - Despliegue en Google Cloud
 
@@ -42,6 +46,7 @@ Cuando todo este arriba:
 
 | Servicio               | URL                              | Credenciales        |
 |------------------------|----------------------------------|---------------------|
+| **Frontend (app web)** | http://localhost:3001            | ver admin abajo     |
 | API (health)           | http://localhost:8080/healthz    | —                   |
 | **Swagger UI (API docs)** | http://localhost:8080/docs    | —                   |
 | Spec OpenAPI (crudo)   | http://localhost:8080/openapi.yaml | —                 |
@@ -50,7 +55,12 @@ Cuando todo este arriba:
 | Prometheus             | http://localhost:9090            | —                   |
 | Grafana                | http://localhost:3000            | admin / admin       |
 | **Jaeger (trazas)**    | http://localhost:16686           | —                   |
-| PostgreSQL             | localhost:5432                   | mooc / mooc         |
+| PostgreSQL             | localhost:5433                   | mooc / mooc         |
+
+> El **frontend** (Next.js como BFF) es la única puerta de entrada para el
+> navegador: habla con la API por la red interna de Docker (`api:8080`), nunca
+> directo desde el cliente. Se publica en **3001** porque Grafana ya ocupa el
+> 3000 en el host.
 
 Administrador inicial: `admin@mooc.local` / `Admin123!`
 (lo crea la API al arrancar a partir de `ADMIN_EMAIL` y `ADMIN_PASSWORD`).
