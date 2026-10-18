@@ -46,7 +46,7 @@ export default async function CourseDetailPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl px-6 py-10">
+      <main className="mx-auto max-w-[1200px] px-6 py-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
@@ -54,10 +54,10 @@ export default async function CourseDetailPage({
               {detail.level && <Tag tone="yellow">{detail.level}</Tag>}
               <Tag tone="neutral">{detail.language}</Tag>
             </div>
-            <h1 className="text-4xl font-semibold leading-tight">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight">
               {detail.title}
             </h1>
-            <p className="text-lg font-medium">{detail.summary}</p>
+            <p className="text-lg text-[var(--color-text-muted)]">{detail.summary}</p>
             <p className="text-sm font-medium text-[var(--color-text-muted)]">
               Por {detail.teacher}
             </p>

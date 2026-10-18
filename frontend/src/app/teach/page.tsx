@@ -17,9 +17,9 @@ export default async function TeachHomePage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
+      <main className="mx-auto max-w-5xl space-y-6 px-6 py-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-4xl font-semibold">Mis cursos</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Mis cursos</h1>
           <Link href="/teach/new">
             <Button>
               <Plus className="h-5 w-5" /> Nuevo curso
