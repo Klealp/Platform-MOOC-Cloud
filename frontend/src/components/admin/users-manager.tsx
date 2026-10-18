@@ -89,10 +89,10 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
       {rowError && <Alert variant="error">{rowError}</Alert>}
 
       {/* Tabla de usuarios */}
-      <div className="overflow-x-auto brutal-border brutal-shadow bg-[var(--card)]">
+      <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] elevate-sm">
         <table className="w-full text-sm">
-          <thead className="border-b-[3px] border-ink bg-brand-100">
-            <tr className="text-left uppercase">
+          <thead className="border-b border-[var(--color-border)] bg-[var(--color-surface-alt)]">
+            <tr className="text-left">
               <th className="p-3">Usuario</th>
               <th className="p-3">Rol</th>
               <th className="p-3">Estado</th>
@@ -102,10 +102,10 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
           </thead>
           <tbody>
             {initialUsers.map((u) => (
-              <tr key={u.id} className="border-b-2 border-ink last:border-b-0">
+              <tr key={u.id} className="border-b border-[var(--color-border)] last:border-b-0">
                 <td className="p-3">
-                  <p className="font-bold">{u.full_name}</p>
-                  <p className="opacity-60">{u.email}</p>
+                  <p className="font-medium">{u.full_name}</p>
+                  <p className="text-[var(--color-text-muted)]">{u.email}</p>
                   {!u.email_verified && <Tag tone="warn">sin verificar</Tag>}
                 </td>
                 <td className="p-3">
@@ -133,13 +133,13 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
                   </Select>
                   <span className="ml-1"><Tag tone={statusTone(u.status)}>{u.status}</Tag></span>
                 </td>
-                <td className="p-3 font-medium opacity-70">{formatDate(u.created_at)}</td>
+                <td className="p-3 font-medium text-[var(--color-text-muted)]">{formatDate(u.created_at)}</td>
                 <td className="p-3">
                   <button
                     title="Revocar sesiones"
                     disabled={pending}
                     onClick={() => revoke(u)}
-                    className="flex items-center gap-1 border-2 border-ink bg-accent-yellow px-2 py-1 text-xs font-bold uppercase brutal-press"
+                    className="flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-xs font-medium transition-colors"
                   >
                     <ShieldOff className="h-3.5 w-3.5" /> Sesiones
                   </button>

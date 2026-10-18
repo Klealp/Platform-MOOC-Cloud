@@ -2,9 +2,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const base =
-  "w-full bg-[var(--card)] brutal-border px-3 py-2.5 text-base font-medium " +
-  "outline-none focus:brutal-shadow-sm focus:translate-x-[-2px] focus:translate-y-[-2px] " +
-  "transition-all placeholder:text-neutral-400 disabled:opacity-50";
+  "w-full rounded-[var(--radius-sm)] border border-[var(--color-border)] " +
+  "bg-[var(--color-surface)] text-[var(--color-text)] px-3.5 py-2.5 text-base " +
+  "transition-colors placeholder:text-[var(--color-text-muted)] " +
+  "focus-visible:outline-none focus-visible:border-[var(--color-primary)] " +
+  "disabled:opacity-50 disabled:cursor-not-allowed";
 
 export const Input = React.forwardRef<
   HTMLInputElement,
@@ -36,7 +38,10 @@ export function Label({
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn("mb-1.5 block text-sm font-bold uppercase tracking-wide", className)}
+      className={cn(
+        "mb-1.5 block text-sm font-medium text-[var(--color-text)]",
+        className,
+      )}
       {...props}
     />
   );
@@ -46,18 +51,24 @@ export function Field({
   label,
   htmlFor,
   hint,
+  error,
   children,
 }: {
   label: string;
   htmlFor?: string;
   hint?: string;
+  error?: string;
   children: React.ReactNode;
 }) {
   return (
     <div>
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
-      {hint && <p className="mt-1 text-xs font-medium opacity-70">{hint}</p>}
+      {error ? (
+        <p className="mt-1 text-xs font-medium text-[var(--color-danger)]">{error}</p>
+      ) : hint ? (
+        <p className="mt-1 text-xs text-[var(--color-text-muted)]">{hint}</p>
+      ) : null}
     </div>
   );
 }

@@ -139,7 +139,7 @@ export function VideoPlayer({
     <video
       ref={videoRef}
       controls
-      className="aspect-video w-full brutal-border bg-black"
+      className="aspect-video w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-black"
     />
   );
 }

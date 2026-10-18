@@ -97,7 +97,7 @@ export function ContentEditor({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-extrabold uppercase">{title}</h2>
+        <h2 className="text-xl font-semibold">{title}</h2>
         <SaveIndicator state={state} revision={revision} />
       </div>
 
@@ -120,7 +120,7 @@ export function ContentEditor({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div>
-          <p className="mb-1.5 text-sm font-bold uppercase">Markdown</p>
+          <p className="mb-1.5 text-sm font-medium">Markdown</p>
           <Textarea
             className="min-h-[420px] font-mono text-sm"
             value={content}
@@ -132,8 +132,8 @@ export function ContentEditor({
           />
         </div>
         <div>
-          <p className="mb-1.5 text-sm font-bold uppercase">Vista previa</p>
-          <div className="min-h-[420px] brutal-border bg-[var(--card)] p-4">
+          <p className="mb-1.5 text-sm font-medium">Vista previa</p>
+          <div className="min-h-[420px] rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <MarkdownClient content={content} />
           </div>
         </div>
@@ -148,14 +148,14 @@ export function ContentEditor({
 
 function SaveIndicator({ state, revision }: { state: SaveState; revision: number }) {
   const map = {
-    idle: { icon: null, text: `rev ${revision}`, cls: "opacity-60" },
+    idle: { icon: null, text: `rev ${revision}`, cls: "text-[var(--color-text-muted)]" },
     saving: { icon: <Loader2 className="h-4 w-4 animate-spin" />, text: "Guardando…", cls: "" },
-    saved: { icon: <Check className="h-4 w-4 text-ok" />, text: "Guardado", cls: "" },
-    conflict: { icon: <AlertTriangle className="h-4 w-4 text-warn" />, text: "Conflicto", cls: "text-warn" },
-    error: { icon: <AlertTriangle className="h-4 w-4 text-danger" />, text: "Error", cls: "text-danger" },
+    saved: { icon: <Check className="h-4 w-4 text-[var(--color-success)]" />, text: "Guardado", cls: "" },
+    conflict: { icon: <AlertTriangle className="h-4 w-4 text-[var(--color-warning)]" />, text: "Conflicto", cls: "text-[var(--color-warning)]" },
+    error: { icon: <AlertTriangle className="h-4 w-4 text-[var(--color-danger)]" />, text: "Error", cls: "text-[var(--color-danger)]" },
   }[state];
   return (
-    <span className={`flex items-center gap-1 text-sm font-bold uppercase ${map.cls}`}>
+    <span className={`flex items-center gap-1 text-sm font-medium ${map.cls}`}>
       {map.icon}
       {map.text}
     </span>

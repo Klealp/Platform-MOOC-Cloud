@@ -246,7 +246,7 @@ export function ResumableUpload({
       >
         <span className="flex flex-wrap items-center gap-2">
           {label.done ? (
-            <CheckCircle2 className="h-4 w-4 text-ok" />
+            <CheckCircle2 className="h-4 w-4 text-[var(--color-success)]" />
           ) : label.error ? (
             <XCircle className="h-4 w-4" />
           ) : (
@@ -284,7 +284,7 @@ export function ResumableUpload({
           <ProgressBar value={progress} />
           <div className="flex items-center justify-between gap-2">
             <p className="flex items-center gap-1 text-xs font-bold">
-              {progress === 100 && <CheckCircle2 className="h-3 w-3 text-ok" />}
+              {progress === 100 && <CheckCircle2 className="h-3 w-3 text-[var(--color-success)]" />}
               {status}
             </p>
             <Button type="button" size="sm" variant="outline" onClick={cancelUpload}>

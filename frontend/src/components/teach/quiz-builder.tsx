@@ -108,9 +108,9 @@ export function QuizBuilder({ quiz }: { quiz: AuthorQuiz }) {
               <option value="after_passing">Tras aprobar</option>
             </Select>
           </Field>
-          <label className="flex items-center gap-2 text-sm font-bold">
+          <label className="flex items-center gap-2 text-sm font-medium">
             <input type="checkbox" checked={shuffle} onChange={(e) => setShuffle(e.target.checked)}
-              className="h-4 w-4 border-2 border-ink" />
+              className="h-4 w-4 rounded-[var(--radius-sm)] border border-[var(--color-border)]" />
             Barajar preguntas
           </label>
           <div className="sm:col-span-2">
@@ -123,7 +123,7 @@ export function QuizBuilder({ quiz }: { quiz: AuthorQuiz }) {
 
       {/* Preguntas */}
       <section className="space-y-4">
-        <h2 className="text-xl font-extrabold uppercase">
+        <h2 className="text-xl font-semibold">
           Preguntas ({quiz.questions.length})
         </h2>
         {quiz.questions.map((q, i) => (
@@ -138,7 +138,7 @@ export function QuizBuilder({ quiz }: { quiz: AuthorQuiz }) {
                   title="Eliminar"
                   disabled={pending}
                   onClick={() => removeQuestion(q.id)}
-                  className="border-2 border-ink bg-danger p-1.5 text-white brutal-press"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -149,9 +149,9 @@ export function QuizBuilder({ quiz }: { quiz: AuthorQuiz }) {
                 {q.options.map((o) => (
                   <li key={o.id} className="flex items-center gap-2 text-sm font-medium">
                     {o.is_correct ? (
-                      <Check className="h-4 w-4 text-ok" />
+                      <Check className="h-4 w-4 text-[var(--color-success)]" />
                     ) : (
-                      <X className="h-4 w-4 opacity-30" />
+                      <X className="h-4 w-4 text-[var(--color-text-muted)]" />
                     )}
                     {o.text}
                   </li>
@@ -238,9 +238,9 @@ function NewQuestionForm({
         <Field label="Enunciado">
           <Input value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="¿Pregunta?" />
         </Field>
-        <label className="flex items-center gap-2 text-sm font-bold">
+        <label className="flex items-center gap-2 text-sm font-medium">
           <input type="checkbox" checked={multiple} onChange={(e) => setMultiple(e.target.checked)}
-            className="h-4 w-4 border-2 border-ink" />
+            className="h-4 w-4 rounded-[var(--radius-sm)] border border-[var(--color-border)]" />
           Permite varias respuestas correctas
         </label>
         <div className="space-y-2">
@@ -254,7 +254,7 @@ function NewQuestionForm({
                     prev.map((x, i) => (i === idx ? { ...x, is_correct: e.target.checked } : x)),
                   )
                 }
-                className="h-5 w-5 border-2 border-ink"
+                className="h-5 w-5 rounded-[var(--radius-sm)] border border-[var(--color-border)]"
                 title="Correcta"
               />
               <Input
@@ -269,7 +269,7 @@ function NewQuestionForm({
               {options.length > 2 && (
                 <button
                   onClick={() => setOptions((prev) => prev.filter((_, i) => i !== idx))}
-                  className="border-2 border-ink bg-danger p-1.5 text-white brutal-press"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

@@ -19,7 +19,7 @@ export default async function TeachHomePage() {
       <Navbar />
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-4xl font-extrabold uppercase">Mis cursos</h1>
+          <h1 className="text-4xl font-semibold">Mis cursos</h1>
           <Link href="/teach/new">
             <Button>
               <Plus className="h-5 w-5" /> Nuevo curso
@@ -38,18 +38,18 @@ export default async function TeachHomePage() {
                 <Card interactive className="flex h-full flex-col">
                   <CardBody className="flex-1 space-y-2">
                     <Tag tone={statusTone(c.status)}>{c.status}</Tag>
-                    <h2 className="text-xl font-extrabold uppercase leading-tight">
+                    <h2 className="text-xl font-semibold leading-tight">
                       {c.title}
                     </h2>
                     {c.category && (
-                      <p className="text-sm font-bold opacity-60">{c.category}</p>
+                      <p className="text-sm font-medium text-[var(--color-text-muted)]">{c.category}</p>
                     )}
                   </CardBody>
-                  <CardFooter className="flex items-center justify-between text-sm font-bold">
+                  <CardFooter className="flex items-center justify-between text-sm font-medium">
                     <span className="flex items-center gap-1">
                       <Users className="h-4 w-4" /> {c.active_enrollments ?? 0}
                     </span>
-                    <span className="opacity-60">{formatDate(c.updated_at)}</span>
+                    <span className="text-[var(--color-text-muted)]">{formatDate(c.updated_at)}</span>
                   </CardFooter>
                 </Card>
               </Link>

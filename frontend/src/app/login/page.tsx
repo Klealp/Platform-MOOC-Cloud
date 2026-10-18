@@ -16,17 +16,21 @@ export default async function LoginPage({
   const { from } = await searchParams;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-brand-100 p-4">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] p-4">
       <div className="w-full max-w-md">
-        <div className="mb-6 text-center">
-          <h1 className="inline-block border-[3px] border-ink bg-accent-yellow px-4 py-2 text-3xl font-extrabold uppercase brutal-shadow">
-            Iniciar sesión
-          </h1>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Iniciar sesión</h1>
+          <p className="mt-2 text-[var(--color-text-muted)]">
+            Accede para continuar tu aprendizaje.
+          </p>
         </div>
         <LoginForm from={from} />
-        <p className="mt-4 text-center text-sm font-medium">
+        <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
           ¿No tienes cuenta?{" "}
-          <Link href="/register" className="font-bold underline decoration-[3px]">
+          <Link
+            href="/register"
+            className="font-medium text-[var(--color-primary)] hover:underline"
+          >
             Regístrate
           </Link>
         </p>

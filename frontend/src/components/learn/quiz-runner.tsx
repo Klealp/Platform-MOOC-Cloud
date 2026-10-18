@@ -201,14 +201,18 @@ export function QuizRunner({
                       type="button"
                       disabled={!!finished}
                       onClick={() => toggle(q.id, o.id, q.multiple)}
-                      className={`flex w-full items-center gap-3 border-[3px] border-ink px-3 py-2 text-left font-medium brutal-press disabled:cursor-default ${
-                        selected ? "bg-accent-yellow" : "bg-[var(--card)]"
+                      className={`flex w-full items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border)] px-3 py-2 text-left font-medium transition-colors disabled:cursor-default ${
+                        selected
+                          ? "border-[var(--color-primary)] bg-[color-mix(in_srgb,var(--color-primary)_10%,transparent)]"
+                          : "bg-[var(--color-surface)]"
                       }`}
                     >
                       <span
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 border-ink ${
-                          selected ? "bg-ink text-white" : ""
-                        } ${q.multiple ? "" : "rounded-full"}`}
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center border ${
+                          selected
+                            ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
+                            : "border-[var(--color-border)]"
+                        } ${q.multiple ? "rounded-sm" : "rounded-full"}`}
                       >
                         {selected && <CheckCircle2 className="h-3 w-3" />}
                       </span>
