@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Award, ExternalLink } from "lucide-react";
 
 import { Navbar } from "@/components/layout/navbar";
@@ -39,14 +40,12 @@ export default async function MyBadgesPage() {
                   {b.revoked_at && <Tag tone="danger">revocada</Tag>}
                 </CardBody>
                 <CardFooter className="text-center">
-                  <a
-                    href={b.verify_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/badges/verify/${b.public_code}`}
                     className="inline-flex items-center gap-1 font-bold uppercase underline decoration-2"
                   >
                     Verificar <ExternalLink className="h-4 w-4" />
-                  </a>
+                  </Link>
                 </CardFooter>
               </Card>
             ))}
