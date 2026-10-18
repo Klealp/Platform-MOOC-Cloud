@@ -1,32 +1,74 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-type Tone = "brand" | "yellow" | "pink" | "blue" | "purple" | "ok" | "warn" | "danger" | "neutral";
+/**
+ * Etiqueta/chip minimalista: píldora de fondo tenue y texto del color
+ * semántico. Se conservan los nombres de tono para no tocar los llamadores.
+ */
+type Tone =
+  | "brand"
+  | "yellow"
+  | "pink"
+  | "blue"
+  | "purple"
+  | "ok"
+  | "warn"
+  | "danger"
+  | "neutral";
 
-const tones: Record<Tone, string> = {
-  brand: "bg-brand-500 text-ink",
-  yellow: "bg-accent-yellow text-ink",
-  pink: "bg-accent-pink text-ink",
-  blue: "bg-accent-blue text-ink",
-  purple: "bg-accent-purple text-white",
-  ok: "bg-ok text-white",
-  warn: "bg-warn text-ink",
-  danger: "bg-danger text-white",
-  neutral: "bg-neutral-200 text-ink",
+const tones: Record<Tone, { bg: string; fg: string }> = {
+  brand: {
+    bg: "color-mix(in srgb, var(--color-primary) 12%, transparent)",
+    fg: "var(--color-primary)",
+  },
+  blue: {
+    bg: "color-mix(in srgb, var(--color-accent) 14%, transparent)",
+    fg: "var(--color-accent)",
+  },
+  purple: {
+    bg: "color-mix(in srgb, var(--color-primary) 12%, transparent)",
+    fg: "var(--color-primary)",
+  },
+  yellow: {
+    bg: "color-mix(in srgb, var(--color-warning) 14%, transparent)",
+    fg: "var(--color-warning)",
+  },
+  pink: {
+    bg: "color-mix(in srgb, var(--color-danger) 10%, transparent)",
+    fg: "var(--color-danger)",
+  },
+  ok: {
+    bg: "color-mix(in srgb, var(--color-success) 14%, transparent)",
+    fg: "var(--color-success)",
+  },
+  warn: {
+    bg: "color-mix(in srgb, var(--color-warning) 14%, transparent)",
+    fg: "var(--color-warning)",
+  },
+  danger: {
+    bg: "color-mix(in srgb, var(--color-danger) 12%, transparent)",
+    fg: "var(--color-danger)",
+  },
+  neutral: {
+    bg: "var(--color-surface-alt)",
+    fg: "var(--color-text-muted)",
+  },
 };
 
 export function Tag({
   tone = "neutral",
   className,
+  style,
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & { tone?: Tone }) {
+  const t = tones[tone];
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 border-2 border-ink px-2 py-0.5 text-xs font-bold uppercase tracking-wide",
-        tones[tone],
+        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium",
         className,
       )}
+      style={{ backgroundColor: t.bg, color: t.fg, ...style }}
       {...props}
     />
   );

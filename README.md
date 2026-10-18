@@ -1,12 +1,15 @@
 # Plataforma MOOC
 
-Plataforma de cursos masivos abiertos en linea (ISIS4426 - Desarrollo de
-Soluciones Cloud, Universidad de los Andes). Backend en Go (monolito modular +
-workers asincronos) y frontend web en Next.js que actua como BFF, todo en
-contenedores y desplegado en Google Cloud.
+Plataforma de cursos masivos abiertos en linea (MOOC).
+Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
+todo en contenedores.
 
-Este README es un mapa: resume como funciona la plataforma hoy y apunta a la
-carpeta donde esta la documentacion detallada de cada parte.
+> La documentacion detallada de la arquitectura y de cada archivo esta en
+> [`DOCUMENTACION.md`](./DOCUMENTACION.md).
+>
+> **Despliegue local completo (backend + frontend) con un solo comando:**
+> `docker compose up --build` levanta la API, los workers, el frontend y todas
+> las dependencias. El **frontend queda en http://localhost:3001**.
 
 ## Documentacion por entrega
 
@@ -27,7 +30,70 @@ La arquitectura vigente es la descrita en
 [`docs/entrega2/`](docs/entrega2/README.md): dos VMs `e2-highcpu-2` en una VPC
 propia (`us-central1-a`) mas servicios administrados.
 
-![Modelo de despliegue en GCP](docs/entrega2/diagramas/despliegue.svg)
+No hace falta tener Go instalado: la compilacion ocurre dentro de Docker.
+
+## Puesta en marcha
+
+```bash
+cp .env.example .env
+make deps          # genera go.sum (go mod tidy en un contenedor Go)
+docker compose up --build
+```
+
+La primera vez tarda varios minutos: descarga las imagenes y compila los dos
+binarios de Go.
+
+Cuando todo este arriba:
+
+| Servicio               | URL                              | Credenciales        |
+|------------------------|----------------------------------|---------------------|
+| **Frontend (app web)** | http://localhost:3001            | ver admin abajo     |
+| API (health)           | http://localhost:8080/healthz    | —                   |
+| **Swagger UI (API docs)** | http://localhost:8080/docs    | —                   |
+| Spec OpenAPI (crudo)   | http://localhost:8080/openapi.yaml | —                 |
+| Bandeja de correo      | http://localhost:8025            | —                   |
+| Consola de MinIO       | http://localhost:9001            | minioadmin / minioadmin |
+| Prometheus             | http://localhost:9090            | —                   |
+| Grafana                | http://localhost:3000            | admin / admin       |
+| **Jaeger (trazas)**    | http://localhost:16686           | —                   |
+| PostgreSQL             | localhost:5433                   | mooc / mooc         |
+
+> El **frontend** (Next.js como BFF) es la única puerta de entrada para el
+> navegador: habla con la API por la red interna de Docker (`api:8080`), nunca
+> directo desde el cliente. Se publica en **3001** porque Grafana ya ocupa el
+> 3000 en el host.
+
+Administrador inicial: `admin@mooc.local` / `Admin123!`
+(lo crea la API al arrancar a partir de `ADMIN_EMAIL` y `ADMIN_PASSWORD`).
+
+## Prueba de humo
+
+```bash
+./testdata/smoke.sh
+```
+
+Recorre el flujo completo: crear profesor, armar el curso, publicarlo,
+registrar un estudiante, inscribirlo, reportar progreso, presentar el quiz y
+verificar la insignia. De paso comprueba tres condiciones de la rubrica:
+el rechazo del porcentaje enviado por el cliente, la idempotencia del envio
+del quiz y el aislamiento entre estudiantes.
+
+## Comandos frecuentes
+
+```bash
+make up                     # levantar
+make down                   # detener (conserva datos)
+make reset                  # detener y BORRAR volumenes
+make logs                   # seguir logs de api y worker
+make psql                   # consola SQL
+docker compose up --scale worker=3   # tres workers
+```
+
+> **Importante:** `db/init.sql` solo se ejecuta la primera vez que se crea el
+> volumen de Postgres. Si lo modificas, ejecuta `make reset` antes de volver a
+> levantar.
+
+## Arquitectura en una pantalla
 
 ```
                          Internet (HTTPS, Let's Encrypt)

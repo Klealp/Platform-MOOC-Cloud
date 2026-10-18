@@ -55,14 +55,14 @@ export function CatalogFilters() {
 
   return (
     <form
-      className="grid gap-3 brutal-border brutal-shadow-sm bg-[var(--card)] p-4 md:grid-cols-[1fr_auto_auto_auto_auto]"
+      className="grid gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 elevate-sm md:grid-cols-[1fr_auto_auto_auto_auto]"
       onSubmit={(e) => {
         e.preventDefault();
         apply({});
       }}
     >
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-50" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-text-muted)]" />
         <Input
           className="pl-10"
           placeholder="Buscar cursos…"

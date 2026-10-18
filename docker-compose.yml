@@ -7,6 +7,7 @@
 #                                      (necesario si cambias db/init.sql)
 #
 # Puertos publicados en el anfitrion:
+#   3001  Frontend (BFF Next.js) -> unica URL para el navegador
 #   8080  API
 #   3001  Frontend web (Next.js)
 #   5433  PostgreSQL (5432 dentro de la red de compose)

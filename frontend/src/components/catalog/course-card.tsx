@@ -22,23 +22,23 @@ export function CourseCard({ course }: { course: CatalogItem }) {
             {course.category && <Tag tone="blue">{course.category}</Tag>}
             {course.level && <Tag tone={tone}>{course.level}</Tag>}
           </div>
-          <h3 className="text-xl font-extrabold uppercase leading-tight">
+          <h3 className="text-lg font-semibold leading-snug tracking-tight">
             {course.title}
           </h3>
-          <p className="line-clamp-3 text-sm font-medium opacity-80">
+          <p className="line-clamp-3 text-sm text-[var(--color-text-muted)]">
             {course.summary || "Sin descripción."}
           </p>
           {course.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {course.tags.slice(0, 4).map((t) => (
-                <span key={t} className="text-xs font-bold opacity-60">
+                <span key={t} className="text-xs text-[var(--color-text-muted)]">
                   #{t}
                 </span>
               ))}
             </div>
           )}
         </CardBody>
-        <CardFooter className="flex items-center justify-between text-sm font-bold">
+        <CardFooter className="flex items-center justify-between text-sm text-[var(--color-text-muted)]">
           <span className="truncate">{course.teacher}</span>
           <span className="flex items-center gap-1">
             <Users className="h-4 w-4" /> {course.enrolled}

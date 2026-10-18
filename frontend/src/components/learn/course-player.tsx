@@ -48,18 +48,18 @@ export function CoursePlayer({ initial }: { initial: EnrollmentOutline }) {
     <main className="mx-auto grid max-w-6xl gap-6 px-4 py-8 lg:grid-cols-[320px_1fr]">
       {/* Sidebar: arbol + progreso */}
       <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-        <div className="brutal-border brutal-shadow-sm bg-[var(--card)] p-4">
-          <p className="mb-2 text-sm font-bold uppercase">Tu progreso</p>
+        <div className="elevate-sm rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <p className="mb-2 text-sm font-medium">Tu progreso</p>
           <ProgressBar value={progressPct} />
-          <p className="mt-2 text-xs font-bold uppercase opacity-70">
+          <p className="mt-2 text-xs font-medium text-[var(--color-text-muted)]">
             {initial.progress.state}
           </p>
         </div>
 
         <nav className="space-y-3">
           {initial.modules.map((mod, i) => (
-            <div key={mod.id} className="brutal-border bg-[var(--card)]">
-              <p className="border-b-[3px] border-ink bg-brand-100 px-3 py-2 text-sm font-extrabold uppercase">
+            <div key={mod.id} className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+              <p className="border-b border-[var(--color-border)] bg-[var(--color-surface-alt)] px-3 py-2 text-sm font-semibold">
                 {i + 1}. {mod.title}
               </p>
               <ul>
@@ -82,25 +82,27 @@ export function CoursePlayer({ initial }: { initial: EnrollmentOutline }) {
                         <button
                           onClick={() => setActiveStableId(r.stable_id)}
                           className={cn(
-                            "flex w-full items-center gap-2 border-b-2 border-ink px-3 py-2 text-left text-sm font-medium last:border-b-0",
-                            isActive ? "bg-accent-yellow" : "hover:bg-brand-50",
+                            "flex w-full items-center gap-2 border-b border-[var(--color-border)] px-3 py-2 text-left text-sm font-medium transition-colors last:border-b-0",
+                            isActive
+                              ? "border-l-2 border-l-[var(--color-primary)] bg-[color-mix(in_srgb,var(--color-primary)_10%,transparent)]"
+                              : "hover:bg-[var(--color-surface-alt)]",
                           )}
                         >
                           {done ? (
-                            <CheckCircle2 className="h-4 w-4 shrink-0 text-ok" />
+                            <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--color-success)]" />
                           ) : (
-                            <Circle className="h-4 w-4 shrink-0 opacity-40" />
+                            <Circle className="h-4 w-4 shrink-0 text-[var(--color-text-muted)]" />
                           )}
                           <Icon className="h-4 w-4 shrink-0" />
                           <span className="flex-1 truncate">{r.title}</span>
                           {processing && (
                             <Clock
-                              className="h-3.5 w-3.5 shrink-0 text-warn"
+                              className="h-3.5 w-3.5 shrink-0 text-[var(--color-warning)]"
                               aria-label="En procesamiento"
                             />
                           )}
                           {r.required && (
-                            <span className="h-2 w-2 shrink-0 bg-accent-pink" title="Obligatorio" />
+                            <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--color-accent)]" title="Obligatorio" />
                           )}
                         </button>
                       </li>
@@ -118,7 +120,7 @@ export function CoursePlayer({ initial }: { initial: EnrollmentOutline }) {
         {active ? (
           <>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-extrabold uppercase">{active.title}</h1>
+              <h1 className="text-2xl font-semibold">{active.title}</h1>
               <Tag tone="blue">{active.type}</Tag>
               {completedMap[active.stable_id] && <Tag tone="ok">completado</Tag>}
             </div>

@@ -90,7 +90,7 @@ export function CourseEditor({
               </Tag>
             )}
           </div>
-          <h1 className="text-3xl font-extrabold uppercase">{course.title}</h1>
+          <h1 className="text-3xl font-semibold">{course.title}</h1>
         </div>
         <div className="flex flex-wrap gap-2">
           {!isDraft && (
@@ -130,7 +130,7 @@ export function CourseEditor({
           <ul className="mt-1 list-disc space-y-1 pl-5">
             {problems.map((p, i) => (
               <li key={i}>
-                <span className="font-mono text-xs opacity-70">{p.path}</span> —{" "}
+                <span className="font-mono text-xs text-[var(--color-text-muted)]">{p.path}</span> —{" "}
                 {p.message}
               </li>
             ))}
@@ -158,7 +158,7 @@ export function CourseEditor({
                   title="Eliminar módulo"
                   disabled={pending}
                   onClick={() => run(() => deleteModuleAction(mod.id))}
-                  className="border-2 border-ink bg-danger p-1.5 text-white brutal-press"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -166,15 +166,15 @@ export function CourseEditor({
             </CardHeader>
             <CardBody className="space-y-4">
               {mod.units.map((unit) => (
-                <div key={unit.id} className="brutal-border bg-brand-50 p-3">
+                <div key={unit.id} className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-3">
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <p className="font-bold">{unit.title}</p>
+                    <p className="font-medium">{unit.title}</p>
                     {isDraft && (
                       <button
                         title="Eliminar unidad"
                         disabled={pending}
                         onClick={() => run(() => deleteUnitAction(unit.id))}
-                        className="border-2 border-ink bg-danger p-1 text-white brutal-press"
+                        className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1 text-white transition-colors hover:brightness-95"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -184,20 +184,20 @@ export function CourseEditor({
                     {unit.resources.map((r) => (
                       <li
                         key={r.id}
-                        className="flex items-center gap-2 border-2 border-ink bg-[var(--card)] px-2 py-1 text-sm font-medium"
+                        className="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-sm font-medium"
                       >
                         <Tag tone="neutral">{r.type}</Tag>
                         {r.type === "rich_text" && isDraft ? (
                           <a
                             href={`/teach/${course.id}/resource/${r.id}`}
-                            className="flex-1 truncate underline decoration-2"
+                            className="flex-1 truncate underline"
                           >
                             {r.title}
                           </a>
                         ) : r.type === "quiz" && r.quiz_id && isDraft ? (
                           <a
                             href={`/teach/${course.id}/quiz/${r.quiz_id}`}
-                            className="flex-1 truncate underline decoration-2"
+                            className="flex-1 truncate underline"
                           >
                             {r.title}
                           </a>
@@ -210,7 +210,7 @@ export function CourseEditor({
                             title="Eliminar recurso"
                             disabled={pending}
                             onClick={() => run(() => deleteResourceAction(r.id))}
-                            className="border-2 border-ink bg-danger p-1 text-white brutal-press"
+                            className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1 text-white transition-colors hover:brightness-95"
                           >
                             <Trash2 className="h-3 w-3" />
                           </button>
