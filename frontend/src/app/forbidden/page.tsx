@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 
 export default function ForbiddenPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-danger p-4 text-center">
-      <ShieldX className="h-20 w-20 text-white" />
-      <h1 className="border-[3px] border-ink bg-[var(--card)] px-6 py-3 text-4xl font-extrabold uppercase brutal-shadow-lg">
-        403 — Sin permiso
-      </h1>
-      <p className="max-w-md font-bold text-white">
-        Tu rol no permite acceder a esta sección. Esta comprobación la realiza
-        el servidor.
-      </p>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] p-4 text-center">
+      <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-danger)_12%,transparent)] text-[var(--color-danger)]">
+        <ShieldX className="h-10 w-10" />
+      </span>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">403 — Sin permiso</h1>
+        <p className="max-w-md text-[var(--color-text-muted)]">
+          Tu rol no permite acceder a esta sección. Esta comprobación la realiza
+          el servidor.
+        </p>
+      </div>
       <Link href="/dashboard">
         <Button variant="secondary">Volver al panel</Button>
       </Link>

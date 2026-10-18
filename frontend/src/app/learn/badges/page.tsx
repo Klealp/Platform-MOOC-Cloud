@@ -16,8 +16,8 @@ export default async function MyBadgesPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
-        <h1 className="text-4xl font-extrabold uppercase">Mis insignias</h1>
+      <main className="mx-auto max-w-5xl space-y-6 px-6 py-10">
+        <h1 className="text-3xl font-bold tracking-tight">Mis insignias</h1>
 
         {badges.length === 0 ? (
           <Alert variant="info">
@@ -28,13 +28,13 @@ export default async function MyBadgesPage() {
             {badges.map((b) => (
               <Card key={b.id} className={b.revoked_at ? "opacity-60" : ""}>
                 <CardBody className="space-y-3 text-center">
-                  <span className="mx-auto flex h-20 w-20 items-center justify-center border-[3px] border-ink bg-accent-yellow">
+                  <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-warning)_14%,transparent)] text-[var(--color-warning)]">
                     <Award className="h-10 w-10" />
                   </span>
-                  <h2 className="text-lg font-extrabold uppercase leading-tight">
+                  <h2 className="text-lg font-semibold leading-snug">
                     {b.course_title}
                   </h2>
-                  <p className="text-xs font-bold opacity-70">
+                  <p className="text-xs text-[var(--color-text-muted)]">
                     Emitida {formatDate(b.issued_at)}
                   </p>
                   {b.revoked_at && <Tag tone="danger">revocada</Tag>}
@@ -42,7 +42,7 @@ export default async function MyBadgesPage() {
                 <CardFooter className="text-center">
                   <Link
                     href={`/badges/verify/${b.public_code}`}
-                    className="inline-flex items-center gap-1 font-bold uppercase underline decoration-2"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline"
                   >
                     Verificar <ExternalLink className="h-4 w-4" />
                   </Link>

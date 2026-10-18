@@ -29,11 +29,11 @@ export default async function QuizBuilderPage({
       <main className="mx-auto max-w-4xl space-y-6 px-4 py-10">
         <Link
           href={`/teach/${courseId}`}
-          className="inline-flex items-center gap-1 text-sm font-bold uppercase underline decoration-2"
+          className="inline-flex items-center gap-1 text-sm font-medium underline"
         >
           <ArrowLeft className="h-4 w-4" /> Volver al curso
         </Link>
-        <h1 className="text-3xl font-extrabold uppercase">Constructor de quiz</h1>
+        <h1 className="text-3xl font-semibold">Constructor de quiz</h1>
         <QuizBuilder quiz={quiz} />
       </main>
     </>

@@ -14,10 +14,10 @@ export default async function SessionsPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-10">
+      <main className="mx-auto max-w-3xl space-y-6 px-6 py-10">
         <div className="space-y-1">
-          <h1 className="text-4xl font-extrabold uppercase">Mis sesiones</h1>
-          <p className="font-medium opacity-80">
+          <h1 className="text-3xl font-bold tracking-tight">Mis sesiones</h1>
+          <p className="text-[var(--color-text-muted)]">
             Estas son las sesiones activas de tu cuenta. Cierra las que no
             reconozcas.
           </p>

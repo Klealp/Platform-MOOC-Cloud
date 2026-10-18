@@ -11,8 +11,8 @@ export default async function AdminAuditPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-10">
-        <h1 className="text-4xl font-extrabold uppercase">Bitácora de auditoría</h1>
+      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
+        <h1 className="text-4xl font-semibold">Bitácora de auditoría</h1>
 
         {entries.length === 0 ? (
           <Alert variant="info">No hay registros de auditoría todavía.</Alert>
@@ -21,22 +21,22 @@ export default async function AdminAuditPage() {
             {entries.map((e) => (
               <div
                 key={e.id}
-                className="brutal-border bg-[var(--card)] p-3 text-sm"
+                className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-sm elevate-sm"
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <Tag tone="purple">{e.action}</Tag>
-                  <span className="font-bold">{e.entity_type}</span>
-                  <span className="font-mono text-xs opacity-60">{e.entity_id}</span>
-                  <span className="ml-auto font-mono text-xs opacity-60">
+                  <span className="font-medium">{e.entity_type}</span>
+                  <span className="font-mono text-xs text-[var(--color-text-muted)]">{e.entity_id}</span>
+                  <span className="ml-auto font-mono text-xs text-[var(--color-text-muted)]">
                     {new Date(e.created_at).toLocaleString("es-CO")}
                   </span>
                 </div>
-                <div className="mt-1 flex flex-wrap gap-x-4 text-xs font-medium opacity-70">
+                <div className="mt-1 flex flex-wrap gap-x-4 text-xs font-medium text-[var(--color-text-muted)]">
                   <span>actor: {e.actor_id || "—"}</span>
                   <span>ip: {e.ip}</span>
                 </div>
                 {e.metadata && Object.keys(e.metadata).length > 0 && (
-                  <pre className="mt-2 overflow-x-auto border-2 border-ink bg-ink p-2 font-mono text-xs text-brand-300">
+                  <pre className="mt-2 overflow-x-auto rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-2 font-mono text-xs text-[var(--color-text)]">
                     {JSON.stringify(e.metadata, null, 2)}
                   </pre>
                 )}

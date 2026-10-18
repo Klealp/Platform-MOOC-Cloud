@@ -11,21 +11,23 @@ import { Button } from "@/components/ui/button";
  */
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-accent-yellow p-4 text-center">
-      <SearchX className="h-20 w-20" />
-      <h1 className="border-[3px] border-ink bg-[var(--card)] px-6 py-3 text-4xl font-extrabold uppercase brutal-shadow-lg">
-        404 — No encontrado
-      </h1>
-      <p className="max-w-md font-bold">
-        La página o el recurso que buscas no existe o no está disponible para tu
-        cuenta.
-      </p>
-      <div className="flex gap-2">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] p-4 text-center">
+      <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-surface-alt)] text-[var(--color-text-muted)]">
+        <SearchX className="h-10 w-10" />
+      </span>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">404 — No encontrado</h1>
+        <p className="max-w-md text-[var(--color-text-muted)]">
+          La página o el recurso que buscas no existe o no está disponible para
+          tu cuenta.
+        </p>
+      </div>
+      <div className="flex gap-3">
         <Link href="/dashboard">
           <Button variant="secondary">Ir al panel</Button>
         </Link>
         <Link href="/catalog">
-          <Button variant="outline">Ver catálogo</Button>
+          <Button variant="ghost">Ver catálogo</Button>
         </Link>
       </div>
     </main>

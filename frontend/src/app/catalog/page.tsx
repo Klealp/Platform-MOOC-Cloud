@@ -48,8 +48,8 @@ export default async function CatalogPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-10">
-        <h1 className="text-4xl font-extrabold uppercase">Catálogo</h1>
+      <main className="mx-auto max-w-[1200px] space-y-8 px-6 py-10">
+        <h1 className="text-3xl font-bold tracking-tight">Catálogo</h1>
         <CatalogFilters />
 
         {error ? (

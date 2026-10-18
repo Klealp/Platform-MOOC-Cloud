@@ -1,110 +1,156 @@
 @import "tailwindcss";
 
+/* El modo oscuro se activa con la clase .dark en <html> (estrategia "class"),
+   controlada por el ThemeToggle y persistida en localStorage. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
-  Sistema de diseno BRUTALISTA (referencia visual: Platzi).
-  Rasgos: bordes negros gruesos, sombras duras sin desenfoque (offset solido),
-  colores saturados de alto contraste, tipografia pesada, cero gradientes
-  suaves. La paleta base es verde Platzi (#98CA3F) + acentos.
+  Sistema de diseño MINIMALISTA (referencia: Coursera / Notion / Platzi limpio).
+  Rasgos: mucho espacio en blanco, un solo color de marca, sombras sutiles tipo
+  Material, bordes de 1px, tipografía Inter, radios suaves. El contenido manda.
 */
 
 @theme {
-  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 
-  /* Marca (verde estilo Platzi) */
-  --color-brand-50: #f3f9e6;
-  --color-brand-100: #e4f1c3;
-  --color-brand-200: #cfe694;
-  --color-brand-300: #b9db64;
-  --color-brand-400: #a8d348;
-  --color-brand-500: #98ca3f;
-  --color-brand-600: #7aa52f;
-  --color-brand-700: #5c7d23;
-  --color-brand-800: #3f5618;
-  --color-brand-900: #26330e;
+  /* ---- Marca (indigo) ---- */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-accent: #06b6d4;
 
-  /* Acentos brutalistas de alta saturacion */
-  --color-accent-yellow: #ffd43b;
-  --color-accent-pink: #ff6b9d;
-  --color-accent-blue: #4dabf7;
-  --color-accent-purple: #9775fa;
-  --color-accent-orange: #ff922b;
+  /* ---- Semántica de estado ---- */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
 
-  /* Semaforo de estado */
-  --color-ok: #37b24d;
-  --color-warn: #f59f00;
-  --color-danger: #e03131;
+  /* ---- Superficies y texto (modo claro, valores por defecto del tema) ---- */
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0f2f5;
+  --color-text: #1a1a2e;
+  --color-text-muted: #5a6072;
+  --color-border: #e3e6eb;
 
-  /* Neutros */
-  --color-ink: #0d0d0d;
-  --color-paper: #faf7f0;
-  --color-paper-dark: #121212;
+  /* ---- Radios ---- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* ---- Sombras (sutiles, estilo Material) ---- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+  /* ---- Escala de espaciado (sistema de 4px) ---- */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
 }
 
+/*
+  Tokens de runtime (resueltos por variante de tema). Los componentes usan
+  --color-surface / --color-text / etc. a través de las utilidades de Tailwind
+  (bg-surface, text-text, border-border...) o con var() directo.
+*/
 :root {
-  --bg: var(--color-paper);
-  --fg: var(--color-ink);
-  --card: #ffffff;
-  --border-w: 3px;
-  --shadow-brutal: 6px 6px 0 0 var(--color-ink);
-  --shadow-brutal-sm: 4px 4px 0 0 var(--color-ink);
-  --shadow-brutal-lg: 10px 10px 0 0 var(--color-ink);
+  color-scheme: light;
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0f2f5;
+  --color-text: #1a1a2e;
+  --color-text-muted: #5a6072;
+  --color-border: #e3e6eb;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-accent: #06b6d4;
+  --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.4);
 }
 
 .dark {
-  --bg: var(--color-paper-dark);
-  --fg: #faf7f0;
-  --card: #1c1c1c;
-  --shadow-brutal: 6px 6px 0 0 #000000;
-  --shadow-brutal-sm: 4px 4px 0 0 #000000;
-  --shadow-brutal-lg: 10px 10px 0 0 #000000;
-}
-
-* {
-  border-color: var(--color-ink);
+  color-scheme: dark;
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-surface-alt: #242836;
+  --color-text: #e8eaed;
+  --color-text-muted: #9aa0ae;
+  --color-border: #2c3040;
+  --color-primary: #6366f1;
+  --color-primary-hover: #818cf8;
+  --color-accent: #22d3ee;
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.5);
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--fg);
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Utilidades brutalistas reutilizables */
-@utility brutal-border {
-  border: var(--border-w) solid var(--color-ink);
+/* Foco de teclado SIEMPRE visible (WCAG AA). */
+:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
 }
 
-@utility brutal-shadow {
-  box-shadow: var(--shadow-brutal);
+/* ===================================================================
+   Utilidades minimalistas reutilizables
+   =================================================================== */
+
+/* Tarjeta/panel: superficie elevada con borde sutil. */
+@utility surface {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
-@utility brutal-shadow-sm {
-  box-shadow: var(--shadow-brutal-sm);
+/* Elevaciones suaves (Material). */
+@utility elevate-sm {
+  box-shadow: var(--shadow-sm);
+}
+@utility elevate-md {
+  box-shadow: var(--shadow-md);
+}
+@utility elevate-lg {
+  box-shadow: var(--shadow-lg);
 }
 
-@utility brutal-shadow-lg {
-  box-shadow: var(--shadow-brutal-lg);
-}
-
-/* Interaccion: la tarjeta/boton "se hunde" hacia su sombra al pulsar. */
-@utility brutal-press {
+/* Interacción sutil al pasar el cursor por una tarjeta clicable. */
+@utility lift {
   transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
 }
-.brutal-press:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-brutal-lg);
-}
-.brutal-press:active {
-  transform: translate(3px, 3px);
-  box-shadow: var(--shadow-brutal-sm);
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Barra de scroll acorde al estilo */
+/* Contenedor de lectura larga: ancho cómodo (~70-75 caracteres). */
+@utility reading {
+  max-width: 720px;
+}
+
 ::selection {
-  background: var(--color-brand-500);
-  color: var(--color-ink);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Respeta la preferencia de menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

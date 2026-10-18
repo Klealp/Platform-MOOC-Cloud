@@ -4,11 +4,35 @@ import { cn } from "@/lib/utils";
 
 type Variant = "info" | "success" | "warning" | "error";
 
-const config: Record<Variant, { cls: string; Icon: typeof Info }> = {
-  info: { cls: "bg-accent-blue text-ink", Icon: Info },
-  success: { cls: "bg-brand-500 text-ink", Icon: CheckCircle2 },
-  warning: { cls: "bg-accent-yellow text-ink", Icon: AlertTriangle },
-  error: { cls: "bg-danger text-white", Icon: XCircle },
+/**
+ * Aviso minimalista: fondo tenue + borde e icono del color semántico. El color
+ * nunca es el único portador del significado (siempre hay icono y, si procede,
+ * título).
+ */
+const config: Record<
+  Variant,
+  { icon: typeof Info; accent: string; tint: string }
+> = {
+  info: {
+    icon: Info,
+    accent: "var(--color-accent)",
+    tint: "color-mix(in srgb, var(--color-accent) 10%, var(--color-surface))",
+  },
+  success: {
+    icon: CheckCircle2,
+    accent: "var(--color-success)",
+    tint: "color-mix(in srgb, var(--color-success) 10%, var(--color-surface))",
+  },
+  warning: {
+    icon: AlertTriangle,
+    accent: "var(--color-warning)",
+    tint: "color-mix(in srgb, var(--color-warning) 12%, var(--color-surface))",
+  },
+  error: {
+    icon: XCircle,
+    accent: "var(--color-danger)",
+    tint: "color-mix(in srgb, var(--color-danger) 10%, var(--color-surface))",
+  },
 };
 
 export function Alert({
@@ -22,15 +46,23 @@ export function Alert({
   children?: React.ReactNode;
   className?: string;
 }) {
-  const { cls, Icon } = config[variant];
+  const { icon: Icon, accent, tint } = config[variant];
   return (
     <div
       role="alert"
-      className={cn("flex gap-3 brutal-border brutal-shadow-sm p-3", cls, className)}
+      className={cn(
+        "flex gap-3 rounded-[var(--radius-md)] border p-3.5 text-[var(--color-text)]",
+        className,
+      )}
+      style={{ backgroundColor: tint, borderColor: accent }}
     >
-      <Icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-      <div className="text-sm font-medium">
-        {title && <p className="font-extrabold uppercase">{title}</p>}
+      <Icon
+        className="mt-0.5 h-5 w-5 shrink-0"
+        style={{ color: accent }}
+        aria-hidden
+      />
+      <div className="text-sm leading-relaxed">
+        {title && <p className="font-semibold">{title}</p>}
         {children}
       </div>
     </div>

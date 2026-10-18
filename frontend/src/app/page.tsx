@@ -9,16 +9,14 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-12">
-        <section className="grid items-center gap-8 md:grid-cols-2">
+      <main className="mx-auto max-w-[1200px] px-6 py-16">
+        <section className="grid items-center gap-12 md:grid-cols-2">
           <div className="space-y-6">
-            <h1 className="text-5xl font-extrabold uppercase leading-none tracking-tight md:text-6xl">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-5xl">
               Aprende sin{" "}
-              <span className="inline-block -rotate-1 border-[3px] border-ink bg-brand-500 px-2 brutal-shadow">
-                límites
-              </span>
+              <span className="text-[var(--color-primary)]">límites</span>
             </h1>
-            <p className="max-w-md text-lg font-medium">
+            <p className="max-w-md text-lg text-[var(--color-text-muted)]">
               Cursos masivos abiertos en línea. Videos, lecturas, quizzes e
               insignias verificables.
             </p>
@@ -42,14 +40,14 @@ export default function HomePage() {
               { Icon: Award, t: "Insignias verificables", d: "Certifica tu avance con un código público." },
               { Icon: Users, t: "Para todos los roles", d: "Estudiantes, profesores y administradores." },
             ].map(({ Icon, t, d }, i) => (
-              <Card key={i} className={i % 2 ? "rotate-1" : "-rotate-1"}>
+              <Card key={i}>
                 <CardBody className="flex items-start gap-4">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center border-[3px] border-ink bg-accent-yellow">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] text-[var(--color-primary)]">
                     <Icon className="h-6 w-6" />
                   </span>
                   <div>
-                    <h3 className="font-extrabold uppercase">{t}</h3>
-                    <p className="text-sm font-medium opacity-80">{d}</p>
+                    <h3 className="font-semibold">{t}</h3>
+                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">{d}</p>
                   </div>
                 </CardBody>
               </Card>

@@ -48,12 +48,12 @@ export default async function DashboardPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-10">
+      <main className="mx-auto max-w-[1200px] px-6 py-10">
         <div className="mb-8 flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-extrabold uppercase">
+          <h1 className="text-3xl font-bold tracking-tight">
             Hola, {user.full_name.split(" ")[0]}
           </h1>
-          <Tag tone="purple">{user.role}</Tag>
+          <Tag tone="brand">{user.role}</Tag>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -61,11 +61,11 @@ export default async function DashboardPage() {
             <Link key={href} href={href}>
               <Card interactive className="h-full">
                 <CardBody className="space-y-3">
-                  <span className="flex h-12 w-12 items-center justify-center border-[3px] border-ink bg-brand-500">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] text-[var(--color-primary)]">
                     <Icon className="h-6 w-6" />
                   </span>
-                  <h2 className="text-xl font-extrabold uppercase">{t}</h2>
-                  <p className="text-sm font-medium opacity-80">{d}</p>
+                  <h2 className="text-lg font-semibold">{t}</h2>
+                  <p className="text-sm text-[var(--color-text-muted)]">{d}</p>
                 </CardBody>
               </Card>
             </Link>

@@ -85,7 +85,7 @@ export function AddResourceDialog({
   }
 
   return (
-    <div className="space-y-3 brutal-border bg-[var(--card)] p-3">
+    <div className="space-y-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
       {error && <Alert variant="error">{error}</Alert>}
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Tipo">
@@ -122,17 +122,17 @@ export function AddResourceDialog({
 
       {MEDIA_TYPES.has(type) && (
         <div>
-          <p className="mb-1.5 text-sm font-bold uppercase">Archivo</p>
+          <p className="mb-1.5 text-sm font-medium">Archivo</p>
           <ResumableUpload onComplete={setAssetId} />
         </div>
       )}
 
-      <label className="flex items-center gap-2 text-sm font-bold">
+      <label className="flex items-center gap-2 text-sm font-medium">
         <input
           type="checkbox"
           checked={required}
           onChange={(e) => setRequired(e.target.checked)}
-          className="h-4 w-4 border-2 border-ink"
+          className="h-4 w-4 rounded-[var(--radius-sm)] border border-[var(--color-border)]"
         />
         Obligatorio para completar el curso
       </label>

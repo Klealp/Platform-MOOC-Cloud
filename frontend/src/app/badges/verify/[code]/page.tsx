@@ -38,7 +38,7 @@ export default async function BadgeVerifyPage({
     <>
       <Navbar />
       <main className="mx-auto max-w-2xl space-y-6 px-4 py-12">
-        <h1 className="text-center text-3xl font-extrabold uppercase">
+        <h1 className="text-center text-3xl font-bold tracking-tight">
           Verificación de insignia
         </h1>
 
@@ -51,24 +51,30 @@ export default async function BadgeVerifyPage({
           <Card>
             <CardBody className="space-y-4 text-center">
               <span
-                className={`mx-auto flex h-24 w-24 items-center justify-center border-[3px] border-ink ${
-                  badge.valid ? "bg-accent-yellow" : "bg-neutral-200"
-                }`}
+                className="mx-auto flex h-24 w-24 items-center justify-center rounded-full"
+                style={{
+                  backgroundColor: badge.valid
+                    ? "color-mix(in srgb, var(--color-warning) 14%, transparent)"
+                    : "var(--color-surface-alt)",
+                  color: badge.valid
+                    ? "var(--color-warning)"
+                    : "var(--color-text-muted)",
+                }}
               >
                 <Award className="h-12 w-12" />
               </span>
 
               {badge.valid ? (
-                <div className="flex items-center justify-center gap-2 font-extrabold uppercase text-ok">
+                <div className="flex items-center justify-center gap-2 font-semibold text-[var(--color-success)]">
                   <CheckCircle2 className="h-5 w-5" /> Insignia válida
                 </div>
               ) : (
-                <div className="flex items-center justify-center gap-2 font-extrabold uppercase text-danger">
+                <div className="flex items-center justify-center gap-2 font-semibold text-[var(--color-danger)]">
                   <XCircle className="h-5 w-5" /> Insignia revocada
                 </div>
               )}
 
-              <dl className="space-y-2 text-left text-sm font-bold">
+              <dl className="space-y-2 text-left text-sm">
                 <div className="flex justify-between gap-3">
                   <dt className="opacity-60">Titular</dt>
                   <dd className="text-right">{badge.recipient}</dd>
