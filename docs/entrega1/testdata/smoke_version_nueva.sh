@@ -31,7 +31,7 @@
 #        cambiado de contenido debajo de sus pies.
 #
 # Uso:
-#   ./testdata/smoke_version_nueva.sh 'C:\ruta\imagen_v1.jpg' 'C:\ruta\imagen_v2.jpg'
+#   ./docs/entrega1/testdata/smoke_version_nueva.sh 'C:\ruta\imagen_v1.jpg' 'C:\ruta\imagen_v2.jpg'
 #
 #   o con variables de entorno: IMAGE1_PATH (imagen de la version 1),
 #   IMAGE2_PATH (la que la reemplaza en la version 2). Si no se pasa

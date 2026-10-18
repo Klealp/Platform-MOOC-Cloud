@@ -2,8 +2,8 @@
 # =====================================================================
 # Prueba de humo del flujo completo. Requiere curl y jq.
 #
-#   chmod +x testdata/smoke.sh
-#   ./testdata/smoke.sh
+#   chmod +x docs/entrega1/testdata/smoke.sh
+#   ./docs/entrega1/testdata/smoke.sh
 #
 # Recorre: admin -> crear profesor -> curso -> modulo -> unidad ->
 # recurso de texto -> quiz con una pregunta -> publicar -> registrar

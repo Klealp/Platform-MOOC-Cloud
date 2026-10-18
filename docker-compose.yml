@@ -8,7 +8,8 @@
 #
 # Puertos publicados en el anfitrion:
 #   8080  API
-#   5432  PostgreSQL
+#   3001  Frontend web (Next.js)
+#   5433  PostgreSQL (5432 dentro de la red de compose)
 #   6379  Redis
 #   9000  MinIO (API S3)      9001  MinIO (consola web)
 #   1025  Mailpit (SMTP)      8025  Mailpit (bandeja web)
@@ -36,6 +37,26 @@ services:
       minio:
         condition: service_healthy
       jaeger:
+        condition: service_started
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Web: frontend Next.js (BFF). El navegador solo habla con este
+  # servicio; las llamadas a la API de Go se hacen server-side por la red
+  # interna de compose, por eso API_BASE_URL apunta a "api" y no a
+  # localhost. Se publica en 3001 porque Grafana ya ocupa el 3000.
+  # ------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    environment:
+      API_BASE_URL: http://api:8080/api/v1
+      SESSION_COOKIE_NAME: mooc_session
+    ports:
+      - "3001:3000"
+    depends_on:
+      api:
         condition: service_started
     restart: unless-stopped
 

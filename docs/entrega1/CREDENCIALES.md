@@ -30,7 +30,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 
 ---
 
-## 2. Usuarios que crea `testdata/smoke.sh`
+## 2. Usuarios que crea `docs/entrega1/testdata/smoke.sh`
 
 El script genera usuarios **nuevos en cada ejecución**, usando la hora actual
 (`$STAMP = date +%s`) para que el email nunca se repita. Las contraseñas sí
@@ -89,7 +89,7 @@ no `localhost`):
 | MinIO | `.env` y `docker-compose.yml` | `S3_ACCESS_KEY`, `S3_SECRET_KEY` / `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` |
 | Grafana | `docker-compose.yml` | `GF_SECURITY_ADMIN_USER`, `GF_SECURITY_ADMIN_PASSWORD` |
 | pgAdmin | `docker-compose.yml` | `PGADMIN_DEFAULT_EMAIL`, `PGADMIN_DEFAULT_PASSWORD` |
-| Usuarios de `smoke.sh` | `testdata/smoke.sh` | strings fijos junto a cada `curl -X POST .../register` |
+| Usuarios de `smoke.sh` | `docs/entrega1/testdata/smoke.sh` | strings fijos junto a cada `curl -X POST .../register` |
 
 ---
 
