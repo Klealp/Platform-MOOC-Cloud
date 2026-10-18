@@ -20,6 +20,7 @@ import type { AttemptView, OutlineResource } from "@/lib/api/types";
 
 interface AttemptResponse extends AttemptView {
   passing_score: number;
+  attempt_number?: number;
   seconds_left?: number;
   score?: number;
   passed?: boolean;
@@ -45,6 +46,9 @@ export function QuizRunner({
   const [result, setResult] = useState<SubmitResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [exhausted, setExhausted] = useState<{ max: number; used: number } | null>(
+    null,
+  );
   const idemKey = useRef<string>(crypto.randomUUID());
 
   if (!resource.quiz_id) {
@@ -59,12 +63,19 @@ export function QuizRunner({
       const res = await fetch(`/api/quizzes/${quizId}/attempts`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) {
+        // 409 = intentos agotados: el backend informa max_attempts y used.
+        if (res.status === 409 && data?.error?.details) {
+          const d = data.error.details as { max_attempts?: number; used?: number };
+          setExhausted({ max: d.max_attempts ?? 0, used: d.used ?? 0 });
+        }
         setError(data?.error?.message ?? "No se pudo iniciar el intento.");
         return;
       }
       setAttempt(data);
       setAnswers(data.answers ?? {});
-      if (data.score !== undefined) {
+      // Si el backend devolvió un intento YA enviado (p. ej. recargaste tras
+      // enviar), mostramos directamente su resultado.
+      if (data.score !== undefined && data.status !== "in_progress") {
         setResult({
           status: data.status,
           score: data.score,
@@ -120,14 +131,26 @@ export function QuizRunner({
     return (
       <Card>
         <CardBody className="space-y-4">
-          {error && <Alert variant="error">{error}</Alert>}
-          <p className="font-medium">
-            Pon a prueba lo aprendido. La calificación la realiza el servidor.
-          </p>
-          <Button onClick={start} disabled={busy}>
-            <PlayCircle className="h-5 w-5" />
-            {busy ? "Cargando…" : "Comenzar quiz"}
-          </Button>
+          {exhausted ? (
+            <Alert variant="warning" title="Sin intentos disponibles">
+              Agotaste los intentos de este quiz ({exhausted.used} de{" "}
+              {exhausted.max}).
+            </Alert>
+          ) : (
+            error && <Alert variant="error">{error}</Alert>
+          )}
+          {!exhausted && (
+            <>
+              <p className="font-medium">
+                Pon a prueba lo aprendido. La calificación la realiza el
+                servidor.
+              </p>
+              <Button onClick={start} disabled={busy}>
+                <PlayCircle className="h-5 w-5" />
+                {busy ? "Cargando…" : "Comenzar quiz"}
+              </Button>
+            </>
+          )}
         </CardBody>
       </Card>
     );
@@ -139,6 +162,16 @@ export function QuizRunner({
     <div className="space-y-4">
       {error && <Alert variant="error">{error}</Alert>}
 
+      <div className="flex flex-wrap items-center gap-2">
+        {attempt.attempt_number ? (
+          <Tag tone="neutral">Intento #{attempt.attempt_number}</Tag>
+        ) : null}
+        <Tag tone="blue">Nota mínima {attempt.passing_score}%</Tag>
+        {attempt.status === "in_progress" && !finished && (
+          <Tag tone="warn">En curso</Tag>
+        )}
+      </div>
+
       {finished && (
         <Alert
           variant={result!.passed ? "success" : "error"}
@@ -147,6 +180,7 @@ export function QuizRunner({
           Puntaje: {Math.round(result!.score)}% (mínimo {attempt.passing_score}%).
           {result!.total_questions > 0 &&
             ` Acertaste ${result!.correct_questions}/${result!.total_questions}.`}
+          {result!.status === "expired" && " El tiempo del intento expiró."}
         </Alert>
       )}
 
@@ -200,6 +234,8 @@ export function QuizRunner({
             setAttempt(null);
             setResult(null);
             setAnswers({});
+            setError(null);
+            setExhausted(null);
             idemKey.current = crypto.randomUUID();
           }}
         >

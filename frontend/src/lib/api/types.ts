@@ -227,19 +227,29 @@ export interface AttemptResult {
 
 export interface Badge {
   id: string;
-  code: string;
+  public_code: string;
   course_title: string;
+  course_slug: string;
   issued_at: string;
   revoked_at: string | null;
   verify_url: string;
+  image_url?: string;
 }
 
+/**
+ * Verificación pública de una insignia (GET /public/badges/:code).
+ * Forma real devuelta por handleVerifyBadge (no expone el correo del titular).
+ */
 export interface PublicBadge {
   valid: boolean;
-  revoked: boolean;
-  student_name: string;
-  course_title: string;
+  recipient: string;
+  course: string;
+  course_slug: string;
+  issued_by: string;
   issued_at: string;
+  public_code: string;
+  revoked_at?: string | null;
+  revoke_reason?: string;
 }
 
 // ------------------------- Autoria -------------------------

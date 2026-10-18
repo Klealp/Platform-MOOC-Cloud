@@ -18,6 +18,20 @@ export function formatDate(iso?: string | null): string {
   });
 }
 
+/** Formatea una fecha ISO con fecha y hora a es-CO legible. */
+export function formatDateTime(iso?: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("es-CO", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 /** Convierte segundos a mm:ss. */
 export function formatSeconds(total: number): string {
   const s = Math.max(0, Math.floor(total));
