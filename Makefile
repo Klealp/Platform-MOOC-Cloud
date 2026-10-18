@@ -61,4 +61,4 @@ vet:
 	docker run --rm -v "$(PWD)":/src -w /src golang:1.24-alpine go vet ./...
 
 test-smoke:
-	./testdata/smoke.sh
+	./docs/entrega1/testdata/smoke.sh

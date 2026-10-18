@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Plus, Rocket, Trash2, GitBranch } from "lucide-react";
+import { Plus, Rocket, Trash2, GitBranch, EyeOff } from "lucide-react";
 
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
   deleteResourceAction,
   deleteUnitAction,
   publishVersionAction,
+  unpublishCourseAction,
 } from "@/lib/authoring/actions";
 import type { Course, CourseVersion } from "@/lib/api/types";
 import type { VersionOutline } from "@/lib/api/authoring";
@@ -91,7 +92,7 @@ export function CourseEditor({
           </div>
           <h1 className="text-3xl font-extrabold uppercase">{course.title}</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {!isDraft && (
             <Button
               variant="secondary"
@@ -99,6 +100,15 @@ export function CourseEditor({
               onClick={() => run(() => createDraftVersionAction(course.id))}
             >
               <GitBranch className="h-5 w-5" /> Nuevo borrador
+            </Button>
+          )}
+          {course.status === "published" && (
+            <Button
+              variant="danger"
+              disabled={pending}
+              onClick={() => run(() => unpublishCourseAction(course.id))}
+            >
+              <EyeOff className="h-5 w-5" /> Despublicar
             </Button>
           )}
           {isDraft && (

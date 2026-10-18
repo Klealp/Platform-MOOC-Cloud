@@ -2,7 +2,7 @@
 
 ISIS4426 - Desarrollo de Soluciones Cloud · Universidad de los Andes · 2026-20
 
-Este documento describe la solucion **efectivamente desplegada** en Google Cloud y los cambios frente a la Entrega 1. La arquitectura logica de la aplicacion (modulos, reglas de negocio, modelo de datos) no cambia y sigue documentada en [`ARQUITECTURA.md`](../../ARQUITECTURA.md); aqui se documenta como se distribuye en la nube.
+Este documento describe la solucion **efectivamente desplegada** en Google Cloud y los cambios frente a la Entrega 1. La arquitectura logica de la aplicacion (modulos, reglas de negocio, modelo de datos) no cambia y sigue documentada en [`ARQUITECTURA.md`](../entrega1/ARQUITECTURA.md); aqui se documenta como se distribuye en la nube.
 
 > Los valores marcados como **PENDIENTE** se completan con datos del entorno desplegado (IPs, costos observados, fechas) y no deben inventarse.
 
@@ -195,7 +195,7 @@ El orden importa: la API necesita Redis al arrancar, y Redis vive en el Worker S
 ### 6.3 Verificacion
 
 - `curl https://<dominio>/readyz` debe responder `{"checks":{"postgres":"ok","redis":"ok","storage":"ok"},"ready":true}`.
-- Pruebas de humo: `API=https://<dominio>/api/v1 ADMIN_PASSWORD=... ./testdata/smoke.sh`. En produccion la API no devuelve el token de verificacion de correo (solo en `APP_ENV=dev`), asi que el token se lee de Mailpit: `gcloud compute ssh worker-server --tunnel-through-iap -- -L 8025:localhost:8025` y abrir `http://localhost:8025`. PENDIENTE: adaptar los smoke tests para leerlo de la API de Mailpit.
+- Pruebas de humo: `API=https://<dominio>/api/v1 ADMIN_PASSWORD=... ./docs/entrega1/testdata/smoke.sh`. En produccion la API no devuelve el token de verificacion de correo (solo en `APP_ENV=dev`), asi que el token se lee de Mailpit: `gcloud compute ssh worker-server --tunnel-through-iap -- -L 8025:localhost:8025` y abrir `http://localhost:8025`. PENDIENTE: adaptar los smoke tests para leerlo de la API de Mailpit.
 
 ### 6.4 Reinicio, respaldo y reconstruccion
 

@@ -52,6 +52,23 @@ export async function updateCourseAction(
   return { ok: true };
 }
 
+/** Despublica un curso: deja de estar visible en el catálogo. */
+export async function unpublishCourseAction(
+  courseId: string,
+): Promise<AuthoringResult> {
+  try {
+    await apiFetch(`/courses/${encodeURIComponent(courseId)}/unpublish`, {
+      method: "POST",
+    });
+  } catch (err) {
+    if (err instanceof ApiRequestError) return { error: err.message };
+    return { error: "No se pudo despublicar el curso." };
+  }
+  revalidatePath(`/teach/${courseId}`);
+  revalidatePath("/teach");
+  return { ok: true };
+}
+
 export async function createDraftVersionAction(
   courseId: string,
 ): Promise<AuthoringResult> {

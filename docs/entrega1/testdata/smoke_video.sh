@@ -4,10 +4,10 @@
 # video REAL subido por carga multipart en una de las unidades.
 #
 # Uso:
-#   VIDEO_PATH=/mnt/c/Users/kevin/Videos/mivideo.mp4 ./testdata/smoke_video.sh
+#   VIDEO_PATH=/mnt/c/Users/kevin/Videos/mivideo.mp4 ./docs/entrega1/testdata/smoke_video.sh
 #
 # o pasando la ruta como primer argumento:
-#   ./testdata/smoke_video.sh /mnt/c/Users/kevin/Videos/mivideo.mp4
+#   ./docs/entrega1/testdata/smoke_video.sh /mnt/c/Users/kevin/Videos/mivideo.mp4
 #
 # Requiere: curl, jq, sha256sum. No requiere ffmpeg en tu maquina: el que
 # transcodifica es el WORKER, dentro de su propio contenedor.

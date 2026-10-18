@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =====================================================================
 # Prueba de humo NEGATIVA: un profesor nuevo intenta subir el archivo
-# EICAR (testdata/eicar.txt) como recurso de una unidad. No es un virus
+# EICAR (docs/entrega1/testdata/eicar.txt) como recurso de una unidad. No es un virus
 # real: es un texto que todo antivirus reconoce como si lo fuera, hecho
 # justo para probar la deteccion sin riesgo. La API debe RECHAZARLO.
 #
@@ -20,8 +20,8 @@
 #      (publishable=false) con el problema 'asset_not_ready'.
 #
 # Uso:
-#   chmod +x testdata/smoke_eicar.sh
-#   ./testdata/smoke_eicar.sh
+#   chmod +x docs/entrega1/testdata/smoke_eicar.sh
+#   ./docs/entrega1/testdata/smoke_eicar.sh
 #
 # Requiere: curl, jq, sha256sum (o shasum).
 # =====================================================================

@@ -496,7 +496,7 @@ agrega dependencias.
 | `badge.go` | Emision idempotente. Trata la violacion de unicidad como exito. `newPublicCode()` genera un codigo aleatorio: si fuera el id del usuario o un consecutivo, cualquiera podria enumerar las insignias de la plataforma. |
 | `reap.go` | El mantenimiento periodico: aborta cargas vencidas, reencola escaneos y transcodificaciones huerfanas, emite insignias faltantes, expira intentos vencidos y limpia sesiones caducadas. Responde directamente a la recomendacion del enunciado de "reencolar trabajos sin heartbeat para mitigar perdidas en Redis". |
 
-### 5.15 `deploy/` y `testdata/`
+### 5.15 `deploy/` y `docs/entrega1/testdata/`
 
 - `deploy/prometheus.yml` — usa `dns_sd_configs` para los workers, no una lista
   fija. Al escalar con `--scale worker=3`, Docker crea tres contenedores y el
@@ -504,8 +504,8 @@ agrega dependencias.
   estatica solo se veria uno.
 - `deploy/grafana/datasource.yml` — provisionamiento por archivo: Grafana
   arranca con la fuente de datos lista, sin pasos manuales.
-- `testdata/smoke.sh` — recorrido completo con `curl`.
-- `testdata/eicar.txt` — el archivo de prueba del antivirus.
+- `docs/entrega1/testdata/smoke.sh` — recorrido completo con `curl`.
+- `docs/entrega1/testdata/eicar.txt` — el archivo de prueba del antivirus.
 
 ---
 
@@ -562,7 +562,7 @@ agrega dependencias.
 | Emision de insignia | `tasks/badge.go` | Una sola fila en `badges`; `/public/badges/{code}` no muestra el correo |
 | Ultimo administrador | `handleAdminUpdateUser` | Degradar al unico admin → 409 |
 
-Los puntos 5, 6, 7 y 8 los ejecuta automaticamente `./testdata/smoke.sh`.
+Los puntos 5, 6, 7 y 8 los ejecuta automaticamente `./docs/entrega1/testdata/smoke.sh`.
 
 ---
 

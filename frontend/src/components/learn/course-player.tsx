@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CheckCircle2, Circle, FileText, Film, HelpCircle } from "lucide-react";
+import { CheckCircle2, Circle, Clock, FileText, Film, HelpCircle } from "lucide-react";
 
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Tag } from "@/components/ui/badge";
@@ -67,6 +67,10 @@ export function CoursePlayer({ initial }: { initial: EnrollmentOutline }) {
                   u.resources.map((r) => {
                     const done = completedMap[r.stable_id];
                     const isActive = r.stable_id === activeStableId;
+                    // Un recurso con archivo adjunto que aún no está `ready`
+                    // está en procesamiento y no debe presentarse como listo.
+                    const processing =
+                      !!r.asset_id && !!r.asset_status && r.asset_status !== "ready";
                     const Icon =
                       r.type === "video"
                         ? Film
@@ -89,6 +93,12 @@ export function CoursePlayer({ initial }: { initial: EnrollmentOutline }) {
                           )}
                           <Icon className="h-4 w-4 shrink-0" />
                           <span className="flex-1 truncate">{r.title}</span>
+                          {processing && (
+                            <Clock
+                              className="h-3.5 w-3.5 shrink-0 text-warn"
+                              aria-label="En procesamiento"
+                            />
+                          )}
                           {r.required && (
                             <span className="h-2 w-2 shrink-0 bg-accent-pink" title="Obligatorio" />
                           )}

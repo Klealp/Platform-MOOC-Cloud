@@ -14,12 +14,12 @@
 # contrario, donde si se consume todo y la insignia SI se emite).
 #
 # Uso:
-#   chmod +x testdata/smoke_pdf.sh
-#   ./testdata/smoke_pdf.sh 'C:\ruta\doc1.pdf' 'C:\ruta\doc2.pdf' 'C:\ruta\doc3.pdf'
+#   chmod +x docs/entrega1/testdata/smoke_pdf.sh
+#   ./docs/entrega1/testdata/smoke_pdf.sh 'C:\ruta\doc1.pdf' 'C:\ruta\doc2.pdf' 'C:\ruta\doc3.pdf'
 #
 #   o con variables de entorno:
 #   PDF1_PATH=/mnt/c/.../doc1.pdf PDF2_PATH=/mnt/c/.../doc2.pdf \
-#   PDF3_PATH=/mnt/c/.../doc3.pdf ./testdata/smoke_pdf.sh
+#   PDF3_PATH=/mnt/c/.../doc3.pdf ./docs/entrega1/testdata/smoke_pdf.sh
 #
 # Si la ruta es de Windows (C:\...) se convierte sola con wslpath.
 # Requiere: curl, jq, sha256sum (o shasum), wslpath (si aplica).
