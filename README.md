@@ -1,4 +1,4 @@
-# Plataforma MOOC — Backend (Entrega 1)
+# Plataforma MOOC
 
 Plataforma de cursos masivos abiertos en linea (MOOC).
 Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
@@ -11,23 +11,24 @@ todo en contenedores.
 > `docker compose up --build` levanta la API, los workers, el frontend y todas
 > las dependencias. El **frontend queda en http://localhost:3001**.
 
-## Entrega 2 - Despliegue en Google Cloud
+## Documentacion por entrega
 
 | Que | Donde |
 |---|---|
-| Documento de arquitectura del despliegue | [`docs/entrega2/`](docs/entrega2/README.md) |
-| Informe de capacidad | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
+| Arquitectura logica, documentacion de cada archivo y credenciales locales (Entrega 1) | [`docs/entrega1/`](docs/entrega1/) (`ARQUITECTURA.md`, `DOCUMENTACION.md`, `CREDENCIALES.md`) |
+| Arquitectura del despliegue en GCP (Entrega 2) | [`docs/entrega2/README.md`](docs/entrega2/README.md) |
+| Informe de capacidad (Entrega 2) | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
 | Aprovisionamiento, compose por VM y migracion | [`deploy/gcp/`](deploy/gcp/) |
-| URL de la aplicacion | (`https://<ip>.sslip.io`)](https://136-114-53-21.sslip.io) |
-| Video de sustentacion | PENDIENTE |
+| URL de la aplicacion | https://136-114-53-21.sslip.io |
 
-Las credenciales de acceso para el equipo docente se entregan por el canal
-privado del curso, nunca en este repositorio.
+Las credenciales de la nube se entregan al equipo docente por el canal privado
+del curso, nunca en este repositorio.
 
-## Requisitos
+## Arquitectura actual (despliegue en Google Cloud)
 
-- Docker y Docker Compose (probado con Docker 29.x / Docker Desktop 4.76)
-- `curl` y `jq` para la prueba de humo
+La arquitectura vigente es la descrita en
+[`docs/entrega2/`](docs/entrega2/README.md): dos VMs `e2-highcpu-2` en una VPC
+propia (`us-central1-a`) mas servicios administrados.
 
 No hace falta tener Go instalado: la compilacion ocurre dentro de Docker.
 
@@ -95,93 +96,119 @@ docker compose up --scale worker=3   # tres workers
 ## Arquitectura en una pantalla
 
 ```
-                  ┌──────────────┐
-   Cliente ──────▶│  API (Go)    │──── publica trabajos ───▶ Redis / asynq
-                  │  sin estado  │                                │
-                  └───┬──────┬───┘                                │
-                      │      │                                    ▼
-     URL prefirmada   │      │  metadatos              ┌──────────────────┐
-   ┌──────────────────┘      └──────────▶ PostgreSQL   │  Worker (Go)     │
-   │                                        ▲          │  ffmpeg, escaneo │
-   ▼                                        └──────────│  correo, badges  │
-┌──────────┐                                           └────────┬─────────┘
-│  MinIO   │◀──────── sube y baja archivos ─────────────────────┘
-└──────────┘
+                         Internet (HTTPS, Let's Encrypt)
+                                      │
+  ┌─ Web Server (subred publica) ─────▼────────────────────────────┐
+  │  Caddy ── /api/v1/*, /docs, /openapi.yaml, /healthz, /readyz ─▶ API (Go)
+  │    └──── todo lo demas ─▶ Frontend Next.js (BFF) ─ red interna ─▶ API
+  │  Prometheus + redis-exporter + postgres-exporter (solo localhost)
+  └──────────────┬──────────────────┬──────────────────┬───────────┘
+                 │ SQL + TLS        │ encola (6379)    │ firma URLs
+                 ▼                  ▼                  ▼
+          Cloud SQL (PG 16)   ┌─ Worker Server ─┐   Cloud Storage
+          IP privada          │ Redis / asynq   │   (bucket privado,
+                ▲             │ Worker (Go)     │──▶ API XML S3 + HMAC)
+                └─────────────│ Mailpit         │        ▲
+                              └─ sin IP publica ┘        │
+         Navegador ── PUT/GET directo con URL firmada ───┘
 ```
 
-- La **API** valida, consulta, firma URLs y encola. Nunca transcodifica.
-- Los **workers** hacen el trabajo pesado y se escalan por separado.
-- **Postgres** es la fuente de verdad. **Redis** es cache y cola.
-- **MinIO** guarda originales, derivados HLS e imagenes de insignias.
-- **Mailpit** captura los correos en desarrollo.
+| Componente | Donde corre | Responsabilidad |
+|---|---|---|
+| **Caddy** | Web Server | Unico servicio expuesto a Internet. Termina TLS y enruta por ruta; oculta `/metrics`. |
+| **API** (`cmd/api`) | Web Server | Autenticacion con tokens opacos, autoria versionada, inscripciones, progreso calculado en servidor, calificacion de quizzes y emision de URLs firmadas. Sin estado; nunca transcodifica. |
+| **Frontend / BFF** (`frontend/`) | Web Server | Interfaz web. Guarda el token en una cookie HttpOnly y llama a la API por la red interna con `Authorization: Bearer`. |
+| **Worker** (`cmd/worker`) | Worker Server | Escaneo antimalware (stub EICAR), transcodificacion HLS con ffmpeg, insignias, correo y limpieza de cargas vencidas. |
+| **Redis + asynq** | Worker Server | Cola con tres prioridades, cache de sesion y rate limit. Solo alcanzable desde el Web Server. |
+| **Cloud SQL** | Administrado | PostgreSQL 16, fuente de verdad. IP privada y TLS obligatorio. |
+| **Cloud Storage** | Administrado | Originales, derivados HLS e insignias. El cliente sube y descarga directamente con URLs firmadas. |
+| **Mailpit** | Worker Server | Captura del correo saliente. |
 
-## Variables de configuracion
+Principios que se mantienen desde la Entrega 1: la API no guarda estado local,
+los archivos no pasan por la API, Postgres es la fuente de verdad (si Redis se
+vacia el sistema sigue siendo correcto) y la idempotencia de las tareas tiene
+tres capas (`asynq.TaskID`, tabla `processed_jobs` y restricciones de
+integridad).
 
-Todas viven en `.env` (plantilla en `.env.example`) y se leen en un unico
-lugar del codigo: `internal/config/config.go`.
+**Observabilidad en la nube:** Cloud Monitoring (Ops Agent en las VMs y
+metricas nativas de Cloud SQL) para infraestructura; Prometheus y exportadores
+en el Web Server para metricas de la aplicacion y de la cola; Grafana corre en
+el PC de quien analiza, conectado por un tunel IAP. Las trazas OpenTelemetry
+estan apagadas en la nube por memoria.
 
-La documentacion de la API (Swagger UI y el spec) **no necesita configuracion**:
-se sirve embebida en el binario, siempre disponible en `/docs` y `/openapi.yaml`.
+Para red, firewall, cuentas de servicio, costos, puntos unicos de falla y
+operacion (despliegue, migracion, respaldo) ver
+[`docs/entrega2/README.md`](docs/entrega2/README.md).
 
-Las trazas OpenTelemetry se controlan con dos variables:
+## Mapa del repositorio
 
-| Variable                      | Default       | Para que |
-|-------------------------------|---------------|----------|
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `jaeger:4318` | Colector OTLP/HTTP al que la API y el worker envian sus trazas. **Vacio = trazas apagadas**, sin recompilar. |
-| `OTEL_SAMPLE_RATIO`           | `1.0`         | Fraccion de trazas muestreadas (0..1). Bajalo si hay mucho trafico. |
+| Carpeta / archivo | Contenido | Mas documentacion |
+|---|---|---|
+| [`cmd/api/`](cmd/api/) | Punto de entrada del proceso HTTP (`main.go`). | `docs/entrega1/DOCUMENTACION.md` |
+| [`cmd/worker/`](cmd/worker/) | Punto de entrada del proceso que consume la cola (`main.go`). | `docs/entrega1/DOCUMENTACION.md` |
+| [`internal/`](internal/) | Paquetes del backend: `api` (handlers, middlewares, rutas), `auth`, `audit`, `badge`, `config` (unico lugar donde se leen variables de entorno), `database`, `mailer`, `metrics`, `openapi` (contrato embebido), `progress`, `queue`, `storage`, `tasks` (handlers del worker) y `telemetry`. | `docs/entrega1/DOCUMENTACION.md` |
+| [`db/`](db/) | `init.sql`, esquema completo de la base. Solo se ejecuta al crear el volumen. | `docs/entrega1/ARQUITECTURA.md` |
+| [`frontend/`](frontend/) | Frontend Next.js 15 + TypeScript + Tailwind (BFF). | [`frontend/README.md`](frontend/README.md) |
+| [`deploy/gcp/`](deploy/gcp/) | `provision.sh`, `startup.sh`, `migrate.sh`, `cors.json` y un compose por VM: `web/` (API, frontend, Caddy), `worker/` (worker, Redis, Mailpit) y `monitor/` (Prometheus, exportadores, Grafana local, `k6.sh`). | [`docs/entrega2/README.md`](docs/entrega2/README.md) |
+| [`deploy/`](deploy/) | Configuracion local de Prometheus y Grafana (dashboard provisionado) y `docker-compose.metrics.yml` con exportadores. | — |
+| [`capacity-planning/`](capacity-planning/) | Scripts de k6, resultados y el informe de capacidad de los escenarios 1 y 2. | [`capacity-planning/README.md`](capacity-planning/README.md), [`capacity-planning/escenario2/README.md`](capacity-planning/escenario2/README.md) |
+| [`postman/`](postman/) | Coleccion de la API y entornos local y nube. | [`postman/README.md`](postman/README.md) |
+| [`.postman/`](.postman/) | Metadatos del workspace de Postman. | — |
+| [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/`, `entrega2/`). | — |
+| [`docs/entrega1/testdata/`](docs/entrega1/testdata/) | Pruebas de humo de extremo a extremo (`smoke.sh` y `smoke_*.sh`, cada una demuestra un comportamiento concreto). | [`docs/entrega1/testdata/README.md`](docs/entrega1/testdata/README.md) |
+| `Dockerfile.api`, `Dockerfile.worker`, `Dockerfile.web` | Imagenes de la API, el worker y el frontend. | — |
+| `docker-compose.yml`, `Makefile` | Entorno local completo y atajos. | Esta pagina |
 
 ## Contrato de la API
 
-El contrato vive en `internal/openapi/openapi.yaml` (OpenAPI 3.1) y se incrusta
-en el binario de la API. Con el sistema levantado se navega y se prueba desde el
-navegador, sin herramientas externas:
+El contrato vive en `internal/openapi/openapi.yaml` (OpenAPI 3.1), va embebido
+en el binario y no necesita configuracion:
 
-- **Swagger UI:** http://localhost:8080/docs — cada operacion de escritura trae
-  un ejemplo cargado, asi que "Try it out" ya viene con datos listos para enviar.
-- **Spec crudo:** http://localhost:8080/openapi.yaml — util para Postman/Insomnia
-  o para generar clientes.
+- **Swagger UI:** `/docs` (con ejemplos listos para "Try it out").
+- **Spec crudo:** `/openapi.yaml` (util para Postman o para generar clientes;
+  el frontend genera sus tipos desde aqui).
 
-Flujo tipico en Swagger UI: `POST /auth/login` con el admin
-(`admin@mooc.local` / `Admin123!`), copiar el `access_token`, pulsar
-**Authorize** y pegar el token; a partir de ahi se pueden recorrer los ejemplos
-de crear profesor, curso, modulo, unidad, recurso, quiz e inscripcion.
+Flujo tipico: `POST /api/v1/auth/login`, copiar el `access_token`, pulsar
+**Authorize** y recorrer los ejemplos. Para un flujo encadenado completo usar
+la coleccion de [`postman/`](postman/README.md).
 
-Tambien se puede abrir el `.yaml` en [editor.swagger.io](https://editor.swagger.io).
+## Entorno local
 
-## Observabilidad
+Requisitos: Docker y Docker Compose. No hace falta Go ni Node: todo se compila
+dentro de Docker.
 
-Cada servicio expone metricas Prometheus (`/metrics` en la API y en `:9100` del
-worker). Prometheus las raspa y Grafana las pinta, ambos provisionados por
-archivo (sin pasos manuales):
+```bash
+make deps                  # genera go.sum en un contenedor Go
+docker compose up --build  # requiere un archivo .env en la raiz (lo leen api y worker)
+```
 
-- **Grafana:** http://localhost:3000 (admin/admin, tambien anonimo). El tablero
-  **"Plataforma MOOC - Vision general"** queda cargado al arrancar
-  (`deploy/grafana/dashboards/mooc-overview.json`) con p95/p99 de latencia, tasa
-  de error 5xx, throughput por codigo, rate limiting, trabajos del worker por
-  estado, **conteo en DLQ**, duracion de jobs y metricas de dominio
-  (inscripciones, quizzes, insignias).
-- **Prometheus:** http://localhost:9090 para consultas ad-hoc, p. ej.
-  `histogram_quantile(0.95, sum by (le) (rate(mooc_http_request_duration_seconds_bucket[5m])))`.
+En local MinIO reemplaza a Cloud Storage y Postgres corre en un contenedor; el
+codigo es el mismo y solo cambia la configuracion (`internal/config`).
 
-El provisioning vive en `deploy/grafana/provisioning/` (fuente de datos con uid
-fijo `prometheus` + proveedor de dashboards).
+| Servicio | URL |
+|---|---|
+| Frontend web | http://localhost:3001 |
+| API (health / Swagger) | http://localhost:8080/healthz · http://localhost:8080/docs |
+| Bandeja de correo (Mailpit) | http://localhost:8025 |
+| Consola de MinIO | http://localhost:9001 |
+| Prometheus / Grafana | http://localhost:9090 · http://localhost:3000 |
+| Jaeger (trazas) | http://localhost:16686 |
+| PostgreSQL | localhost:5433 |
 
-### Trazas (OpenTelemetry)
+Las credenciales locales estan en
+[`docs/entrega1/CREDENCIALES.md`](docs/entrega1/CREDENCIALES.md).
 
-La API y el worker exportan trazas por OTLP a **Jaeger**:
+```bash
+make up | make down | make logs | make psql
+make reset                           # BORRA los volumenes
+docker compose up --scale worker=3   # varios workers
+```
 
-- **Jaeger UI:** http://localhost:16686 — elige el servicio `mooc-api` o
-  `mooc-worker` y pulsa *Find Traces*. Cada peticion HTTP muestra su span y, por
-  debajo, las consultas SQL (instrumentadas con otelsql); cada trabajo del
-  worker aparece como su propia traza.
-- Se configura con `OTEL_EXPORTER_OTLP_ENDPOINT` (por defecto `jaeger:4318`).
-  Dejala vacia y las trazas se apagan sin tocar el codigo.
-
-La instrumentacion vive en `internal/telemetry` (arranque del exportador),
-`otelgin` en el router y `otelsql` en la conexion a Postgres.
+> `db/init.sql` solo se ejecuta la primera vez que se crea el volumen de
+> Postgres. Si se modifica, hay que correr `make reset` antes de volver a
+> levantar.
 
 ## Uso de agentes de inteligencia artificial
 
-El diseno y la implementacion de este backend se realizaron con asistencia de
-un agente de IA, segun lo permite el enunciado del curso. Debe declararse en
-la sustentacion.
+El diseno y la implementacion se realizaron con asistencia de un agente de IA,
+segun lo permite el enunciado del curso. Debe declararse en la sustentacion.

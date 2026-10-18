@@ -31,7 +31,7 @@
 #     NO recibe insignia, aunque vio el 100% del contenido.
 #
 # Uso (con tus propios archivos, en orden PPTX MP4 JPG1 JPG2 PDF1 PDF2):
-#   ./testdata/smoke_curso_completo.sh 'C:\ruta\pres.pptx' 'C:\ruta\video.mp4' \
+#   ./docs/entrega1/testdata/smoke_curso_completo.sh 'C:\ruta\pres.pptx' 'C:\ruta\video.mp4' \
 #     'C:\ruta\foto1.jpg' 'C:\ruta\foto2.jpg' 'C:\ruta\doc1.pdf' 'C:\ruta\doc2.pdf'
 #
 #   o con variables de entorno: PPTX_PATH, VIDEO_PATH, IMAGE1_PATH,

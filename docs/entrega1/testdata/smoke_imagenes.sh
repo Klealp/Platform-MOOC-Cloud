@@ -14,16 +14,16 @@
 # como argumentos o en IMAGE1_PATH / IMAGE2_PATH. Si es una ruta de
 # Windows (C:\...) se convierte sola con wslpath. Si no pasas nada, se
 # generan dos PNG minimos en caliente y no se agrega ningun binario a
-# testdata/ (ver testdata/README.md).
+# docs/entrega1/testdata/ (ver docs/entrega1/testdata/README.md).
 #
 # Uso:
-#   chmod +x testdata/smoke_imagenes.sh
-#   ./testdata/smoke_imagenes.sh 'C:\Users\kevin\Pictures\foto1.jpg' 'C:\Users\kevin\Pictures\foto2.jpg'
+#   chmod +x docs/entrega1/testdata/smoke_imagenes.sh
+#   ./docs/entrega1/testdata/smoke_imagenes.sh 'C:\Users\kevin\Pictures\foto1.jpg' 'C:\Users\kevin\Pictures\foto2.jpg'
 #
 #   o con variables de entorno:
 #   IMAGE1_PATH=/mnt/c/Users/kevin/Pictures/foto1.jpg \
 #   IMAGE2_PATH=/mnt/c/Users/kevin/Pictures/foto2.jpg \
-#   ./testdata/smoke_imagenes.sh
+#   ./docs/entrega1/testdata/smoke_imagenes.sh
 #
 # Requiere: curl, jq, sha256sum (o shasum), base64.
 # =====================================================================

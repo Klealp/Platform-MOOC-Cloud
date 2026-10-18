@@ -49,7 +49,7 @@ El binario **no pasa por la API**: se sube directo a MinIO con una URL prefirmad
 
 > Para un solo archivo pequeño basta con que `videoSize` sea > 0 (aprox). Para una
 > carga multipart real (archivos grandes en varias partes) es más cómodo el script
-> `testdata/smoke_video.sh`, que parte el archivo y sube cada parte.
+> `docs/entrega1/testdata/smoke_video.sh`, que parte el archivo y sube cada parte.
 
 ## Notas
 
