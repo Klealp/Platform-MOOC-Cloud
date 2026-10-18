@@ -41,7 +41,22 @@ export function RichTextContent({ resourceId }: { resourceId: string }) {
     );
   }
   if (content === null) {
-    return <p className="font-bold opacity-60">Cargando contenido…</p>;
+    // Estado de carga con skeleton (no spinner), según la guía de estilo.
+    return (
+      <div className="reading space-y-3" aria-busy="true" aria-live="polite">
+        <span className="sr-only">Cargando contenido…</span>
+        <div className="h-6 w-2/3 animate-pulse rounded bg-[var(--color-surface-alt)]" />
+        <div className="h-4 w-full animate-pulse rounded bg-[var(--color-surface-alt)]" />
+        <div className="h-4 w-11/12 animate-pulse rounded bg-[var(--color-surface-alt)]" />
+        <div className="h-4 w-full animate-pulse rounded bg-[var(--color-surface-alt)]" />
+        <div className="h-4 w-4/5 animate-pulse rounded bg-[var(--color-surface-alt)]" />
+      </div>
+    );
   }
-  return <MarkdownClient content={content} />;
+  // Contenido de lectura constreñido a ~720px para legibilidad.
+  return (
+    <div className="reading">
+      <MarkdownClient content={content} />
+    </div>
+  );
 }

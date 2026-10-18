@@ -11,8 +11,8 @@ export default async function AdminAuditPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
-        <h1 className="text-4xl font-semibold">Bitácora de auditoría</h1>
+      <main className="mx-auto max-w-[1200px] space-y-6 px-6 py-10">
+        <h1 className="text-3xl font-bold tracking-tight">Bitácora de auditoría</h1>
 
         {entries.length === 0 ? (
           <Alert variant="info">No hay registros de auditoría todavía.</Alert>

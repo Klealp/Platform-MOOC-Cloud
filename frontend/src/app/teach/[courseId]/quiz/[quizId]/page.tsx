@@ -26,7 +26,7 @@ export default async function QuizBuilderPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-4xl space-y-6 px-4 py-10">
+      <main className="mx-auto max-w-4xl space-y-6 px-6 py-10">
         <Link
           href={`/teach/${courseId}`}
           className="inline-flex items-center gap-1 text-sm font-medium underline"

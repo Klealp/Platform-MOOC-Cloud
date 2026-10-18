@@ -37,7 +37,7 @@ export default async function BadgeVerifyPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-2xl space-y-6 px-4 py-12">
+      <main className="mx-auto max-w-2xl space-y-6 px-6 py-12">
         <h1 className="text-center text-3xl font-bold tracking-tight">
           Verificación de insignia
         </h1>
