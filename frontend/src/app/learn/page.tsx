@@ -9,6 +9,7 @@ import { Tag, statusTone } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { WithdrawButton } from "@/components/learn/withdraw-button";
 
 export default async function MyLearningPage() {
   await requireUser("/learn");
@@ -40,13 +41,16 @@ export default async function MyLearningPage() {
                   </h2>
                   <ProgressBar value={e.progress_pct} />
                 </CardBody>
-                <CardFooter>
+                <CardFooter className="flex flex-col items-stretch gap-2">
                   {e.status === "active" ? (
-                    <Link href={`/learn/${e.id}`}>
-                      <Button className="w-full">
-                        Continuar <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                    <>
+                      <Link href={`/learn/${e.id}`}>
+                        <Button className="w-full">
+                          Continuar <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <WithdrawButton enrollmentId={e.id} />
+                    </>
                   ) : (
                     <Link href={`/catalog/${e.slug}`}>
                       <Button variant="outline" className="w-full">

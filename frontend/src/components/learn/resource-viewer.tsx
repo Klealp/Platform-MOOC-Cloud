@@ -9,6 +9,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { VideoPlayer } from "./video-player";
 import { QuizRunner } from "./quiz-runner";
 import { RichTextContent } from "./rich-text-content";
+import { AssetStatusNotice, isAssetReady } from "./asset-status";
 import type { OutlineResource } from "@/lib/api/types";
 
 /**
@@ -72,18 +73,22 @@ export function ResourceViewer({
   switch (resource.type) {
     case "video":
     case "audio":
+      if (!resource.asset_id) {
+        return <Alert variant="warning">Este recurso no tiene archivo asociado.</Alert>;
+      }
+      // Mientras el asset no esté `ready` no intentamos reproducir: mostramos
+      // su estado intermedio (procesando/verificando/fallido).
+      if (!isAssetReady(resource.asset_status)) {
+        return <AssetStatusNotice status={resource.asset_status} />;
+      }
       return (
         <div className="space-y-4">
-          {resource.asset_id ? (
-            <VideoPlayer
-              assetId={resource.asset_id}
-              enrollmentId={enrollmentId}
-              resourceStableId={resource.stable_id}
-              onProgress={onProgress}
-            />
-          ) : (
-            <Alert variant="warning">Este recurso no tiene archivo asociado.</Alert>
-          )}
+          <VideoPlayer
+            assetId={resource.asset_id}
+            enrollmentId={enrollmentId}
+            resourceStableId={resource.stable_id}
+            onProgress={onProgress}
+          />
         </div>
       );
 
@@ -121,16 +126,22 @@ export function ResourceViewer({
       return (
         <Card>
           <CardBody className="space-y-4">
-            {resource.asset_id ? (
+            {!resource.asset_id ? (
+              <Alert variant="warning">Sin archivo asociado.</Alert>
+            ) : !isAssetReady(resource.asset_status) ? (
+              // No ofrecemos la descarga hasta que el archivo esté disponible.
+              <AssetStatusNotice status={resource.asset_status} />
+            ) : (
               <a href={`/api/assets/${resource.asset_id}/url`} target="_blank" rel="noopener noreferrer">
                 <Button variant="secondary">
                   <Download className="h-5 w-5" /> Abrir / descargar
                 </Button>
               </a>
-            ) : (
-              <Alert variant="warning">Sin archivo asociado.</Alert>
             )}
-            {completeButton}
+            {/* Solo permitimos "marcar como visto" cuando el archivo existe y
+                está disponible. */}
+            {(!resource.asset_id || isAssetReady(resource.asset_status)) &&
+              completeButton}
           </CardBody>
         </Card>
       );

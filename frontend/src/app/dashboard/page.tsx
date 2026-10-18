@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, PencilRuler, ShieldCheck, Award, Layers } from "lucide-react";
+import { BookOpen, PencilRuler, ShieldCheck, Award, Layers, Monitor } from "lucide-react";
 
 import { Navbar } from "@/components/layout/navbar";
 import { requireUser } from "@/lib/auth/guards";
@@ -28,12 +28,22 @@ export default async function DashboardPage() {
     { href: "/admin/badges", Icon: Award, t: "Insignias", d: "Revocar insignias." },
   ];
 
+  // Disponible para cualquier rol: gestión de las sesiones propias.
+  const accountCards = [
+    {
+      href: "/account/sessions",
+      Icon: Monitor,
+      t: "Mis sesiones",
+      d: "Revisa y cierra sesiones activas.",
+    },
+  ];
+
   const cards =
     user.role === "admin"
-      ? [...adminCards, ...teacherCards]
+      ? [...adminCards, ...teacherCards, ...accountCards]
       : user.role === "teacher"
-        ? teacherCards
-        : studentCards;
+        ? [...teacherCards, ...accountCards]
+        : [...studentCards, ...accountCards];
 
   return (
     <>
