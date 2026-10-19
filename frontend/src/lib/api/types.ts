@@ -191,13 +191,16 @@ export interface ProgressEventBody {
 
 // ------------------------- Quizzes -------------------------
 
+// El backend identifica preguntas y opciones del intento por stable_id (no hay
+// campo id): las respuestas se envian como { <question_stable_id>: [<option_stable_id>] }.
 export interface QuizOptionView {
-  id: string;
+  stable_id: string;
   text: string;
+  feedback?: string;
 }
 
 export interface QuizQuestionView {
-  id: string;
+  stable_id: string;
   prompt: string;
   points: number;
   multiple: boolean;

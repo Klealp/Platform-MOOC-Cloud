@@ -66,26 +66,31 @@ export function VideoPlayer({
     if (!video) return;
     const src = `/api/assets/${assetId}/playlist`;
 
+    // Se prefiere hls.js sobre el HLS nativo: algunos Chrome recientes
+    // responden "maybe" a canPlayType y luego fallan en silencio (pantalla
+    // negra) sin disparar ningun error visible. El nativo queda para Safari/iOS.
+    // Sin withCredentials: los segmentos van firmados a otro origen (bucket) y
+    // las credenciales harian fallar el CORS con origin "*"; la playlist es
+    // same-origin y la cookie viaja igual.
     let hls: Hls | null = null;
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = src; // Safari / HLS nativo
-    } else if (Hls.isSupported()) {
-      hls = new Hls({
-        xhrSetup: (xhr) => {
-          xhr.withCredentials = true;
-        },
-      });
+    const onNativeError = () => setError("No se pudo cargar el video.");
+    if (Hls.isSupported()) {
+      hls = new Hls();
       hls.loadSource(src);
       hls.attachMedia(video);
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (data.fatal) setError("No se pudo cargar el video.");
       });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = src;
+      video.addEventListener("error", onNativeError);
     } else {
       setError("Tu navegador no soporta la reproducción HLS.");
     }
 
     void sendSignal("open");
     return () => {
+      video.removeEventListener("error", onNativeError);
       hls?.destroy();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

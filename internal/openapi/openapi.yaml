@@ -533,6 +533,38 @@ paths:
         "200": { description: Esquema, progreso por recurso y estado global }
         "404": { $ref: "#/components/responses/NotFound" }
 
+  /enrollments/{id}/resources/{resourceId}/content:
+    get:
+      tags: [learning]
+      summary: Leer el contenido Markdown de un recurso rich_text como estudiante
+      description: |
+        Lectura para quien cursa (la de autoria es `GET /resources/{id}/content`).
+        Solo responde si la inscripcion es del usuario y esta activa, el curso
+        esta publicado y el recurso es `rich_text`, visible y de la version
+        vigente. Cualquier otro caso responde 404. El Markdown es crudo: el
+        cliente debe sanearlo antes de renderizarlo.
+      parameters:
+        - { $ref: "#/components/parameters/PathId" }
+        - name: resourceId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Contenido en Markdown canonico
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, stable_id, title, content_md, updated_at]
+                properties:
+                  id: { type: string, format: uuid }
+                  stable_id: { type: string, format: uuid }
+                  title: { type: string }
+                  content_md: { type: string }
+                  updated_at: { type: string, format: date-time }
+        "404": { $ref: "#/components/responses/NotFound" }
+
   /progress/events:
     post:
       tags: [learning]

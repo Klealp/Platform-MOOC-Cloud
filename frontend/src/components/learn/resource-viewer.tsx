@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, Download, ExternalLink } from "lucide-react";
+import { CheckCircle2, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -10,6 +10,7 @@ import { VideoPlayer } from "./video-player";
 import { QuizRunner } from "./quiz-runner";
 import { RichTextContent } from "./rich-text-content";
 import { AssetStatusNotice, isAssetReady } from "./asset-status";
+import { AssetFileViewer } from "./asset-file-viewer";
 import type { OutlineResource } from "@/lib/api/types";
 
 /**
@@ -97,7 +98,7 @@ export function ResourceViewer({
         <Card>
           <CardBody className="space-y-4">
             {resource.has_content ? (
-              <RichTextContent resourceId={resource.id} />
+              <RichTextContent enrollmentId={enrollmentId} resourceId={resource.id} />
             ) : (
               <Alert variant="info">Este recurso aún no tiene contenido.</Alert>
             )}
@@ -132,11 +133,16 @@ export function ResourceViewer({
               // No ofrecemos la descarga hasta que el archivo esté disponible.
               <AssetStatusNotice status={resource.asset_status} />
             ) : (
-              <a href={`/api/assets/${resource.asset_id}/url`} target="_blank" rel="noopener noreferrer">
-                <Button variant="secondary">
-                  <Download className="h-5 w-5" /> Abrir / descargar
-                </Button>
-              </a>
+              <AssetFileViewer
+                assetId={resource.asset_id}
+                title={resource.title}
+                preview={
+                  resource.type === "pdf" ? "pdf" : resource.type === "image" ? "image" : "none"
+                }
+                // Un recurso "download" existe para descargarse; en imagen y PDF
+                // se respeta la bandera `downloadable` del profesor.
+                allowDownload={resource.type === "download" || resource.downloadable}
+              />
             )}
             {/* Solo permitimos "marcar como visto" cuando el archivo existe y
                 está disponible. */}

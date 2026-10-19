@@ -32,6 +32,7 @@ interface SubmitResponse {
   passed: boolean;
   correct_questions: number;
   total_questions: number;
+  questions?: AttemptView["questions"];
 }
 
 export function QuizRunner({
@@ -120,6 +121,11 @@ export function QuizRunner({
         return;
       }
       setResult(data);
+      // Si la politica del quiz lo permite, el backend devuelve las preguntas
+      // con la retroalimentacion de cada opcion; se reemplazan para mostrarla.
+      if (Array.isArray(data.questions)) {
+        setAttempt((prev) => (prev ? { ...prev, questions: data.questions } : prev));
+      }
       if (data.passed) onPassed();
     } finally {
       setBusy(false);
@@ -185,7 +191,7 @@ export function QuizRunner({
       )}
 
       {attempt.questions.map((q, i) => (
-        <Card key={q.id}>
+        <Card key={q.stable_id}>
           <CardHeader className="flex items-center justify-between gap-2">
             <CardTitle>Pregunta {i + 1}</CardTitle>
             {q.multiple && <Tag tone="purple">Selección múltiple</Tag>}
@@ -194,13 +200,13 @@ export function QuizRunner({
             <p className="font-bold">{q.prompt}</p>
             <ul className="space-y-2">
               {q.options.map((o) => {
-                const selected = (answers[q.id] ?? []).includes(o.id);
+                const selected = (answers[q.stable_id] ?? []).includes(o.stable_id);
                 return (
-                  <li key={o.id}>
+                  <li key={o.stable_id}>
                     <button
                       type="button"
                       disabled={!!finished}
-                      onClick={() => toggle(q.id, o.id, q.multiple)}
+                      onClick={() => toggle(q.stable_id, o.stable_id, q.multiple)}
                       className={`flex w-full items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border)] px-3 py-2 text-left font-medium transition-colors disabled:cursor-default ${
                         selected
                           ? "border-[var(--color-primary)] bg-[color-mix(in_srgb,var(--color-primary)_10%,transparent)]"
@@ -218,6 +224,11 @@ export function QuizRunner({
                       </span>
                       {o.text}
                     </button>
+                    {finished && selected && o.feedback && (
+                      <p className="mt-1 ml-8 text-sm text-[var(--color-text-muted)]">
+                        {o.feedback}
+                      </p>
+                    )}
                   </li>
                 );
               })}

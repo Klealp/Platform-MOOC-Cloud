@@ -28,7 +28,8 @@ export function AddResourceDialog({
   onDone,
 }: {
   unitId: string;
-  onDone: () => void;
+  /** Recibe el quiz_id cuando el recurso creado es un quiz. */
+  onDone: (quizId?: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<ResourceType>("rich_text");
@@ -71,7 +72,7 @@ export function AddResourceDialog({
       else {
         reset();
         setOpen(false);
-        onDone();
+        onDone(res.quiz_id);
       }
     });
   }
@@ -120,6 +121,13 @@ export function AddResourceDialog({
         </Field>
       )}
 
+      {type === "quiz" && (
+        <Alert variant="info">
+          Al crear el recurso se abrirá el constructor del quiz, donde podrás
+          añadir las preguntas, sus opciones y la nota mínima para aprobar.
+        </Alert>
+      )}
+
       {MEDIA_TYPES.has(type) && (
         <div>
           <p className="mb-1.5 text-sm font-medium">Archivo</p>
@@ -139,7 +147,7 @@ export function AddResourceDialog({
 
       <div className="flex gap-2">
         <Button size="sm" onClick={submit} disabled={pending}>
-          {pending ? "Creando…" : "Crear recurso"}
+          {pending ? "Creando…" : type === "quiz" ? "Crear quiz y añadir preguntas" : "Crear recurso"}
         </Button>
         <Button size="sm" variant="ghost" onClick={() => { reset(); setOpen(false); }}>
           Cancelar

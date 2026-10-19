@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lib/pq"
 
 	"mooc-platform/internal/audit"
@@ -401,6 +402,60 @@ func (s *Server) handleEnrollmentOutline(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"enrollment_id": enrollmentID, "course_id": courseID, "version_id": versionID,
 		"modules": modules, "resource_progress": byStable, "progress": result,
+	})
+}
+
+// handleEnrollmentResourceContent entrega al estudiante el Markdown de un
+// recurso rich_text. GET /resources/:id/content es de autoria (expone la
+// revision y admite cualquier version, incluidos borradores); esta es la
+// lectura de quien cursa.
+//
+// Toda la regla de acceso va en el WHERE, la misma de canAccessAsset: la
+// inscripcion es del usuario y esta activa, el curso esta publicado, el
+// recurso pertenece a la version VIGENTE y es visible. Cualquier otro caso
+// (recurso ajeno, borrador, oculto, de otro curso) responde 404.
+func (s *Server) handleEnrollmentResourceContent(c *gin.Context) {
+	// Un id mal formado no es un error del servidor: es un recurso que no existe.
+	if _, err := uuid.Parse(c.Param("id")); err != nil {
+		notFound(c, "Recurso no encontrado.")
+		return
+	}
+	if _, err := uuid.Parse(c.Param("resourceId")); err != nil {
+		notFound(c, "Recurso no encontrado.")
+		return
+	}
+
+	var resourceID, stableID, title, content string
+	var updated time.Time
+	err := s.db.QueryRowContext(c.Request.Context(), `
+		SELECT r.id, r.stable_id, r.title, r.content_md, r.updated_at
+		FROM enrollments e
+		JOIN courses co ON co.id = e.course_id
+		JOIN course_versions v ON v.id = co.current_version_id
+		JOIN modules m ON m.version_id = v.id
+		JOIN units u ON u.module_id = m.id
+		JOIN resources r ON r.unit_id = u.id
+		WHERE e.id = $1
+		  AND e.user_id = $2
+		  AND e.status = 'active'
+		  AND co.status = 'published'
+		  AND r.id = $3
+		  AND r.visible
+		  AND r.type = 'rich_text'`,
+		c.Param("id"), currentUser(c).UserID, c.Param("resourceId")).
+		Scan(&resourceID, &stableID, &title, &content, &updated)
+	if errors.Is(err, sql.ErrNoRows) {
+		notFound(c, "Recurso no encontrado.")
+		return
+	}
+	if err != nil {
+		internalError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id": resourceID, "stable_id": stableID, "title": title,
+		"content_md": content, "updated_at": updated,
 	})
 }
 

@@ -8,6 +8,7 @@ import { Card, CardBody, CardFooter } from "@/components/ui/card";
 import { Tag } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { formatDate } from "@/lib/utils";
+import { ShareBadgeLink } from "@/components/learn/share-badge-link";
 
 export default async function MyBadgesPage() {
   await requireUser("/learn/badges");
@@ -40,12 +41,18 @@ export default async function MyBadgesPage() {
                   {b.revoked_at && <Tag tone="danger">revocada</Tag>}
                 </CardBody>
                 <CardFooter className="text-center">
-                  <Link
-                    href={`/badges/verify/${b.public_code}`}
-                    className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline"
-                  >
-                    Verificar <ExternalLink className="h-4 w-4" />
-                  </Link>
+                  {b.revoked_at ? (
+                    // Una insignia revocada no se ofrece para compartir; su
+                    // pagina publica sigue indicando que fue revocada.
+                    <Link
+                      href={`/badges/verify/${b.public_code}`}
+                      className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline"
+                    >
+                      Ver estado <ExternalLink className="h-4 w-4" />
+                    </Link>
+                  ) : (
+                    <ShareBadgeLink code={b.public_code} courseTitle={b.course_title} />
+                  )}
                 </CardFooter>
               </Card>
             ))}

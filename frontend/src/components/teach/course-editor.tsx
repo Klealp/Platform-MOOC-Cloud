@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Plus, Rocket, Trash2, GitBranch, EyeOff } from "lucide-react";
+import { Plus, Rocket, Trash2, GitBranch, EyeOff, ListChecks } from "lucide-react";
 
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -195,12 +195,15 @@ export function CourseEditor({
                             {r.title}
                           </a>
                         ) : r.type === "quiz" && r.quiz_id && isDraft ? (
-                          <a
-                            href={`/teach/${course.id}/quiz/${r.quiz_id}`}
-                            className="flex-1 truncate underline"
-                          >
-                            {r.title}
-                          </a>
+                          <>
+                            <span className="flex-1 truncate">{r.title}</span>
+                            <a
+                              href={`/teach/${course.id}/quiz/${r.quiz_id}`}
+                              className="inline-flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border)] px-2 py-0.5 text-xs font-medium transition-colors hover:bg-[var(--color-surface-alt)]"
+                            >
+                              <ListChecks className="h-3 w-3" /> Preguntas y configuración
+                            </a>
+                          </>
                         ) : (
                           <span className="flex-1 truncate">{r.title}</span>
                         )}
@@ -220,7 +223,14 @@ export function CourseEditor({
                   </ul>
                   {isDraft && (
                     <div className="mt-2">
-                      <AddResourceDialog unitId={unit.id} onDone={() => router.refresh()} />
+                      <AddResourceDialog
+                        unitId={unit.id}
+                        onDone={(quizId) =>
+                          quizId
+                            ? router.push(`/teach/${course.id}/quiz/${quizId}`)
+                            : router.refresh()
+                        }
+                      />
                     </div>
                   )}
                 </div>

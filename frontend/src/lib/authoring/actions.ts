@@ -131,18 +131,20 @@ export interface CreateResourceInput {
 export async function createResourceAction(
   unitId: string,
   input: CreateResourceInput,
-): Promise<AuthoringResult> {
+): Promise<AuthoringResult & { quiz_id?: string }> {
+  let created: { quiz_id?: string };
   try {
-    await apiFetch(`/units/${encodeURIComponent(unitId)}/resources`, {
-      method: "POST",
-      json: input,
-    });
+    created = await apiFetch<{ quiz_id?: string }>(
+      `/units/${encodeURIComponent(unitId)}/resources`,
+      { method: "POST", json: input },
+    );
   } catch (err) {
     if (err instanceof ApiRequestError) return { error: err.message };
     return { error: "No se pudo crear el recurso." };
   }
   revalidatePath("/teach", "layout");
-  return { ok: true };
+  // Un recurso quiz nace con su quiz vacio; el id permite abrir el constructor.
+  return { ok: true, quiz_id: created?.quiz_id };
 }
 
 export async function deleteModuleAction(moduleId: string): Promise<AuthoringResult> {

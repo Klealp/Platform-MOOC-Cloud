@@ -181,6 +181,7 @@ func (s *Server) Router() *gin.Engine {
 		priv.GET("/enrollments/:id", s.handleGetEnrollment)
 		priv.DELETE("/enrollments/:id", s.handleWithdraw)
 		priv.GET("/enrollments/:id/outline", s.handleEnrollmentOutline)
+		priv.GET("/enrollments/:id/resources/:resourceId/content", s.handleEnrollmentResourceContent)
 		priv.POST("/progress/events", s.handleProgressEvent)
 
 		// --- Presentacion de quizzes ---
