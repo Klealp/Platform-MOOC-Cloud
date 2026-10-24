@@ -21,6 +21,14 @@ terminadas; el proyecto se prepara para la **Entrega 3**.
   (TypeScript). No modificarlo al trabajar en el backend salvo peticion
   explicita; si cambia el contrato OpenAPI, avisar que el frontend regenera
   sus tipos con `npm run gen:api`.
+- El frontend debe cumplir **WCAG 2.2 AA** (criterio de calificacion). Al
+  tocarlo, seguir las convenciones de la seccion "Accesibilidad" de
+  `frontend/README.md` (tokens de color, `Field`, `ButtonLink`, titulos por
+  pagina, nada de texto atenuado con `opacity`) y volver a correr la auditoria
+  de `docs/entrega3/Prueba Accesibilidad/`. La ultima ejecucion (2026-10-24)
+  aprobo las 38 auditorias. Los subtitulos y transcripciones de video/audio
+  (1.2.2 y 1.2.5) siguen pendientes: necesitan que el backend guarde pistas
+  WebVTT.
 
 Un proyecto anterior del mismo autor, `okf-platform` (conversion de documentos
 a bundles OKF), sirvio de referencia: se conservan a proposito su estructura de
@@ -90,6 +98,9 @@ capacity-planning/ pruebas de carga k6 e informe de capacidad (escenarios 1 y 2)
 postman/          coleccion de la API y entornos local y nube
 docs/entrega1/    ARQUITECTURA.md, DOCUMENTACION.md, CREDENCIALES.md (locales)
 docs/entrega2/    documento de arquitectura del despliegue en GCP y diagramas
+docs/entrega3/    "Prueba Accesibilidad/": auditoria WCAG 2.2 AA con Playwright +
+                  axe que corre en un contenedor (ejecutar.sh) y deja su
+                  reporte en resultados/REPORTE.md
 docs/entrega1/testdata/
                   smoke.sh, otros smoke_*.sh (cada uno demuestra un
                   comportamiento concreto: un formato de archivo, un
@@ -167,6 +178,7 @@ make logs    # sigue los logs de api y worker
 make psql    # consola SQL
 docker compose up -d --build --no-deps web   # reconstruye solo el frontend
 ./docs/entrega1/testdata/smoke.sh   # prueba de humo de extremo a extremo
+"./docs/entrega3/Prueba Accesibilidad/ejecutar.sh"   # auditoria WCAG 2.2 AA (en contenedor)
 
 # Nube (ver docs/entrega2/README.md seccion 6)
 ./deploy/gcp/provision.sh todo|config|resumen
@@ -214,4 +226,7 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
   tambien en `frontend/src/components/admin/audit-filters.tsx`.
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
-- No hay pruebas unitarias todavia, solo la prueba de humo.
+- No hay pruebas unitarias ni CI todavia. Las pruebas automatizadas son la
+  prueba de humo (`smoke*.sh`) y la auditoria de accesibilidad
+  (`docs/entrega3/Prueba Accesibilidad/ejecutar.sh`). Faltan, segun la
+  retroalimentacion de la Entrega 1, compatibilidad y recuperacion.

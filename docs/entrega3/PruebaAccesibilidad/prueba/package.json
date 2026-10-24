@@ -1,0 +1,10 @@
+{
+  "name": "mooc-auditoria-accesibilidad",
+  "private": true,
+  "description": "Auditoria automatica WCAG 2.2 AA del frontend con Playwright + axe-core. Corre dentro de la imagen oficial de Playwright (ver ../ejecutar.sh).",
+  "type": "module",
+  "dependencies": {
+    "@axe-core/playwright": "4.10.1",
+    "playwright": "1.49.1"
+  }
+}

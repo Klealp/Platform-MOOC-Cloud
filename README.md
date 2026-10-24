@@ -19,6 +19,9 @@ todo en contenedores.
 | Arquitectura del despliegue en GCP (Entrega 2) | [`docs/entrega2/README.md`](docs/entrega2/README.md) |
 | Informe de capacidad (Entrega 2) | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
 | Aprovisionamiento, compose por VM y migracion | [`deploy/gcp/`](deploy/gcp/) |
+| Prueba automatica de accesibilidad WCAG 2.2 AA (Entrega 3) | [`docs/entrega3/Prueba Accesibilidad/README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md) |
+| Ultimo reporte de accesibilidad | [`docs/entrega3/Prueba Accesibilidad/resultados/REPORTE.md`](docs/entrega3/Prueba%20Accesibilidad/resultados/REPORTE.md) |
+| Convenciones de accesibilidad del frontend | [`frontend/README.md`](frontend/README.md), seccion "Accesibilidad (WCAG 2.2 AA)" |
 | URL de la aplicacion | https://136-114-53-21.sslip.io |
 
 Las credenciales de la nube se entregan al equipo docente por el canal privado
@@ -77,6 +80,23 @@ registrar un estudiante, inscribirlo, reportar progreso, presentar el quiz y
 verificar la insignia. De paso comprueba tres condiciones de la rubrica:
 el rechazo del porcentaje enviado por el cliente, la idempotencia del envio
 del quiz y el aislamiento entre estudiantes.
+
+## Prueba de accesibilidad
+
+```bash
+"./docs/entrega3/Prueba Accesibilidad/ejecutar.sh"
+```
+
+Auditoria automatica WCAG 2.2 AA con Playwright + axe-core. Corre por completo
+dentro de la imagen oficial de Playwright, conectada a la red de Docker
+Compose: no instala nada en la maquina ni modifica la API. Recorre 19 paginas
+de los cuatro roles (anonimo, estudiante, profesor, administrador) en tema
+claro y oscuro, y aprueba solo si ninguna tiene incumplimientos `critical` o
+`serious`. Requiere el proyecto levantado y los datos que deja la prueba de
+humo. El reporte queda en
+[`resultados/REPORTE.md`](docs/entrega3/Prueba%20Accesibilidad/resultados/REPORTE.md); la ultima
+ejecucion (2026-10-24) aprobo las 38 auditorias. Paso a paso en
+[`docs/entrega3/Prueba Accesibilidad/README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md).
 
 ## Comandos frecuentes
 
@@ -155,7 +175,8 @@ operacion (despliegue, migracion, respaldo) ver
 | [`capacity-planning/`](capacity-planning/) | Scripts de k6, resultados y el informe de capacidad de los escenarios 1 y 2. | [`capacity-planning/README.md`](capacity-planning/README.md), [`capacity-planning/escenario2/README.md`](capacity-planning/escenario2/README.md) |
 | [`postman/`](postman/) | Coleccion de la API y entornos local y nube. | [`postman/README.md`](postman/README.md) |
 | [`.postman/`](.postman/) | Metadatos del workspace de Postman. | — |
-| [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/`, `entrega2/`). | — |
+| [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/`, `entrega2/`, `entrega3/`). | — |
+| [`docs/entrega3/Prueba Accesibilidad/`](docs/entrega3/Prueba%20Accesibilidad/) | Auditoria automatica WCAG 2.2 AA (`ejecutar.sh`, script de Playwright + axe en `prueba/`) y su ultimo reporte en `resultados/`. | [`README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md) |
 | [`docs/entrega1/testdata/`](docs/entrega1/testdata/) | Pruebas de humo de extremo a extremo (`smoke.sh` y `smoke_*.sh`, cada una demuestra un comportamiento concreto). | [`docs/entrega1/testdata/README.md`](docs/entrega1/testdata/README.md) |
 | `Dockerfile.api`, `Dockerfile.worker`, `Dockerfile.web` | Imagenes de la API, el worker y el frontend. | — |
 | `docker-compose.yml`, `Makefile` | Entorno local completo y atajos. | Esta pagina |

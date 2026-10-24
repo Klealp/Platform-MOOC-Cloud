@@ -80,7 +80,9 @@ Convenciones que mantienen el frontend dentro de AA; respetarlas al agregar UI:
   (`--color-success/warning/danger/accent`) están calibrados para 4.5:1 como
   texto en ambos temas; sobre un fondo de marca o de peligro el texto va en
   `--color-on-primary` / `--color-on-danger`, nunca `text-white`. Los bordes
-  de controles usan `--color-border-strong` (3:1).
+  de controles usan `--color-border-strong` (3:1). No atenuar texto con
+  `opacity-*` (la auditoría lo detectó: baja a 4.48:1); usar
+  `--color-text-muted`.
 - **Foco:** contorno sólido global en `:focus-visible`; no quitarlo.
   `scroll-padding-top` evita que la barra sticky tape el elemento enfocado.
 - **Estructura:** cada página exporta `metadata.title`, tiene un `h1` y su
@@ -93,6 +95,9 @@ Convenciones que mantienen el frontend dentro de AA; respetarlas al agregar UI:
 - **Estados:** `Alert` anuncia (`alert` para errores, `status` para el resto);
   un estado que se muestra con icono o color se repite en texto `sr-only`.
 - **Filtros:** los `<select>` no navegan al cambiar; se aplica con el botón.
+
+La auditoría automática está en `docs/entrega3/Prueba Accesibilidad/`
+(`ejecutar.sh`, corre en un contenedor); volver a correrla tras cambiar la UI.
 
 Pendiente fuera del frontend: subtítulos y transcripciones de video/audio
 (1.2.2 y 1.2.5) requieren que el backend almacene pistas WebVTT.

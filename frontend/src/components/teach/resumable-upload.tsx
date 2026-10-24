@@ -295,7 +295,7 @@ export function ResumableUpload({
           </div>
         </div>
       )}
-      {!busy && status && <p role="status" className="text-xs font-bold opacity-70">{status}</p>}
+      {!busy && status && <p role="status" className="text-xs font-bold text-[var(--color-text-muted)]">{status}</p>}
     </div>
   );
 }

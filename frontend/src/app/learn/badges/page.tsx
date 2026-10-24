@@ -30,7 +30,12 @@ export default async function MyBadgesPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {badges.map((b) => (
-              <Card key={b.id} className={b.revoked_at ? "opacity-60" : ""}>
+              <Card
+                key={b.id}
+                // Revocada: borde punteado en vez de opacidad, que bajaria el
+                // contraste del texto por debajo de 4.5:1; la etiqueta dice el estado.
+                className={b.revoked_at ? "border-dashed" : ""}
+              >
                 <CardBody className="space-y-3 text-center">
                   <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-warning)_14%,transparent)] text-[var(--color-warning)]">
                     <Award className="h-10 w-10" />

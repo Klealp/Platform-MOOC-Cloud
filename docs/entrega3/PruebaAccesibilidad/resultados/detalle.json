@@ -1,0 +1,268 @@
+[
+  {
+    "nombre": "Inicio",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/",
+    "violaciones": []
+  },
+  {
+    "nombre": "Inicio",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/",
+    "violaciones": []
+  },
+  {
+    "nombre": "Catalogo",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/catalog",
+    "violaciones": []
+  },
+  {
+    "nombre": "Catalogo",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/catalog",
+    "violaciones": []
+  },
+  {
+    "nombre": "Ficha de curso",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/catalog/fundamentos-de-la-nube-4",
+    "violaciones": []
+  },
+  {
+    "nombre": "Ficha de curso",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/catalog/fundamentos-de-la-nube-4",
+    "violaciones": []
+  },
+  {
+    "nombre": "Iniciar sesion",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/login",
+    "violaciones": []
+  },
+  {
+    "nombre": "Iniciar sesion",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/login",
+    "violaciones": []
+  },
+  {
+    "nombre": "Crear cuenta",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/register",
+    "violaciones": []
+  },
+  {
+    "nombre": "Crear cuenta",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/register",
+    "violaciones": []
+  },
+  {
+    "nombre": "Pagina 404",
+    "rol": "anonimo",
+    "tema": "claro",
+    "ruta": "/pagina-que-no-existe",
+    "violaciones": []
+  },
+  {
+    "nombre": "Pagina 404",
+    "rol": "anonimo",
+    "tema": "oscuro",
+    "ruta": "/pagina-que-no-existe",
+    "violaciones": []
+  },
+  {
+    "nombre": "Panel",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/dashboard",
+    "violaciones": []
+  },
+  {
+    "nombre": "Panel",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/dashboard",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis cursos",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/learn",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis cursos",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/learn",
+    "violaciones": []
+  },
+  {
+    "nombre": "Reproductor del curso",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/learn/25a60e9e-f61f-4ed5-8eaf-e5f320c2c787",
+    "violaciones": []
+  },
+  {
+    "nombre": "Reproductor del curso",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/learn/25a60e9e-f61f-4ed5-8eaf-e5f320c2c787",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis insignias",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/learn/badges",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis insignias",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/learn/badges",
+    "violaciones": []
+  },
+  {
+    "nombre": "Verificacion publica de insignia",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/badges/verify/imflxsi7inqtwsvwq3qasvgr",
+    "violaciones": []
+  },
+  {
+    "nombre": "Verificacion publica de insignia",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/badges/verify/imflxsi7inqtwsvwq3qasvgr",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis sesiones",
+    "rol": "estudiante",
+    "tema": "claro",
+    "ruta": "/account/sessions",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis sesiones",
+    "rol": "estudiante",
+    "tema": "oscuro",
+    "ruta": "/account/sessions",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis cursos (autoria)",
+    "rol": "profesor",
+    "tema": "claro",
+    "ruta": "/teach",
+    "violaciones": []
+  },
+  {
+    "nombre": "Mis cursos (autoria)",
+    "rol": "profesor",
+    "tema": "oscuro",
+    "ruta": "/teach",
+    "violaciones": []
+  },
+  {
+    "nombre": "Nuevo curso",
+    "rol": "profesor",
+    "tema": "claro",
+    "ruta": "/teach/new",
+    "violaciones": []
+  },
+  {
+    "nombre": "Nuevo curso",
+    "rol": "profesor",
+    "tema": "oscuro",
+    "ruta": "/teach/new",
+    "violaciones": []
+  },
+  {
+    "nombre": "Editor de curso",
+    "rol": "profesor",
+    "tema": "claro",
+    "ruta": "/teach/8d5e407e-9526-4b35-8772-c724cd870972",
+    "violaciones": []
+  },
+  {
+    "nombre": "Editor de curso",
+    "rol": "profesor",
+    "tema": "oscuro",
+    "ruta": "/teach/8d5e407e-9526-4b35-8772-c724cd870972",
+    "violaciones": []
+  },
+  {
+    "nombre": "Usuarios y roles",
+    "rol": "admin",
+    "tema": "claro",
+    "ruta": "/admin/users",
+    "violaciones": []
+  },
+  {
+    "nombre": "Usuarios y roles",
+    "rol": "admin",
+    "tema": "oscuro",
+    "ruta": "/admin/users",
+    "violaciones": []
+  },
+  {
+    "nombre": "Bitacora de auditoria",
+    "rol": "admin",
+    "tema": "claro",
+    "ruta": "/admin/audit",
+    "violaciones": []
+  },
+  {
+    "nombre": "Bitacora de auditoria",
+    "rol": "admin",
+    "tema": "oscuro",
+    "ruta": "/admin/audit",
+    "violaciones": []
+  },
+  {
+    "nombre": "Insignias (administracion)",
+    "rol": "admin",
+    "tema": "claro",
+    "ruta": "/admin/badges",
+    "violaciones": []
+  },
+  {
+    "nombre": "Insignias (administracion)",
+    "rol": "admin",
+    "tema": "oscuro",
+    "ruta": "/admin/badges",
+    "violaciones": []
+  },
+  {
+    "nombre": "Todos los cursos",
+    "rol": "admin",
+    "tema": "claro",
+    "ruta": "/teach",
+    "violaciones": []
+  },
+  {
+    "nombre": "Todos los cursos",
+    "rol": "admin",
+    "tema": "oscuro",
+    "ruta": "/teach",
+    "violaciones": []
+  }
+]

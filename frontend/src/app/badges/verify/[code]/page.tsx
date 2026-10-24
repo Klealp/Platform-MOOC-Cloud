@@ -78,23 +78,23 @@ export default async function BadgeVerifyPage({
 
               <dl className="space-y-2 text-left text-sm">
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Titular</dt>
+                  <dt className="text-[var(--color-text-muted)]">Titular</dt>
                   <dd className="text-right">{badge.recipient}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Curso</dt>
+                  <dt className="text-[var(--color-text-muted)]">Curso</dt>
                   <dd className="text-right">{badge.course}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Emitida por</dt>
+                  <dt className="text-[var(--color-text-muted)]">Emitida por</dt>
                   <dd className="text-right">{badge.issued_by}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Fecha de emisión</dt>
+                  <dt className="text-[var(--color-text-muted)]">Fecha de emisión</dt>
                   <dd className="text-right">{formatDate(badge.issued_at)}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Código</dt>
+                  <dt className="text-[var(--color-text-muted)]">Código</dt>
                   <dd className="text-right font-mono text-xs">
                     {badge.public_code}
                   </dd>
