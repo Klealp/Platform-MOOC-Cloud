@@ -1,0 +1,22 @@
+# =====================================================================
+# Grupo mooc-web (Entrega 3): frontend Next.js (BFF), grupo de tamano fijo 1.
+#
+# No autoescala (el enunciado no lo exige), pero vive en un grupo para
+# arrancar desde plantilla y repararse solo si la VM falla. No se ejecuta a
+# mano: llega en el metadato mooc-compose (ver deploy/gcp/mig/startup.sh).
+#
+# El balanceador le envia todo lo que no es /api/v1/*. El BFF llama a la API
+# por el mismo balanceador (API_BASE_URL en web.env), no por la red local.
+# =====================================================================
+name: mooc
+
+services:
+  web:
+    image: ${MOOC_IMAGE:?MOOC_IMAGE la define startup.sh}
+    env_file: /etc/mooc/web.env
+    ports:
+      - "3000:3000"
+    stop_grace_period: 15s
+    logging:
+      driver: gcplogs
+    restart: unless-stopped

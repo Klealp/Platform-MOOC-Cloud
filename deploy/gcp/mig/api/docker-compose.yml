@@ -1,0 +1,28 @@
+# =====================================================================
+# Grupo mooc-api (Entrega 3): una API por VM, detras del balanceador.
+#
+# No se ejecuta a mano: la plantilla de instancia lleva este archivo en el
+# metadato mooc-compose y deploy/gcp/mig/startup.sh lo escribe en
+# /opt/mooc/docker-compose.yml. MOOC_IMAGE la fija startup.sh con la
+# version de la plantilla, asi que todas las replicas corren la misma imagen.
+#
+# Sin Caddy: el balanceador termina TLS y enruta /api/v1/* a este puerto.
+# =====================================================================
+name: mooc
+
+services:
+  api:
+    image: ${MOOC_IMAGE:?MOOC_IMAGE la define startup.sh}
+    env_file: /etc/mooc/api.env
+    # El firewall solo abre 8080 a los rangos del balanceador (verificaciones
+    # de salud y trafico) y a Prometheus en infra-server.
+    ports:
+      - "8080:8080"
+    # Mayor que el apagado ordenado de la API (20 s en cmd/api/main.go) y
+    # menor que el margen de ~90 s del shutdown-script.
+    stop_grace_period: 25s
+    # Logs directo a Cloud Logging, etiquetados con la instancia: permiten
+    # mostrar a que replica llego cada peticion.
+    logging:
+      driver: gcplogs
+    restart: unless-stopped

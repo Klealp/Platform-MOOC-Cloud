@@ -1,0 +1,24 @@
+# =====================================================================
+# Grupo mooc-worker (Entrega 3): un worker por VM, todos consumiendo la
+# misma cola de Redis en infra-server.
+#
+# No se ejecuta a mano: llega en el metadato mooc-compose de la plantilla
+# (ver deploy/gcp/mig/startup.sh). Redis NO vive aqui: el autoescalador
+# puede retirar esta VM en cualquier momento.
+# =====================================================================
+name: mooc
+
+services:
+  worker:
+    image: ${MOOC_IMAGE:?MOOC_IMAGE la define startup.sh}
+    env_file: /etc/mooc/worker.env
+    # Metricas (:9100/metrics) para Prometheus en infra-server.
+    ports:
+      - "9100:9100"
+    # Tiempo para que los trabajos activos terminen antes del SIGKILL. Lo
+    # acota el margen de ~90 s de Compute Engine (ver shutdown.sh); lo que no
+    # termine vuelve a la cola y otro worker lo reintenta.
+    stop_grace_period: 80s
+    logging:
+      driver: gcplogs
+    restart: unless-stopped
