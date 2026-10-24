@@ -59,7 +59,7 @@ export function ShareBadgeLink({ code, courseTitle }: { code: string; courseTitl
         className="w-full truncate rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1.5 font-mono text-xs"
       />
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <Button size="sm" variant="outline" onClick={copy}>
+        <Button size="sm" variant="outline" onClick={copy} aria-live="polite">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied ? "Copiado" : "Copiar enlace"}
         </Button>
@@ -72,7 +72,8 @@ export function ShareBadgeLink({ code, courseTitle }: { code: string; courseTitl
           href={path}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline"
+          aria-label="Ver página pública (se abre en una pestaña nueva)"
+          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] underline underline-offset-2"
         >
           Ver página pública <ExternalLink className="h-4 w-4" />
         </a>

@@ -1,14 +1,16 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { Award, CheckCircle2, XCircle } from "lucide-react";
 
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { Tag } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { verifyBadge } from "@/lib/api/public";
 import { ApiRequestError } from "@/lib/api/server-client";
 import { formatDate } from "@/lib/utils";
+
+export const metadata: Metadata = { title: "Verificar insignia" };
 
 /**
  * Verificación PÚBLICA de una insignia. No requiere sesión: cualquiera con el
@@ -37,7 +39,7 @@ export default async function BadgeVerifyPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-2xl space-y-6 px-6 py-12">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-2xl space-y-6 px-6 py-12">
         <h1 className="text-center text-3xl font-bold tracking-tight">
           Verificación de insignia
         </h1>
@@ -116,9 +118,7 @@ export default async function BadgeVerifyPage({
         )}
 
         <div className="text-center">
-          <Link href="/catalog">
-            <Button variant="outline">Ver catálogo de cursos</Button>
-          </Link>
+          <ButtonLink href="/catalog" variant="outline">Ver catálogo de cursos</ButtonLink>
         </div>
       </main>
     </>

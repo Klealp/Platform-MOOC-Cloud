@@ -25,7 +25,7 @@ export function MarkdownClient({
         "[&_h1]:text-2xl [&_h1]:font-semibold",
         "[&_h2]:text-xl [&_h2]:font-semibold",
         "[&_h3]:text-lg [&_h3]:font-medium",
-        "[&_a]:text-[var(--color-primary)] [&_a]:hover:underline",
+        "[&_a]:text-[var(--color-primary)] [&_a]:underline [&_a]:underline-offset-2",
         "[&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6",
         "[&_code]:bg-[var(--color-surface-alt)] [&_code]:px-1 [&_code]:font-mono [&_code]:text-sm [&_code]:rounded-[var(--radius-sm)]",
         "[&_pre]:border [&_pre]:border-[var(--color-border)] [&_pre]:bg-[var(--color-surface-alt)] [&_pre]:p-3 [&_pre]:text-[var(--color-text)] [&_pre]:overflow-x-auto [&_pre]:rounded-[var(--radius-md)]",

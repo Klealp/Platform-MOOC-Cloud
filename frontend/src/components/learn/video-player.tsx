@@ -22,14 +22,16 @@ type Signal = "open" | "heartbeat" | "complete";
 
 export function VideoPlayer({
   assetId,
+  title,
   enrollmentId,
   resourceStableId,
   onProgress,
 }: {
   assetId: string;
+  title: string;
   enrollmentId: string;
   resourceStableId: string;
-  onProgress?: (completed: boolean, pct?: number) => void;
+  onProgress?: (completed: boolean, pct?: number, state?: string) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +55,11 @@ export function VideoPlayer({
       });
       if (res.ok) {
         const data = await res.json();
-        onProgress?.(data.resource?.completed ?? false, data.progress?.progress_pct);
+        onProgress?.(
+          data.resource?.completed ?? false,
+          data.progress?.progress_pct,
+          data.progress?.state,
+        );
       }
     } catch {
       // Reintentamos en el siguiente heartbeat; no interrumpimos la reproduccion.
@@ -144,6 +150,7 @@ export function VideoPlayer({
     <video
       ref={videoRef}
       controls
+      aria-label={title}
       className="aspect-video w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-black"
     />
   );

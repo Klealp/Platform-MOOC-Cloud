@@ -10,9 +10,10 @@ export function LogoutButton() {
       <button
         type="submit"
         title="Cerrar sesión"
+        aria-label="Salir (cerrar sesión)"
         className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-text)]"
       >
-        <LogOut className="h-4 w-4" />
+        <LogOut className="h-4 w-4" aria-hidden />
         <span className="hidden sm:inline">Salir</span>
       </button>
     </form>

@@ -1,12 +1,13 @@
-import Link from "next/link";
-
+import type { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
 import { CatalogFilters } from "@/components/catalog/catalog-filters";
 import { CourseCard } from "@/components/catalog/course-card";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { listCatalog, type CatalogFilters as Filters } from "@/lib/api/catalog";
 import { ApiRequestError } from "@/lib/api/server-client";
+
+export const metadata: Metadata = { title: "Catálogo" };
 
 export default async function CatalogPage({
   searchParams,
@@ -48,7 +49,7 @@ export default async function CatalogPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-[1200px] space-y-8 px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-[1200px] space-y-8 px-6 py-10">
         <h1 className="text-3xl font-bold tracking-tight">Catálogo</h1>
         <CatalogFilters />
 
@@ -65,9 +66,7 @@ export default async function CatalogPage({
             </div>
             {nextCursor && (
               <div className="flex justify-center pt-4">
-                <Link href={cursorHref(nextCursor)}>
-                  <Button variant="secondary">Cargar más</Button>
-                </Link>
+                <ButtonLink href={cursorHref(nextCursor)} variant="secondary">Cargar más</ButtonLink>
               </div>
             )}
           </>

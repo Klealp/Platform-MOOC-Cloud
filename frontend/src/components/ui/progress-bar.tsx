@@ -6,10 +6,13 @@ import { cn } from "@/lib/utils";
  */
 export function ProgressBar({
   value,
+  label = "Progreso",
   className,
   showLabel = true,
 }: {
   value: number;
+  /** Nombre accesible de la barra (un progressbar sin nombre no se entiende). */
+  label?: string;
   className?: string;
   showLabel?: boolean;
 }) {
@@ -20,6 +23,7 @@ export function ProgressBar({
       <div
         className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-alt)]"
         role="progressbar"
+        aria-label={label}
         aria-valuenow={pct}
         aria-valuemin={0}
         aria-valuemax={100}

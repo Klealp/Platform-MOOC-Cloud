@@ -165,6 +165,7 @@ make up      # levanta todo
 make reset   # BORRA los volumenes; obligatorio tras cambiar db/init.sql
 make logs    # sigue los logs de api y worker
 make psql    # consola SQL
+docker compose up -d --build --no-deps web   # reconstruye solo el frontend
 ./docs/entrega1/testdata/smoke.sh   # prueba de humo de extremo a extremo
 
 # Nube (ver docs/entrega2/README.md seccion 6)
@@ -198,9 +199,19 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
   la API, autoescalado de workers, BD con alta disponibilidad y Redis
   administrado. Son las candidatas a la evolucion elastica (seccion 7.4 de
   `docs/entrega2/README.md`); el informe de capacidad decide cual aporta mas.
-- `GET /resources/:id/content` esta restringido a profesor/admin, asi que un
-  estudiante no puede leer el Markdown de un recurso `rich_text` (ver
-  `frontend/README.md`, "Gap conocido del backend").
+- `GET /resources/:id/content` es solo de autoria (profesor/admin). El
+  estudiante lee el Markdown de un recurso `rich_text` por
+  `GET /enrollments/:id/resources/:resourceId/content`, con la misma regla de
+  acceso que los archivos dentro del `WHERE` (inscripcion activa, curso
+  publicado, version vigente, recurso visible); cualquier otro caso es 404.
+- Los filtros de "Mis cursos" (`/teach`) y de la bitacora (`/admin/audit`) se
+  resuelven en parte en el servidor de Next, no en la API: `GET /courses` no
+  acepta filtros ni devuelve nivel ni idioma, y `GET /admin/audit` filtra por
+  `action` pero no por fecha (el frontend pide las ultimas 500 lineas y
+  recorta). Llevarlos al `WHERE` es un cambio pequeno de backend pendiente de
+  aprobar. La lista de tipos del filtro de auditoria copia las constantes
+  `Action*` de `internal/audit/audit.go`: al agregar una accion, agregarla
+  tambien en `frontend/src/components/admin/audit-filters.tsx`.
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
 - No hay pruebas unitarias todavia, solo la prueba de humo.

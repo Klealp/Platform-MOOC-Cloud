@@ -97,7 +97,7 @@ export function ContentEditor({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h1 className="text-2xl font-semibold">{title}</h1>
         <SaveIndicator state={state} revision={revision} />
       </div>
 
@@ -120,8 +120,11 @@ export function ContentEditor({
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div>
-          <p className="mb-1.5 text-sm font-medium">Markdown</p>
+          <label htmlFor="contenido-markdown" className="mb-1.5 block text-sm font-medium">
+            Markdown
+          </label>
           <Textarea
+            id="contenido-markdown"
             className="min-h-[420px] font-mono text-sm"
             value={content}
             onChange={(e) => {
@@ -132,8 +135,11 @@ export function ContentEditor({
           />
         </div>
         <div>
-          <p className="mb-1.5 text-sm font-medium">Vista previa</p>
-          <div className="min-h-[420px] rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <p id="vista-previa" className="mb-1.5 text-sm font-medium">Vista previa</p>
+          <div
+            role="region"
+            aria-labelledby="vista-previa"
+            className="min-h-[420px] rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <MarkdownClient content={content} />
           </div>
         </div>
@@ -155,7 +161,8 @@ function SaveIndicator({ state, revision }: { state: SaveState; revision: number
     error: { icon: <AlertTriangle className="h-4 w-4 text-[var(--color-danger)]" />, text: "Error", cls: "text-[var(--color-danger)]" },
   }[state];
   return (
-    <span className={`flex items-center gap-1 text-sm font-medium ${map.cls}`}>
+    // role="status": el autosave avisa "Guardando…/Guardado" sin mover el foco.
+    <span role="status" className={`flex items-center gap-1 text-sm font-medium ${map.cls}`}>
       {map.icon}
       {map.text}
     </span>

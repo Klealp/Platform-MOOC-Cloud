@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -6,6 +7,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { requireTeacher } from "@/lib/auth/guards";
 import { apiFetch, ApiRequestError } from "@/lib/api/server-client";
 import { QuizBuilder, type AuthorQuiz } from "@/components/teach/quiz-builder";
+
+export const metadata: Metadata = { title: "Constructor de quiz" };
 
 export default async function QuizBuilderPage({
   params,
@@ -26,7 +29,7 @@ export default async function QuizBuilderPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-4xl space-y-6 px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-4xl space-y-6 px-6 py-10">
         <Link
           href={`/teach/${courseId}`}
           className="inline-flex items-center gap-1 text-sm font-medium underline"

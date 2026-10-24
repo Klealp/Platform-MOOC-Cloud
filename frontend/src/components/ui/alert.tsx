@@ -48,8 +48,10 @@ export function Alert({
 }) {
   const { icon: Icon, accent, tint } = config[variant];
   return (
+    // Solo un error interrumpe al lector de pantalla (role="alert"); el resto
+    // se anuncia con cortesia (role="status") cuando aparece.
     <div
-      role="alert"
+      role={variant === "error" ? "alert" : "status"}
       className={cn(
         "flex gap-3 rounded-[var(--radius-md)] border p-3.5 text-[var(--color-text)]",
         className,

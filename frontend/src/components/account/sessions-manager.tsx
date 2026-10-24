@@ -72,6 +72,11 @@ export function SessionsManager({ sessions }: { sessions: ActiveSession[] }) {
                 variant={s.current ? "danger" : "outline"}
                 disabled={pending && revokingId === s.id}
                 onClick={() => revoke(s)}
+                aria-label={
+                  s.current
+                    ? "Cerrar esta sesión"
+                    : `Cerrar la sesión de ${s.user_agent || "dispositivo desconocido"}`
+                }
               >
                 <LogOut className="h-4 w-4" />
                 {pending && revokingId === s.id

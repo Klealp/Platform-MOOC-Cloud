@@ -53,10 +53,13 @@ export function WithdrawButton({
           <Button size={size} variant="danger" disabled={pending} onClick={confirm}>
             {pending ? "Retirando…" : "Sí, retirarme"}
           </Button>
+          {/* El boton "Retirarme" desaparece al confirmar: el foco pasa a
+              "Cancelar" (la opcion segura) para no perderse (WCAG 2.4.3). */}
           <Button
             size={size}
             variant="outline"
             disabled={pending}
+            autoFocus
             onClick={() => setConfirming(false)}
           >
             Cancelar

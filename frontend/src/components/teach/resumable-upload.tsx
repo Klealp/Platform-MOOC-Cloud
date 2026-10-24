@@ -266,6 +266,8 @@ export function ResumableUpload({
         ref={inputRef}
         type="file"
         className="hidden"
+        aria-hidden
+        tabIndex={-1}
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) void start(file);
@@ -281,9 +283,9 @@ export function ResumableUpload({
         </Button>
       ) : (
         <div className="space-y-2">
-          <ProgressBar value={progress} />
+          <ProgressBar value={progress} label="Progreso de la subida" />
           <div className="flex items-center justify-between gap-2">
-            <p className="flex items-center gap-1 text-xs font-bold">
+            <p role="status" className="flex items-center gap-1 text-xs font-bold">
               {progress === 100 && <CheckCircle2 className="h-3 w-3 text-[var(--color-success)]" />}
               {status}
             </p>
@@ -293,7 +295,7 @@ export function ResumableUpload({
           </div>
         </div>
       )}
-      {!busy && status && <p className="text-xs font-bold opacity-70">{status}</p>}
+      {!busy && status && <p role="status" className="text-xs font-bold opacity-70">{status}</p>}
     </div>
   );
 }

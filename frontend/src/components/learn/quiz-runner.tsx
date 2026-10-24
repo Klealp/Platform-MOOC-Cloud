@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, PlayCircle, XCircle } from "lucide-react";
+import { PlayCircle, XCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +33,7 @@ interface SubmitResponse {
   correct_questions: number;
   total_questions: number;
   questions?: AttemptView["questions"];
+  progress?: { progress_pct: number; state: string };
 }
 
 export function QuizRunner({
@@ -40,7 +41,8 @@ export function QuizRunner({
   onPassed,
 }: {
   resource: OutlineResource;
-  onPassed: () => void;
+  /** Recibe el progreso del curso recalculado por el servidor al aprobar. */
+  onPassed: (progress?: { progress_pct: number; state: string }) => void;
 }) {
   const [attempt, setAttempt] = useState<AttemptResponse | null>(null);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
@@ -126,7 +128,7 @@ export function QuizRunner({
       if (Array.isArray(data.questions)) {
         setAttempt((prev) => (prev ? { ...prev, questions: data.questions } : prev));
       }
-      if (data.passed) onPassed();
+      if (data.passed) onPassed(data.progress);
     } finally {
       setBusy(false);
     }
@@ -196,43 +198,46 @@ export function QuizRunner({
             <CardTitle>Pregunta {i + 1}</CardTitle>
             {q.multiple && <Tag tone="purple">Selección múltiple</Tag>}
           </CardHeader>
-          <CardBody className="space-y-3">
-            <p className="font-bold">{q.prompt}</p>
-            <ul className="space-y-2">
-              {q.options.map((o) => {
-                const selected = (answers[q.stable_id] ?? []).includes(o.stable_id);
-                return (
-                  <li key={o.stable_id}>
-                    <button
-                      type="button"
-                      disabled={!!finished}
-                      onClick={() => toggle(q.stable_id, o.stable_id, q.multiple)}
-                      className={`flex w-full items-center gap-3 rounded-[var(--radius-sm)] border border-[var(--color-border)] px-3 py-2 text-left font-medium transition-colors disabled:cursor-default ${
-                        selected
-                          ? "border-[var(--color-primary)] bg-[color-mix(in_srgb,var(--color-primary)_10%,transparent)]"
-                          : "bg-[var(--color-surface)]"
-                      }`}
-                    >
-                      <span
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center border ${
+          <CardBody>
+            {/* Opciones nativas (radio o checkbox) en un fieldset cuyo legend es
+                el enunciado: el lector de pantalla anuncia la pregunta, el tipo
+                de control y si cada opcion esta marcada (WCAG 1.3.1 y 4.1.2). */}
+            <fieldset className="space-y-3" disabled={!!finished}>
+              <legend className="mb-3 font-bold">{q.prompt}</legend>
+              <ul className="space-y-2">
+                {q.options.map((o) => {
+                  const selected = (answers[q.stable_id] ?? []).includes(o.stable_id);
+                  const feedbackId = `fb-${q.stable_id}-${o.stable_id}`;
+                  const showFeedback = finished && selected && o.feedback;
+                  return (
+                    <li key={o.stable_id}>
+                      <label
+                        className={`flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-sm)] border px-3 py-2 text-left font-medium transition-colors has-[:disabled]:cursor-default ${
                           selected
-                            ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                            : "border-[var(--color-border)]"
-                        } ${q.multiple ? "rounded-sm" : "rounded-full"}`}
+                            ? "border-[var(--color-primary)] bg-[color-mix(in_srgb,var(--color-primary)_10%,transparent)]"
+                            : "border-[var(--color-border-strong)] bg-[var(--color-surface)]"
+                        }`}
                       >
-                        {selected && <CheckCircle2 className="h-3 w-3" />}
-                      </span>
-                      {o.text}
-                    </button>
-                    {finished && selected && o.feedback && (
-                      <p className="mt-1 ml-8 text-sm text-[var(--color-text-muted)]">
-                        {o.feedback}
-                      </p>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+                        <input
+                          type={q.multiple ? "checkbox" : "radio"}
+                          name={`pregunta-${q.stable_id}`}
+                          checked={selected}
+                          onChange={() => toggle(q.stable_id, o.stable_id, q.multiple)}
+                          aria-describedby={showFeedback ? feedbackId : undefined}
+                          className="h-5 w-5 shrink-0 accent-[var(--color-primary)]"
+                        />
+                        {o.text}
+                      </label>
+                      {showFeedback && (
+                        <p id={feedbackId} className="mt-1 ml-8 text-sm text-[var(--color-text-muted)]">
+                          {o.feedback}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </fieldset>
           </CardBody>
         </Card>
       ))}

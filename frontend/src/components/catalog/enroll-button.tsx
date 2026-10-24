@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Rocket } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { enrollAction } from "@/lib/learning/actions";
 
@@ -19,11 +19,9 @@ export function EnrollButton({
 
   if (!authenticated) {
     return (
-      <a href={`/login?from=/catalog/${slug}`}>
-        <Button size="lg" className="w-full">
-          Inicia sesión para inscribirte
-        </Button>
-      </a>
+      <ButtonLink href={`/login?from=/catalog/${slug}`} size="lg" className="w-full">
+        Inicia sesión para inscribirte
+      </ButtonLink>
     );
   }
 
@@ -41,7 +39,7 @@ export function EnrollButton({
           })
         }
       >
-        <Rocket className="h-5 w-5" />
+        <Rocket className="h-5 w-5" aria-hidden />
         {pending ? "Inscribiendo…" : "Inscribirme"}
       </Button>
     </div>

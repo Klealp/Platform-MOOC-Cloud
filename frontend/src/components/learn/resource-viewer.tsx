@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardBody } from "@/components/ui/card";
 import { VideoPlayer } from "./video-player";
@@ -31,7 +31,8 @@ export function ResourceViewer({
   resource: OutlineResource;
   enrollmentId: string;
   completed: boolean;
-  onProgress: (completed: boolean, pct?: number) => void;
+  /** `state` es el estado del curso que devuelve el servidor (approved, ...). */
+  onProgress: (completed: boolean, pct?: number, state?: string) => void;
 }) {
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +51,11 @@ export function ResourceViewer({
     });
     if (res.ok) {
       const data = await res.json();
-      onProgress(data.resource?.completed ?? true, data.progress?.progress_pct);
+      onProgress(
+        data.resource?.completed ?? true,
+        data.progress?.progress_pct,
+        data.progress?.state,
+      );
     } else {
       const data = await res.json().catch(() => null);
       setError(data?.error?.message ?? "No se pudo marcar como completado.");
@@ -65,7 +70,7 @@ export function ResourceViewer({
         disabled={pending || completed}
         onClick={() => start(markComplete)}
       >
-        <CheckCircle2 className="h-5 w-5" />
+        <CheckCircle2 className="h-5 w-5" aria-hidden />
         {completed ? "Completado" : pending ? "Guardando…" : "Marcar como visto"}
       </Button>
     </div>
@@ -86,6 +91,7 @@ export function ResourceViewer({
         <div className="space-y-4">
           <VideoPlayer
             assetId={resource.asset_id}
+            title={resource.title}
             enrollmentId={enrollmentId}
             resourceStableId={resource.stable_id}
             onProgress={onProgress}
@@ -111,10 +117,14 @@ export function ResourceViewer({
       return (
         <Card>
           <CardBody className="space-y-4">
-            <a href={resource.external_url ?? "#"} target="_blank" rel="noopener noreferrer">
-              <Button variant="secondary">
-                <ExternalLink className="h-5 w-5" /> Abrir recurso externo
-              </Button>
+            <a
+              href={resource.external_url ?? "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonClasses({ variant: "secondary" })}
+            >
+              <ExternalLink className="h-5 w-5" aria-hidden /> Abrir recurso externo
+              <span className="sr-only"> (se abre en una pestaña nueva)</span>
             </a>
             {completeButton}
           </CardBody>
@@ -156,7 +166,7 @@ export function ResourceViewer({
       return (
         <QuizRunner
           resource={resource}
-          onPassed={() => onProgress(true)}
+          onPassed={(progress) => onProgress(true, progress?.progress_pct, progress?.state)}
         />
       );
 

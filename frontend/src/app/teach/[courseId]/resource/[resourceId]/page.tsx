@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -7,6 +8,8 @@ import { requireTeacher } from "@/lib/auth/guards";
 import { apiFetch, ApiRequestError } from "@/lib/api/server-client";
 import type { ResourceContent } from "@/lib/api/types";
 import { ContentEditor } from "@/components/teach/content-editor";
+
+export const metadata: Metadata = { title: "Editar contenido" };
 
 export default async function ResourceContentPage({
   params,
@@ -29,7 +32,7 @@ export default async function ResourceContentPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-[1200px] space-y-6 px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-[1200px] space-y-6 px-6 py-10">
         <Link
           href={`/teach/${courseId}`}
           className="inline-flex items-center gap-1 text-sm font-medium underline"

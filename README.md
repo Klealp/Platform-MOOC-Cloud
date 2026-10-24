@@ -87,6 +87,7 @@ make reset                  # detener y BORRAR volumenes
 make logs                   # seguir logs de api y worker
 make psql                   # consola SQL
 docker compose up --scale worker=3   # tres workers
+docker compose up -d --build --no-deps web   # reconstruir solo el frontend sin tocar lo demas
 ```
 
 > **Importante:** `db/init.sql` solo se ejecuta la primera vez que se crea el

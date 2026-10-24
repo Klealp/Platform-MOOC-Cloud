@@ -1508,6 +1508,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/enrollments/{id}/resources/{resourceId}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Leer el contenido Markdown de un recurso rich_text como estudiante
+         * @description Lectura para quien cursa (la de autoria es `GET /resources/{id}/content`).
+         *     Solo responde si la inscripcion es del usuario y esta activa, el curso
+         *     esta publicado y el recurso es `rich_text`, visible y de la version
+         *     vigente. Cualquier otro caso responde 404. El Markdown es crudo: el
+         *     cliente debe sanearlo antes de renderizarlo.
+         *
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["parameters"]["PathId"];
+                    resourceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Contenido en Markdown canonico */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            stable_id: string;
+                            title: string;
+                            content_md: string;
+                            /** Format: date-time */
+                            updated_at: string;
+                        };
+                    };
+                };
+                404: components["responses"]["NotFound"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/progress/events": {
         parameters: {
             query?: never;

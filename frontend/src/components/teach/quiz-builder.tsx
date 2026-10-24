@@ -129,20 +129,24 @@ export function QuizBuilder({ quiz }: { quiz: AuthorQuiz }) {
                     {q.multiple ? "Varias correctas" : "Una correcta"}
                   </Tag>
                   <button
+                    type="button"
                     title="Editar"
+                    aria-label={`Editar pregunta ${i + 1}`}
                     disabled={pending}
                     onClick={() => setEditingId(q.id)}
-                    className="rounded-[var(--radius-sm)] border border-[var(--color-border)] p-1.5 transition-colors hover:bg-[var(--color-surface-alt)]"
+                    className="rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] p-1.5 transition-colors hover:bg-[var(--color-surface-alt)]"
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil className="h-4 w-4" aria-hidden />
                   </button>
                   <button
+                    type="button"
                     title="Eliminar"
+                    aria-label={`Eliminar pregunta ${i + 1}`}
                     disabled={pending}
                     onClick={() => removeQuestion(q)}
-                    className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
+                    className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-[var(--color-on-danger)] transition-colors hover:brightness-95"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" aria-hidden />
                   </button>
                 </div>
               </CardHeader>
@@ -468,7 +472,7 @@ function QuestionForm({
             type="checkbox"
             checked={multiple}
             onChange={(e) => toggleMultiple(e.target.checked)}
-            className="h-4 w-4 rounded-[var(--radius-sm)] border border-[var(--color-border)]"
+            className="h-4 w-4 accent-[var(--color-primary)]"
           />
           Permite varias respuestas correctas
         </label>
@@ -486,8 +490,9 @@ function QuestionForm({
                 name={radioGroup}
                 checked={o.is_correct}
                 onChange={(e) => setCorrect(idx, e.target.checked)}
-                className="h-5 w-5 shrink-0 border border-[var(--color-border)]"
+                className="h-5 w-5 shrink-0 accent-[var(--color-primary)]"
                 title="Correcta"
+                aria-label={`Opción ${idx + 1} es correcta`}
               />
               <Input
                 value={o.text}
@@ -497,11 +502,13 @@ function QuestionForm({
                   )
                 }
                 placeholder={`Opción ${idx + 1}`}
+                aria-label={`Texto de la opción ${idx + 1}`}
               />
               {options.length > 2 && (
                 <button
                   type="button"
                   title="Quitar opción"
+                  aria-label={`Quitar opción ${idx + 1}`}
                   onClick={() =>
                     setOptions((prev) => {
                       const next = prev.filter((_, i) => i !== idx);
@@ -510,9 +517,9 @@ function QuestionForm({
                       return next;
                     })
                   }
-                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-[var(--color-on-danger)] transition-colors hover:brightness-95"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </button>
               )}
             </div>
@@ -524,6 +531,7 @@ function QuestionForm({
                 )
               }
               placeholder="Retroalimentación al elegir esta opción (opcional)"
+              aria-label={`Retroalimentación de la opción ${idx + 1} (opcional)`}
               className="ml-7 w-[calc(100%-1.75rem)] text-sm"
             />
             </div>
