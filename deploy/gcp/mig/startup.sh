@@ -6,10 +6,13 @@
 # metadato "startup-script" y Google lo ejecuta como root en CADA arranque
 # de cada VM que crea el grupo. Al terminar, la VM queda atendiendo
 # trafico (api, web) o consumiendo la cola (worker) sin acceso manual.
+# Tambien arranca infra-server (rol infra: Redis y Mailpit), que no esta en
+# un grupo pero se configura igual, sin entrar a la maquina.
 #
 # Todo lo que cambia entre grupos llega por metadatos de la plantilla:
-#   mooc-rol       api | worker | web
-#   mooc-version   etiqueta de la imagen (SHA del commit, ver build.sh)
+#   mooc-rol       api | worker | web | infra
+#   mooc-version   etiqueta de la imagen (SHA del commit, ver build.sh);
+#                  infra usa imagenes publicas fijadas en su compose
 #   mooc-compose   contenido de deploy/gcp/mig/<rol>/docker-compose.yml
 #   mooc-registry  opcional; por defecto <region>-docker.pkg.dev/<proyecto>/mooc
 #
@@ -53,10 +56,14 @@ REGION="${ZONA%-*}"
 REGISTRY="$(mdo mooc-registry)"; REGISTRY="${REGISTRY:-$REGION-docker.pkg.dev/$PROYECTO/mooc}"
 INSTANCIA="$(md instance/name)"
 
+# listo: comprobacion local de que el rol ya hace su trabajo.
 case "$ROL" in
-  api)    SALUD=http://127.0.0.1:8080/healthz ;;
-  worker) SALUD=http://127.0.0.1:9100/healthz ;;
-  web)    SALUD=http://127.0.0.1:3000/ ;;
+  api)    listo() { curl -fsS -o /dev/null http://127.0.0.1:8080/healthz; } ;;
+  worker) listo() { curl -fsS -o /dev/null http://127.0.0.1:9100/healthz; } ;;
+  web)    listo() { curl -fsS -o /dev/null http://127.0.0.1:3000/login; } ;;
+  # Redis es lo critico de infra: sin el, la API no encola ni los workers
+  # consumen. El healthcheck del compose ya hace PING con la contrasena.
+  infra)  listo() { [ "$(docker inspect -f '{{.State.Health.Status}}' mooc-redis-1 2>/dev/null)" = healthy ]; } ;;
   *) log "mooc-rol invalido: '$ROL'"; exit 1 ;;
 esac
 log "instancia=$INSTANCIA rol=$ROL version=$VERSION registro=$REGISTRY"
@@ -114,8 +121,8 @@ log "contenedores arriba con $REGISTRY/$ROL:$VERSION"
 # El balanceador y el autoescalador tienen sus propias verificaciones; esto
 # solo deja la marca en el log.
 for _ in $(seq 1 60); do
-  if curl -fsS -o /dev/null "$SALUD"; then
-    log "LISTA: $ROL responde en $SALUD"
+  if listo; then
+    log "LISTA: $ROL responde"
     exit 0
   fi
   sleep 3

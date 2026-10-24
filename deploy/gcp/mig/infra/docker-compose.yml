@@ -1,0 +1,48 @@
+# =====================================================================
+# infra-server (Entrega 3): servicios compartidos que NO pueden vivir en
+# un grupo autoescalado, porque el autoescalador retira maquinas.
+#
+#   redis    cola asynq, cache de sesion y limite de tasa, compartidos por
+#            todas las replicas de API y workers
+#   mailpit  bandeja SMTP de pruebas
+#
+# Es una VM fija con IP privada fija (provision.sh infra). No se ejecuta a
+# mano: llega en el metadato mooc-compose y lo levanta mig/startup.sh.
+# Sigue siendo un punto unico de falla; se documenta en la arquitectura.
+# =====================================================================
+name: mooc
+
+services:
+  redis:
+    image: redis:7-alpine
+    env_file: /etc/mooc/infra.env
+    # appendonly: la cola sobrevive a un reinicio del contenedor o de la VM.
+    # noeviction (el valor por defecto) es obligatorio para asynq: Redis no
+    # debe descartar trabajos por memoria.
+    command: ["sh", "-c", "exec redis-server --appendonly yes --maxmemory-policy noeviction --requirepass \"$$REDIS_PASSWORD\""]
+    # El firewall solo admite 6379 desde las VMs de los grupos api y worker.
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: gcplogs
+    restart: unless-stopped
+
+  # La interfaz web solo escucha en localhost: se abre con un tunel IAP.
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "127.0.0.1:8025:8025"
+    logging:
+      driver: gcplogs
+    restart: unless-stopped
+
+volumes:
+  redisdata:

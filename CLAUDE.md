@@ -86,6 +86,12 @@ deploy/           Prometheus, Grafana y exportadores para el entorno local
 deploy/gcp/       provision.sh, startup.sh, migrate.sh, cors.json y un compose
                   por VM: web/ (api, web, caddy), worker/ (worker, redis,
                   mailpit), monitor/ (prometheus, exportadores, k6.sh)
+deploy/gcp/mig/   Entrega 3: startup.sh y shutdown.sh de las VMs de los
+                  grupos y un compose + .env.example por rol (api, worker,
+                  web, infra). build.sh sube las imagenes a Artifact
+                  Registry; provision.sh (elastica, grupos, balanceador,
+                  desplegar) crea la infraestructura. Los archivos de la
+                  Entrega 2 se conservan para reconstruir la linea base
 capacity-planning/ pruebas de carga k6 e informe de capacidad (escenarios 1 y 2)
 postman/          coleccion de la API y entornos local y nube
 docs/entrega1/    ARQUITECTURA.md, DOCUMENTACION.md, CREDENCIALES.md (locales)
