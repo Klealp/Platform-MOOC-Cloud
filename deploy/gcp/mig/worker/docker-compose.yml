@@ -12,6 +12,9 @@ services:
   worker:
     image: ${MOOC_IMAGE:?MOOC_IMAGE la define startup.sh}
     env_file: /etc/mooc/worker.env
+    # Nombre de la VM (lo escribe startup.sh): cabecera X-Instance-Id y logs.
+    environment:
+      INSTANCE_ID: ${MOOC_INSTANCE:-}
     # Metricas (:9100/metrics) para Prometheus en infra-server.
     ports:
       - "9100:9100"

@@ -14,6 +14,7 @@ package api
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"time"
 
@@ -57,7 +58,16 @@ func (s *Server) Router() *gin.Engine {
 	}
 
 	r := gin.New()
-	r.Use(recovery(), requestIDMiddleware(), observability(), securityHeaders())
+	// Detras del balanceador, la conexion llega desde los proxies de Google y
+	// la IP real del cliente viene en X-Forwarded-For. Solo se cree esa
+	// cabecera si la pone un proxy de confianza; si no, cualquiera podria
+	// falsificarla para esquivar el limite de tasa.
+	if len(s.cfg.TrustedProxies) > 0 {
+		if err := r.SetTrustedProxies(s.cfg.TrustedProxies); err != nil {
+			log.Fatalf("TRUSTED_PROXIES invalido: %v", err)
+		}
+	}
+	r.Use(recovery(), requestIDMiddleware(), observability(), securityHeaders(), instanceHeader(s.cfg.InstanceID))
 
 	// --- Operacion ---
 	r.GET("/healthz", s.handleHealth) // el proceso vive

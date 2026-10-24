@@ -14,6 +14,9 @@ services:
   api:
     image: ${MOOC_IMAGE:?MOOC_IMAGE la define startup.sh}
     env_file: /etc/mooc/api.env
+    # Nombre de la VM (lo escribe startup.sh): cabecera X-Instance-Id y logs.
+    environment:
+      INSTANCE_ID: ${MOOC_INSTANCE:-}
     # El firewall solo abre 8080 a los rangos del balanceador (verificaciones
     # de salud y trafico) y a Prometheus en infra-server.
     ports:

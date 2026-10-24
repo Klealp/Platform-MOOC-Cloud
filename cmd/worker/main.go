@@ -51,7 +51,7 @@ func main() {
 		_ = shutdownTracing(ctx)
 	}()
 
-	db, err := database.OpenPostgres(cfg.DatabaseURL)
+	db, err := database.OpenPostgres(cfg.DatabaseURL, cfg.DBMaxOpenConns, cfg.DBMaxIdleConns)
 	if err != nil {
 		log.Fatalf("postgres: %v", err)
 	}
@@ -110,6 +110,10 @@ func main() {
 			queue.QueueLow:      1,
 		},
 		ErrorHandler: deps.ErrorHandler(),
+		// Al retirar la VM, los trabajos activos tienen este tiempo para
+		// terminar; despues asynq los devuelve a la cola sin gastar un
+		// reintento. Debe ser menor que stop_grace_period del compose.
+		ShutdownTimeout: cfg.WorkerShutdownTimeout,
 	})
 
 	mux := asynq.NewServeMux()

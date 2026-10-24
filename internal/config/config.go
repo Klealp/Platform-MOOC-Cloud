@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,6 +24,11 @@ type Config struct {
 
 	// --- Postgres ---
 	DatabaseURL string
+	// Tope de conexiones POR PROCESO. Con replicas, el total es la suma de
+	// todas las instancias de API y workers y debe caber en max_connections
+	// de Cloud SQL (ver deploy/gcp/mig/*/*.env.example).
+	DBMaxOpenConns int
+	DBMaxIdleConns int
 
 	// --- Redis (sesiones en cache, rate limit y cola asynq) ---
 	RedisAddr     string
@@ -59,6 +65,18 @@ type Config struct {
 	// --- Workers ---
 	WorkerConcurrency int
 	MaxRetries        int // reintentos antes de la DLQ
+	// Espera por los trabajos activos al apagar. Lo que no termine en ese
+	// tiempo asynq lo devuelve a la cola y otro worker lo reintenta.
+	WorkerShutdownTimeout time.Duration
+
+	// --- Replicas detras del balanceador (Entrega 3) ---
+	// TrustedProxies: rangos de los proxies cuyo X-Forwarded-For se cree para
+	// obtener la IP del cliente (limite de tasa, auditoria). Vacio = el
+	// comportamiento por defecto de gin, que confia en cualquiera.
+	TrustedProxies []string
+	// InstanceID identifica la replica en la cabecera X-Instance-Id y en los
+	// logs: es la evidencia de a que instancia llego cada peticion.
+	InstanceID string
 
 	// --- Metrica de la cola (cmd/queue-metrics, autoescalado de workers) ---
 	// QueueMetricsProject vacio = se toma del servidor de metadatos de GCE;
@@ -89,7 +107,9 @@ func Load() Config {
 		HTTPAddr:      env("HTTP_ADDR", ":8080"),
 		PublicBaseURL: env("PUBLIC_BASE_URL", "http://localhost:8080"),
 
-		DatabaseURL: env("DATABASE_URL", "postgres://mooc:mooc@postgres:5432/mooc?sslmode=disable"),
+		DatabaseURL:    env("DATABASE_URL", "postgres://mooc:mooc@postgres:5432/mooc?sslmode=disable"),
+		DBMaxOpenConns: envInt("DB_MAX_OPEN_CONNS", 25),
+		DBMaxIdleConns: envInt("DB_MAX_IDLE_CONNS", 10),
 
 		RedisAddr:     env("REDIS_ADDR", "redis:6379"),
 		RedisPassword: env("REDIS_PASSWORD", ""),
@@ -116,6 +136,12 @@ func Load() Config {
 
 		WorkerConcurrency: envInt("WORKER_CONCURRENCY", 4),
 		MaxRetries:        envInt("MAX_RETRIES", 3),
+		// 8 s es el valor por defecto de asynq: asi local y la Entrega 2 no
+		// cambian. En los grupos de la Entrega 3 se sube (worker.env).
+		WorkerShutdownTimeout: time.Duration(envInt("WORKER_SHUTDOWN_TIMEOUT_SECONDS", 8)) * time.Second,
+
+		TrustedProxies: envList("TRUSTED_PROXIES"),
+		InstanceID:     env("INSTANCE_ID", hostname()),
 
 		// 30 s: el autoescalador agrega por minuto, y Cloud Monitoring no
 		// admite puntos de una misma serie a menos de 5 s.
@@ -137,9 +163,30 @@ func Load() Config {
 // Describe se imprime al arrancar. Nunca incluye secretos.
 func (c Config) Describe() string {
 	return fmt.Sprintf(
-		"env=%s addr=%s db=ok redis=%s bucket=%s cdn=%q antimalware=%s",
-		c.AppEnv, c.HTTPAddr, c.RedisAddr, c.S3Bucket, c.CDNBaseURL, c.AntimalwareMode,
+		"env=%s instancia=%s addr=%s db_pool=%d redis=%s bucket=%s cdn=%q antimalware=%s",
+		c.AppEnv, c.InstanceID, c.HTTPAddr, c.DBMaxOpenConns, c.RedisAddr, c.S3Bucket, c.CDNBaseURL, c.AntimalwareMode,
 	)
+}
+
+// envList lee una lista separada por comas, ignorando espacios y vacios.
+func envList(key string) []string {
+	var out []string
+	for _, v := range strings.Split(os.Getenv(key), ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			out = append(out, v)
+		}
+	}
+	return out
+}
+
+// hostname es el valor por defecto de INSTANCE_ID. En Docker es el id del
+// contenedor; en la nube startup.sh pasa el nombre de la VM.
+func hostname() string {
+	h, err := os.Hostname()
+	if err != nil {
+		return "desconocida"
+	}
+	return h
 }
 
 func env(key, def string) string {

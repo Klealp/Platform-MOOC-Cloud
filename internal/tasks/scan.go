@@ -195,6 +195,9 @@ func (d *Deps) HandleScanAsset(ctx context.Context, t *asynq.Task) error {
 }
 
 func (d *Deps) failAsset(ctx context.Context, assetID, jobKey, reason string) error {
+	if err := interrupted(ctx); err != nil {
+		return err
+	}
 	if _, err := d.DB.ExecContext(ctx, `
 		UPDATE assets SET status = 'failed', failure_reason = $1, updated_at = now()
 		WHERE id = $2`, reason, assetID); err != nil {

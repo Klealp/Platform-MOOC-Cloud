@@ -15,7 +15,10 @@ import (
 // OpenPostgres espera a que la base este lista. Docker Compose arranca los
 // contenedores casi al mismo tiempo, asi que la API puede intentar conectarse
 // antes de que Postgres termine de inicializarse; por eso reintentamos.
-func OpenPostgres(url string) (*sql.DB, error) {
+//
+// maxOpen y maxIdle son por proceso: con varias replicas, el total debe caber
+// en max_connections del servidor.
+func OpenPostgres(url string, maxOpen, maxIdle int) (*sql.DB, error) {
 	// otelsql envuelve el driver "postgres": cada consulta que reciba un context
 	// con un span activo (el de la peticion HTTP o el del trabajo del worker)
 	// abre un span hijo con la sentencia SQL. Si las trazas estan apagadas, el
@@ -30,8 +33,8 @@ func OpenPostgres(url string) (*sql.DB, error) {
 
 	// Limites del pool. Sin esto, cada peticion concurrente puede abrir una
 	// conexion nueva y agotar max_connections del servidor.
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(maxOpen)
+	db.SetMaxIdleConns(maxIdle)
 	db.SetConnMaxLifetime(30 * time.Minute)
 
 	var lastErr error

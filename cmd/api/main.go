@@ -46,7 +46,7 @@ func main() {
 		_ = shutdownTracing(ctx)
 	}()
 
-	db, err := database.OpenPostgres(cfg.DatabaseURL)
+	db, err := database.OpenPostgres(cfg.DatabaseURL, cfg.DBMaxOpenConns, cfg.DBMaxIdleConns)
 	if err != nil {
 		log.Fatalf("postgres: %v", err)
 	}

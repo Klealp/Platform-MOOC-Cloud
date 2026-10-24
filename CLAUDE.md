@@ -167,6 +167,13 @@ down -v`). Avisarlo siempre que se modifique ese archivo.
   Nunca versionar secretos.
 - `WORKER_CONCURRENCY=2` y `MAX_RETRIES=3` se mantuvieron fijos en las pruebas
   de capacidad; cambiarlos invalida la comparacion con el informe.
+- Entrega 3 (`deploy/gcp/mig/`): con replicas, `DB_MAX_OPEN_CONNS` es POR
+  instancia y la suma debe caber en `max_connections` de Cloud SQL;
+  `TRUSTED_PROXIES` incluye la IP del balanceador (sin ella todos los
+  clientes comparten una IP); `WORKER_SHUTDOWN_TIMEOUT_SECONDS` debe ser
+  menor que `stop_grace_period`. Un trabajo interrumpido al retirar un
+  worker vuelve a la cola sin marcar el asset como fallido (`interrupted`
+  en `internal/tasks/tasks.go`).
 
 ## Comandos
 
@@ -214,5 +221,11 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
   `frontend/README.md`, "Gap conocido del backend").
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
-- Casi no hay pruebas unitarias: solo `internal/queuemetrics` (`go test
-  ./internal/queuemetrics/`). El resto se cubre con la prueba de humo.
+- Pocas pruebas unitarias (`go test ./...`): `internal/queuemetrics`, la IP
+  del cliente detras del balanceador (`internal/api/proxies_test.go`) y los
+  trabajos interrumpidos (`internal/tasks/interrupted_test.go`). El resto se
+  cubre con la prueba de humo.
+- Detras del balanceador, las peticiones anonimas que pasan por el BFF
+  llegan a la API con la IP del Cloud NAT del frontend, asi que comparten el
+  limite de tasa por IP (afecta al login). Arreglarlo exige que el BFF
+  reenvie la IP del navegador y que la API confie en el.

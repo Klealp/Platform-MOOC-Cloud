@@ -383,11 +383,11 @@ paso_identidades() {
   done
 }
 
-# generar_env <plantilla> <componente_hmac> <destino> <dominio> <ip_db>
+# generar_env <plantilla> <componente_hmac> <destino> <dominio> <ip_db> <ip_lb>
 generar_env() {
   local hk="" hs=""
   [ -f "$SECRETS_DIR/hmac_$2" ] && read -r hk hs < <(tr -d '\r' < "$SECRETS_DIR/hmac_$2")
-  tr -d '\r' < "$1" | sed -e "s#<DOMINIO>#$4#g" -e "s#<IP_CLOUDSQL>#$5#g" \
+  tr -d '\r' < "$1" | sed -e "s#<DOMINIO>#$4#g" -e "s#<IP_CLOUDSQL>#$5#g" -e "s#<IP_LB>#$6#g" \
       -e "s#<IP_INFRA>#$IP_INFRA#g" -e "s#<BUCKET>#$BUCKET#g" \
       -e "s#<DB_PASSWORD>#$(cat "$SECRETS_DIR/db_password")#g" \
       -e "s#<REDIS_PASSWORD>#$(cat "$SECRETS_DIR/redis_password")#g" \
@@ -403,15 +403,16 @@ generar_env() {
 
 paso_secretos() {
   say "Configuracion de cada rol en Secret Manager"
-  local dominio ip_db
-  dominio="$(dominio_lb)"
+  local dominio ip_db ip
+  ip="$(ip_lb)"
+  dominio="${ip//./-}.sslip.io"
   ip_db=$(gcloud sql instances describe "$DB_INSTANCE" --format="value(ipAddresses[0].ipAddress)" | tr -d '\r')
   [ -f "$SECRETS_DIR/redis_password" ] || { secreto > "$SECRETS_DIR/redis_password"; privado "$SECRETS_DIR/redis_password"; }
   [ -f "$SECRETS_DIR/admin_password" ] || { echo "Adm$(secreto | cut -c1-16)1!" > "$SECRETS_DIR/admin_password"; privado "$SECRETS_DIR/admin_password"; }
 
   for rol in api worker web infra; do
     local f="$SECRETS_DIR/e3-$rol.env" sec="mooc-$rol-env"
-    generar_env "$MIG_DIR/$rol/$rol.env.example" "$rol" "$f" "$dominio" "$ip_db"
+    generar_env "$MIG_DIR/$rol/$rol.env.example" "$rol" "$f" "$dominio" "$ip_db" "$ip"
     # Cada ejecucion publica una version nueva; las VMs leen "latest" al
     # arrancar, asi que el cambio aplica al recrearlas (paso desplegar).
     if existe gcloud secrets describe "$sec"; then

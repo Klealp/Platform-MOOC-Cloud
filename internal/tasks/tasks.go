@@ -23,6 +23,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -117,6 +118,22 @@ func (d *Deps) markProcessed(ctx context.Context, jobKey, taskType string, resul
 		ON CONFLICT (job_key) DO NOTHING`, jobKey, taskType, string(raw)); err != nil {
 		log.Printf("worker: no se pudo registrar processed_jobs (%s): %v", jobKey, err)
 	}
+}
+
+// interrupted distingue "el archivo no sirve" de "nos interrumpieron".
+//
+// Cuando el autoescalador retira una VM, asynq devuelve a la cola el trabajo
+// activo y cancela su contexto, lo que mata a ffmpeg/ffprobe a mitad de
+// camino. Ese error NO dice nada del archivo: marcar el asset como fallido
+// lo dejaria asi para siempre, aunque otro worker lo procese bien. Si el
+// contexto termino, se devuelve error sin tocar el estado y el reintento
+// vuelve a empezar desde el original (los derivados se sobrescriben en las
+// mismas llaves, asi que no quedan duplicados).
+func interrupted(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("trabajo interrumpido, no se marca como fallido: %w", err)
+	}
+	return nil
 }
 
 // skipDuplicate centraliza el mensaje y la metrica de una reentrega.

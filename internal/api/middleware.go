@@ -110,6 +110,16 @@ func securityHeaders() gin.HandlerFunc {
 	}
 }
 
+// instanceHeader marca cada respuesta con la replica que la atendio. Con el
+// balanceador permite demostrar el reparto entre instancias sin depender de
+// los logs. Es el nombre de la VM: no revela nada que no se vea en la consola.
+func instanceHeader(id string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("X-Instance-Id", id)
+		c.Next()
+	}
+}
+
 // ------------------------- Autenticacion -------------------------
 
 // requireAuth exige un token de sesion valido.
