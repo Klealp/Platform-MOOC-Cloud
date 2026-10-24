@@ -12,8 +12,8 @@
 #   export PROJECT=dsc-uniandes-20262
 #   ./deploy/gcp/provision.sh todo          # todo en orden
 #   ./deploy/gcp/provision.sh <paso>        # un paso: apis red firewall
-#                                           # sql bucket cuentas vms config
-#                                           # presupuesto resumen
+#                                           # sql bucket cuentas registro vms
+#                                           # config presupuesto resumen
 #   ./deploy/gcp/provision.sh monitor       # opcional: Prometheus en el Web
 #                                           # Server (deploy/gcp/monitor/)
 #
@@ -62,7 +62,8 @@ paso_apis() {
   say "Habilitando APIs"
   gcloud services enable compute.googleapis.com sqladmin.googleapis.com \
     servicenetworking.googleapis.com storage.googleapis.com iap.googleapis.com \
-    monitoring.googleapis.com logging.googleapis.com billingbudgets.googleapis.com
+    monitoring.googleapis.com logging.googleapis.com billingbudgets.googleapis.com \
+    artifactregistry.googleapis.com
 }
 
 paso_red() {
@@ -184,6 +185,20 @@ paso_cuentas() {
   done
 }
 
+paso_registro() {
+  say "Artifact Registry: repositorio Docker mooc en $REGION"
+  # Las imagenes las construye y sube deploy/gcp/build.sh. Las VMs solo las
+  # descargan: llegan a $REGION-docker.pkg.dev por Private Google Access, sin
+  # IP publica ni NAT.
+  existe gcloud artifacts repositories describe mooc --location="$REGION" ||
+    gcloud artifacts repositories create mooc --location="$REGION" \
+      --repository-format=docker --description="Imagenes de la plataforma MOOC"
+  # La identidad de las VMs descarga las imagenes. Solo lectura: subir es
+  # trabajo de quien construye, no de las maquinas que ejecutan.
+  gcloud artifacts repositories add-iam-policy-binding mooc --location="$REGION" \
+    --member="serviceAccount:$SA_VM" --role=roles/artifactregistry.reader >/dev/null
+}
+
 paso_vms() {
   say "IP estatica y VMs ($VM_TYPE, disco $VM_DISK)"
   existe gcloud compute addresses describe mooc-web-ip --region="$REGION" ||
@@ -277,7 +292,7 @@ paso_resumen() {
 
 case "${1:-}" in
   todo) paso_apis; paso_red; paso_firewall; paso_sql; paso_bucket; paso_cuentas
-        paso_vms; echo "Espera ~3 min a que las VMs instalen Docker antes de 'config'." ;;
-  apis|red|firewall|sql|bucket|cuentas|vms|monitor|config|presupuesto|resumen) "paso_$1" ;;
+        paso_registro; paso_vms; echo "Espera ~3 min a que las VMs instalen Docker antes de 'config'." ;;
+  apis|red|firewall|sql|bucket|cuentas|registro|vms|monitor|config|presupuesto|resumen) "paso_$1" ;;
   *) sed -n '2,21p' "$0"; exit 1 ;;
 esac
