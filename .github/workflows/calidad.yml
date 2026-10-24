@@ -1,0 +1,84 @@
+# =====================================================================
+# Integracion continua: pruebas + analisis de calidad con SonarQube.
+#
+# El enunciado de la Entrega 3 exige SonarQube ejecutado desde el pipeline
+# y que la automatizacion siga corriendo las pruebas. NO despliega en la
+# nube (no se exige). Explicacion completa: docs/entrega3/guia-sonarqube.md
+#
+# Requisito unico: el secreto SONAR_TOKEN en el repositorio
+# (Settings > Secrets and variables > Actions).
+# =====================================================================
+name: calidad
+
+on:
+  push:
+    branches: [main, "entrega-*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    name: Pruebas Go
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: go vet
+        run: go vet ./...
+      - name: go test con cobertura
+        run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-go
+          path: coverage.out
+
+  frontend:
+    name: Frontend (tipos y build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Verificacion de tipos
+        run: npm run typecheck
+      - name: Build de produccion
+        run: npm run build
+
+  sonarqube:
+    name: SonarQube
+    needs: [go, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Historial completo: SonarQube lo usa para atribuir cada hallazgo
+          # a su commit y para distinguir codigo nuevo del existente.
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: cobertura-go
+      - name: Analisis
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Los umbrales del enunciado se miden sobre el codigo COMPLETO de la
+      # rama; en un pull request SonarQube solo mide el codigo nuevo, por eso
+      # se verifican en los push.
+      - name: Umbrales de la Entrega 3
+        if: github.event_name != 'pull_request'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_BRANCH: ${{ github.ref_name }}
+        run: .github/scripts/sonar-umbrales.sh

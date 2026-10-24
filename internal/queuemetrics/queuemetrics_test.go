@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -74,9 +76,11 @@ func TestCollectPropagaErrorDeRedis(t *testing.T) {
 	}
 }
 
-func TestPublishEnviaUnaSerieGlobalPorMetrica(t *testing.T) {
-	var got timeSeriesRequest
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// servidorMonitoring imita la API de Cloud Monitoring: valida la peticion y
+// guarda el cuerpo recibido en *got.
+func servidorMonitoring(t *testing.T, got *timeSeriesRequest) *httptest.Server {
+	t.Helper()
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/v3/projects/proy/timeSeries" || r.Method != http.MethodPost {
 			t.Errorf("peticion inesperada: %s %s", r.Method, r.URL.Path)
 		}
@@ -84,11 +88,39 @@ func TestPublishEnviaUnaSerieGlobalPorMetrica(t *testing.T) {
 			t.Errorf("Authorization = %q", r.Header.Get("Authorization"))
 		}
 		b, _ := io.ReadAll(r.Body)
-		if err := json.Unmarshal(b, &got); err != nil {
+		if err := json.Unmarshal(b, got); err != nil {
 			t.Errorf("cuerpo invalido: %v", err)
 		}
 		_, _ = w.Write([]byte("{}"))
 	}))
+}
+
+// valoresDeSeries comprueba la forma de cada serie (recurso global, un punto
+// con la hora esperada) y devuelve metrica -> valor como texto.
+func valoresDeSeries(t *testing.T, req timeSeriesRequest, endTime string) map[string]string {
+	t.Helper()
+	valores := map[string]string{}
+	for _, ts := range req.TimeSeries {
+		nombre := strings.TrimPrefix(ts.Metric.Type, MetricPrefix)
+		if ts.Resource.Type != "global" || ts.Resource.Labels["project_id"] != "proy" {
+			t.Errorf("%s: recurso %+v, se esperaba global del proyecto", nombre, ts.Resource)
+		}
+		if len(ts.Points) != 1 || ts.Points[0].Interval.EndTime != endTime {
+			t.Errorf("%s: puntos %+v, se esperaba uno con fin %s", nombre, ts.Points, endTime)
+			continue
+		}
+		if v := ts.Points[0].Value; v.Int64Value != nil {
+			valores[nombre] = *v.Int64Value
+		} else if v.DoubleValue != nil {
+			valores[nombre] = strconv.FormatFloat(*v.DoubleValue, 'f', -1, 64)
+		}
+	}
+	return valores
+}
+
+func TestPublishEnviaUnaSerieGlobalPorMetrica(t *testing.T) {
+	var got timeSeriesRequest
+	srv := servidorMonitoring(t, &got)
 	defer srv.Close()
 
 	p := &Publisher{Project: "proy", HTTP: srv.Client(), Endpoint: srv.URL,
@@ -99,30 +131,10 @@ func TestPublishEnviaUnaSerieGlobalPorMetrica(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	valores := map[string]string{}
-	for _, ts := range got.TimeSeries {
-		if ts.Resource.Type != "global" || ts.Resource.Labels["project_id"] != "proy" {
-			t.Errorf("%s: recurso %+v, se esperaba global del proyecto", ts.Metric.Type, ts.Resource)
-		}
-		if len(ts.Points) != 1 || ts.Points[0].Interval.EndTime != "2026-10-24T12:00:00Z" {
-			t.Errorf("%s: puntos %+v", ts.Metric.Type, ts.Points)
-		}
-		v := ts.Points[0].Value
-		switch {
-		case v.Int64Value != nil:
-			valores[strings.TrimPrefix(ts.Metric.Type, MetricPrefix)] = *v.Int64Value
-		case v.DoubleValue != nil && *v.DoubleValue != 1.5:
-			t.Errorf("antiguedad = %v, se esperaba 1.5", *v.DoubleValue)
-		}
-	}
-	want := map[string]string{"queue_backlog": "5", "queue_pending": "3", "queue_active": "2", "queue_retry": "1"}
-	for k, v := range want {
-		if valores[k] != v {
-			t.Errorf("%s = %q, se esperaba %q", k, valores[k], v)
-		}
-	}
-	if len(got.TimeSeries) != 5 {
-		t.Errorf("series = %d, se esperaban 5", len(got.TimeSeries))
+	want := map[string]string{"queue_backlog": "5", "queue_pending": "3", "queue_active": "2",
+		"queue_retry": "1", "queue_oldest_pending_seconds": "1.5"}
+	if got := valoresDeSeries(t, got, "2026-10-24T12:00:00Z"); !reflect.DeepEqual(got, want) {
+		t.Errorf("series = %v, se esperaba %v", got, want)
 	}
 }
 
