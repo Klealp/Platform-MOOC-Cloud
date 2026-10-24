@@ -1,0 +1,25 @@
+# ---------- Etapa 1: compilacion ----------
+FROM golang:1.25-alpine AS builder
+
+WORKDIR /src
+RUN apk add --no-cache git
+
+COPY go.mod ./
+RUN go mod download || true
+
+COPY . .
+RUN go mod tidy && \
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/queue-metrics ./cmd/queue-metrics
+
+# ---------- Etapa 2: imagen final ----------
+# ca-certificates: publica en monitoring.googleapis.com por HTTPS.
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata && \
+    adduser -D -u 10001 appuser
+
+COPY --from=builder /out/queue-metrics /usr/local/bin/queue-metrics
+
+USER appuser
+
+ENTRYPOINT ["/usr/local/bin/queue-metrics"]

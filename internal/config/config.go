@@ -60,6 +60,12 @@ type Config struct {
 	WorkerConcurrency int
 	MaxRetries        int // reintentos antes de la DLQ
 
+	// --- Metrica de la cola (cmd/queue-metrics, autoescalado de workers) ---
+	// QueueMetricsProject vacio = se toma del servidor de metadatos de GCE;
+	// fuera de GCE el proceso solo registra la medicion en el log.
+	QueueMetricsInterval time.Duration
+	QueueMetricsProject  string
+
 	// --- Antimalware ---
 	// stub  = detecta la firma de prueba EICAR (suficiente para demostrar)
 	// clamav= delega en un demonio ClamAV (no se despliega en esta entrega)
@@ -110,6 +116,11 @@ func Load() Config {
 
 		WorkerConcurrency: envInt("WORKER_CONCURRENCY", 4),
 		MaxRetries:        envInt("MAX_RETRIES", 3),
+
+		// 30 s: el autoescalador agrega por minuto, y Cloud Monitoring no
+		// admite puntos de una misma serie a menos de 5 s.
+		QueueMetricsInterval: time.Duration(envInt("QUEUE_METRICS_INTERVAL_SECONDS", 30)) * time.Second,
+		QueueMetricsProject:  env("QUEUE_METRICS_PROJECT", ""),
 
 		AntimalwareMode: env("ANTIMALWARE_MODE", "stub"),
 		ClamAVAddr:      env("CLAMAV_ADDR", ""),

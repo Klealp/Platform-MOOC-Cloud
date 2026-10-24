@@ -65,6 +65,9 @@ Vienen del enunciado del curso y son criterios de calificacion:
 ```
 cmd/api/          proceso HTTP (no hace trabajo pesado)
 cmd/worker/       proceso que consume la cola (ffmpeg, escaneo, correo, insignias)
+cmd/queue-metrics/ publica pendientes + activos de la cola en Cloud Monitoring
+                  (autoescalado de workers, Entrega 3). Una sola instancia, en
+                  infra-server
 internal/
   api/            handlers, middlewares, rutas. Un archivo handlers_*.go por dominio
   auth/           contrasenas, tokens opacos, sesiones revocables
@@ -76,6 +79,8 @@ internal/
   metrics/        series de Prometheus
   progress/       reglas de avance, finalizacion y aprobacion
   queue/          contrato de tareas entre API y workers (asynq)
+  queuemetrics/   medicion de la cola y escritura en Cloud Monitoring (REST +
+                  token de metadatos, sin el SDK de Google)
   storage/        cliente del almacenamiento de objetos (API S3: MinIO en local, Cloud Storage en la nube)
   tasks/          handlers de los workers
   telemetry/      arranque del exportador OpenTelemetry
@@ -209,4 +214,5 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
   `frontend/README.md`, "Gap conocido del backend").
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
-- No hay pruebas unitarias todavia, solo la prueba de humo.
+- Casi no hay pruebas unitarias: solo `internal/queuemetrics` (`go test
+  ./internal/queuemetrics/`). El resto se cubre con la prueba de humo.

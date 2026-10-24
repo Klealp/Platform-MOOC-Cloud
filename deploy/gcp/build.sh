@@ -11,7 +11,7 @@
 #
 # Uso (desde la raiz del repo o desde cualquier carpeta):
 #   export PROJECT=dsc-uniandes-20262
-#   ./deploy/gcp/build.sh                 # api, worker y web
+#   ./deploy/gcp/build.sh                 # api, worker, web y queue-metrics
 #   ./deploy/gcp/build.sh api worker      # solo algunas
 #
 # Variables opcionales:
@@ -48,13 +48,16 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 # componente -> Dockerfile. El contexto siempre es la raiz del repo.
-declare -A DOCKERFILE=([api]=Dockerfile.api [worker]=Dockerfile.worker [web]=Dockerfile.web)
+# queue-metrics corre en infra-server y publica la metrica del autoescalador
+# de workers.
+declare -A DOCKERFILE=([api]=Dockerfile.api [worker]=Dockerfile.worker [web]=Dockerfile.web
+  [queue-metrics]=Dockerfile.queue-metrics)
 
 if [ "$#" -eq 0 ]; then
-  set -- api worker web
+  set -- api worker web queue-metrics
 fi
 for comp in "$@"; do
-  [ -n "${DOCKERFILE[$comp]:-}" ] || { echo "Componente desconocido: $comp (api|worker|web)" >&2; exit 1; }
+  [ -n "${DOCKERFILE[$comp]:-}" ] || { echo "Componente desconocido: $comp (api|worker|web|queue-metrics)" >&2; exit 1; }
 done
 
 if [ "${NO_PUSH:-}" != "1" ]; then

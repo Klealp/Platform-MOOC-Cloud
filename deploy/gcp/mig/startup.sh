@@ -11,8 +11,8 @@
 #
 # Todo lo que cambia entre grupos llega por metadatos de la plantilla:
 #   mooc-rol       api | worker | web | infra
-#   mooc-version   etiqueta de la imagen (SHA del commit, ver build.sh);
-#                  infra usa imagenes publicas fijadas en su compose
+#   mooc-version   etiqueta de las imagenes propias (SHA del commit, ver
+#                  build.sh); en infra, la de queue-metrics
 #   mooc-compose   contenido de deploy/gcp/mig/<rol>/docker-compose.yml
 #   mooc-registry  opcional; por defecto <region>-docker.pkg.dev/<proyecto>/mooc
 #
@@ -100,8 +100,12 @@ log "configuracion de mooc-$ROL-env escrita"
 # --- 3. Definicion de contenedores (viene de la plantilla) ------------
 mdo mooc-compose > /opt/mooc/docker-compose.yml
 [ -s /opt/mooc/docker-compose.yml ] || { log "falta el metadato mooc-compose"; exit 1; }
+# Variables de interpolacion del compose. Los grupos usan MOOC_IMAGE (una
+# imagen por rol); infra arma la suya con MOOC_REGISTRY y MOOC_VERSION.
 cat > /opt/mooc/.env <<EOF
 MOOC_IMAGE=$REGISTRY/$ROL:$VERSION
+MOOC_REGISTRY=$REGISTRY
+MOOC_VERSION=$VERSION
 MOOC_ROL=$ROL
 EOF
 echo "$VERSION" > /etc/mooc/version

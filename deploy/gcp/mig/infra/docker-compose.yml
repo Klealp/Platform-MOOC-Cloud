@@ -5,6 +5,10 @@
 #   redis    cola asynq, cache de sesion y limite de tasa, compartidos por
 #            todas las replicas de API y workers
 #   mailpit  bandeja SMTP de pruebas
+#   queue-metrics  publica pendientes + activos en Cloud Monitoring para el
+#            autoescalador de mooc-worker (cmd/queue-metrics). Una sola
+#            instancia: si viviera en el grupo de workers, el autoescalador
+#            podria retirar justo a quien le informa
 #
 # Es una VM fija con IP privada fija (provision.sh infra). No se ejecuta a
 # mano: llega en el metadato mooc-compose y lo levanta mig/startup.sh.
@@ -30,6 +34,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    logging:
+      driver: gcplogs
+    restart: unless-stopped
+
+  queue-metrics:
+    image: ${MOOC_REGISTRY:?}/queue-metrics:${MOOC_VERSION:?}
+    env_file: /etc/mooc/infra.env
+    depends_on:
+      redis:
+        condition: service_healthy
     logging:
       driver: gcplogs
     restart: unless-stopped

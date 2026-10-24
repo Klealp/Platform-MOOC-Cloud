@@ -9,10 +9,10 @@
 #                                    infra-server: Redis/asynq + Mailpit
 #
 #   export PROJECT=dsc-uniandes-20262
-#   ./deploy/gcp/provision.sh elastica      # red, identidades, registro,
-#                                           # secretos e infra-server
+#   ./deploy/gcp/provision.sh elastica      # red, identidades, registro
+#                                           # y secretos
 #   ./deploy/gcp/build.sh                   # imagenes del commit actual
-#   ./deploy/gcp/provision.sh grupos balanceador
+#   ./deploy/gcp/provision.sh infra grupos balanceador
 #   ./deploy/gcp/provision.sh desplegar     # version nueva: plantillas +
 #                                           # reemplazo gradual de las VMs
 #   Pasos sueltos: red-elastica firewall-elastico identidades registro
@@ -223,7 +223,7 @@ paso_registro() {
       --repository-format=docker --description="Imagenes de la plataforma MOOC"
   # Las identidades de las VMs de los grupos descargan las imagenes. Solo
   # lectura: subir es trabajo de quien construye, no de quien ejecuta.
-  for sa in "$SA_API" "$SA_WORKER" "$SA_WEB"; do
+  for sa in "$SA_API" "$SA_WORKER" "$SA_WEB" "$SA_INFRA"; do
     gcloud artifacts repositories add-iam-policy-binding mooc --location="$REGION" \
       --member="serviceAccount:$sa" --role=roles/artifactregistry.reader >/dev/null
   done
@@ -429,18 +429,37 @@ paso_secretos() {
 }
 
 paso_infra() {
-  say "infra-server: Redis y Mailpit fuera de los grupos ($INFRA_TYPE, $IP_INFRA)"
+  local v; v="$(version)"
+  say "infra-server: Redis, Mailpit y queue-metrics $v ($INFRA_TYPE, $IP_INFRA)"
+  imagen_existe queue-metrics "$v" || return 1
+  local archivos="startup-script=$MIG_DIR/startup.sh,shutdown-script=$MIG_DIR/shutdown.sh,mooc-compose=$MIG_DIR/infra/docker-compose.yml"
   # VM fija: el autoescalador nunca la retira, asi que la cola no depende de
   # una maquina desechable. Se configura igual que las de los grupos.
-  existe gcloud compute instances describe infra-server --zone="$ZONE" ||
+  if ! existe gcloud compute instances describe infra-server --zone="$ZONE"; then
     gcloud compute instances create infra-server --zone="$ZONE" \
       --machine-type="$INFRA_TYPE" --image-family=debian-12 --image-project=debian-cloud \
       --boot-disk-size=20GB --boot-disk-type=pd-balanced \
       --subnet="$SUBNET_INFRA" --private-network-ip="$IP_INFRA" --no-address \
       --tags=mooc-infra --service-account="$SA_INFRA" --scopes=cloud-platform \
-      --metadata=mooc-rol=infra,mooc-version=fija \
-      --metadata-from-file=startup-script="$MIG_DIR/startup.sh",shutdown-script="$MIG_DIR/shutdown.sh",mooc-compose="$MIG_DIR/infra/docker-compose.yml" \
-      --shielded-secure-boot
+      --metadata=mooc-rol=infra,mooc-version="$v" \
+      --metadata-from-file="$archivos" --shielded-secure-boot
+    return
+  fi
+  # Ya existe: se actualizan los metadatos, pero NO se reinicia sola. Un
+  # reinicio corta Redis unos segundos (la cola sobrevive por el AOF), asi
+  # que se hace cuando se decide, fuera de una prueba de carga.
+  gcloud compute instances add-metadata infra-server --zone="$ZONE" \
+    --metadata=mooc-version="$v" --metadata-from-file="$archivos"
+  echo "Metadatos actualizados a $v. Para aplicarlos (corta Redis unos segundos):"
+  echo "  gcloud compute instances stop infra-server --zone=$ZONE && gcloud compute instances start infra-server --zone=$ZONE"
+}
+
+# imagen_existe <componente> <version>: sin imagen no hay arranque; mejor
+# fallar aqui que con VMs reiniciando en bucle.
+imagen_existe() {
+  existe gcloud artifacts docker images describe "$REGION-docker.pkg.dev/$PROJECT/mooc/$1:$2" && return 0
+  echo "No existe la imagen $1:$2 en Artifact Registry. Ejecuta antes: ./deploy/gcp/build.sh" >&2
+  return 1
 }
 
 # plantilla_de <rol> <version>: nombre de la plantilla. Es inmutable: una
@@ -454,11 +473,7 @@ paso_plantillas() {
     local tpl tipo subred
     tpl="$(plantilla_de "$rol" "$v")"
     existe gcloud compute instance-templates describe "$tpl" && { echo "  $tpl ya existe"; continue; }
-    # Sin imagen no hay arranque: mejor fallar aqui que con VMs en bucle.
-    existe gcloud artifacts docker images describe "$REGION-docker.pkg.dev/$PROJECT/mooc/$rol:$v" || {
-      echo "No existe la imagen $rol:$v en Artifact Registry. Ejecuta antes: ./deploy/gcp/build.sh" >&2
-      return 1
-    }
+    imagen_existe "$rol" "$v" || return 1
     case "$rol" in
       api)    tipo="$VM_TYPE";  subred="$SUBNET_APP" ;;
       worker) tipo="$VM_TYPE";  subred="$SUBNET_WORKER" ;;
@@ -653,10 +668,12 @@ for paso in "$@"; do
           paso_vms; echo "Espera ~3 min a que las VMs instalen Docker antes de 'config'." ;;
     # Base de la Entrega 3. Todos los pasos son idempotentes, asi que sirve
     # tanto para reconstruir desde cero como sobre lo que dejo la Entrega 2.
+    # infra-server queda fuera: necesita la imagen de queue-metrics, que se
+    # construye despues de crear el registro.
     elastica) paso_apis; paso_red; paso_red_elastica; paso_firewall_elastico
               paso_sql; paso_bucket; paso_cuentas; paso_identidades; paso_registro
-              paso_secretos; paso_infra
-              echo "Siguiente: ./deploy/gcp/build.sh && ./deploy/gcp/provision.sh grupos balanceador" ;;
+              paso_secretos
+              echo "Siguiente: ./deploy/gcp/build.sh && ./deploy/gcp/provision.sh infra grupos balanceador" ;;
     apis|red|firewall|sql|bucket|cuentas|registro|vms|monitor|config|presupuesto|resumen|\
     red-elastica|firewall-elastico|identidades|secretos|infra|plantillas|grupos|balanceador|desplegar)
       "paso_${paso//-/_}" ;;
