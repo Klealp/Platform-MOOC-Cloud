@@ -31,7 +31,7 @@ jobs:
       # 4. El mismo escaner que corriste a mano, ahora contra SonarQube Cloud.
       #    Va en el MISMO job que go test para encontrar coverage.out.
       - name: Analisis SonarQube
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
