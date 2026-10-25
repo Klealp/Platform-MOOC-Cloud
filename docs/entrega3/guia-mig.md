@@ -423,7 +423,7 @@ Infraestructura y codigo:
 
 Calidad:
 
-- [ ] GitHub Actions + SonarQube (ver [`guia-sonarqube.md`](guia-sonarqube.md)).
+- [ ] Analisis de calidad con SonarQube (lo implementa el equipo).
 - [ ] `docs/entrega3/deuda-tecnica.md`.
 
 Documentacion y pruebas (entregables del enunciado):

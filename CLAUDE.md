@@ -101,11 +101,7 @@ capacity-planning/ pruebas de carga k6 e informe de capacidad (escenarios 1 y 2)
 postman/          coleccion de la API y entornos local y nube
 docs/entrega1/    ARQUITECTURA.md, DOCUMENTACION.md, CREDENCIALES.md (locales)
 docs/entrega2/    documento de arquitectura del despliegue en GCP y diagramas
-docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes) y
-                  guia-sonarqube.md (pipeline de calidad y primer diagnostico)
-.github/          workflows/calidad.yml (pruebas + SonarQube) y
-                  scripts/sonar-umbrales.sh (umbrales de la Entrega 3).
-                  sonar-project.properties en la raiz define el alcance
+docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes)
 docs/entrega1/testdata/
                   smoke.sh, otros smoke_*.sh (cada uno demuestra un
                   comportamiento concreto: un formato de archivo, un

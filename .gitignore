@@ -15,7 +15,3 @@ capacity-planning/resultados/*.local.json
 
 # Artefactos de Windows al copiar archivos descargados
 *:Zone.Identifier
-
-# Artefactos del analisis de calidad (SonarQube) y de la cobertura de Go
-.scannerwork/
-coverage.out
