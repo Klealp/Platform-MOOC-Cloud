@@ -1,0 +1,25 @@
+# Nombre que aparece en la pestana Actions de GitHub
+name: calidad
+
+# CUANDO se ejecuta
+on:
+  push:
+    branches: [entrega-3-infra]   # en cada push a esta rama
+  workflow_dispatch:              # y con un boton "Run workflow" para lanzarlo a mano
+
+# QUE se ejecuta
+jobs:
+  pruebas:                        # nombre interno del trabajo
+    runs-on: ubuntu-latest        # en que maquina: un Linux limpio que presta GitHub
+    steps:
+      # 1. La maquina arranca vacia: primero descarga el codigo del repo
+      - uses: actions/checkout@v4
+
+      # 2. Instala Go, en la version que dice go.mod
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # 3. Lo mismo que corriste a mano en el paso 6
+      - name: Pruebas con cobertura
+        run: go test -coverprofile=coverage.out ./...
