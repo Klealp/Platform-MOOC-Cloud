@@ -15,3 +15,6 @@ capacity-planning/resultados/*.local.json
 
 # Artefactos de Windows al copiar archivos descargados
 *:Zone.Identifier
+
+# Cobertura de Go: la genera go test -coverprofile, se recrea en cada corrida
+coverage.out
