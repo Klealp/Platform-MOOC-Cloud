@@ -4,7 +4,7 @@ name: calidad
 # CUANDO se ejecuta
 on:
   push:
-    branches: [entrega-3-infra, practica-sonar]   # en cada push a estas ramas
+    branches: [main, entrega-3-infra]   # en cada push a estas ramas
   workflow_dispatch:              # y con un boton "Run workflow" para lanzarlo a mano
 
 # QUE se ejecuta
