@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BookOpen, PencilRuler, ShieldCheck, Award, Layers, Monitor } from "lucide-react";
 
@@ -5,6 +6,8 @@ import { Navbar } from "@/components/layout/navbar";
 import { requireUser } from "@/lib/auth/guards";
 import { Card, CardBody } from "@/components/ui/card";
 import { Tag } from "@/components/ui/badge";
+
+export const metadata: Metadata = { title: "Panel" };
 
 /**
  * Panel principal. requireUser() se ejecuta en el servidor: si no hay sesion
@@ -48,7 +51,7 @@ export default async function DashboardPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-[1200px] px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-[1200px] px-6 py-10">
         <div className="mb-8 flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold tracking-tight">
             Hola, {user.full_name.split(" ")[0]}

@@ -79,7 +79,7 @@ export function CourseEditor({
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 px-4 py-10">
+    <main id="contenido" tabIndex={-1} className="mx-auto max-w-5xl space-y-6 px-4 py-10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -155,12 +155,14 @@ export function CourseEditor({
               </CardTitle>
               {isDraft && (
                 <button
+                  type="button"
                   title="Eliminar módulo"
+                  aria-label={`Eliminar módulo ${mod.title}`}
                   disabled={pending}
                   onClick={() => run(() => deleteModuleAction(mod.id))}
-                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-white transition-colors hover:brightness-95"
+                  className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-[var(--color-on-danger)] transition-colors hover:brightness-95"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" aria-hidden />
                 </button>
               )}
             </CardHeader>
@@ -171,12 +173,14 @@ export function CourseEditor({
                     <p className="font-medium">{unit.title}</p>
                     {isDraft && (
                       <button
+                        type="button"
                         title="Eliminar unidad"
+                        aria-label={`Eliminar unidad ${unit.title}`}
                         disabled={pending}
                         onClick={() => run(() => deleteUnitAction(unit.id))}
-                        className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1 text-white transition-colors hover:brightness-95"
+                        className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-[var(--color-on-danger)] transition-colors hover:brightness-95"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" aria-hidden />
                       </button>
                     )}
                   </div>
@@ -210,12 +214,14 @@ export function CourseEditor({
                         {!r.visible && <Tag tone="warn">oculto</Tag>}
                         {isDraft && (
                           <button
+                            type="button"
                             title="Eliminar recurso"
+                            aria-label={`Eliminar recurso ${r.title}`}
                             disabled={pending}
                             onClick={() => run(() => deleteResourceAction(r.id))}
-                            className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1 text-white transition-colors hover:brightness-95"
+                            className="rounded-[var(--radius-sm)] bg-[var(--color-danger)] p-1.5 text-[var(--color-on-danger)] transition-colors hover:brightness-95"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-4 w-4" aria-hidden />
                           </button>
                         )}
                       </li>
@@ -251,14 +257,22 @@ export function CourseEditor({
                   }}
                 >
                   <Input
+                    aria-label={`Título de la nueva unidad del módulo ${mod.title}`}
                     placeholder="Nueva unidad…"
                     value={unitDrafts[mod.id] ?? ""}
                     onChange={(e) =>
                       setUnitDrafts((p) => ({ ...p, [mod.id]: e.target.value }))
                     }
                   />
-                  <Button type="submit" size="sm" variant="outline" disabled={pending}>
-                    <Plus className="h-4 w-4" />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="outline"
+                    disabled={pending}
+                    aria-label="Agregar unidad"
+                    title="Agregar unidad"
+                  >
+                    <Plus className="h-4 w-4" aria-hidden />
                   </Button>
                 </form>
               )}
@@ -285,6 +299,7 @@ export function CourseEditor({
             }}
           >
             <Input
+              aria-label="Título del nuevo módulo"
               placeholder="Nuevo módulo…"
               value={newModule}
               onChange={(e) => setNewModule(e.target.value)}

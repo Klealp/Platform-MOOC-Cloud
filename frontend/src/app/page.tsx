@@ -1,15 +1,14 @@
-import Link from "next/link";
 import { ArrowRight, Award, BookOpen, Users } from "lucide-react";
 
 import { Navbar } from "@/components/layout/navbar";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 
 export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-[1200px] px-6 py-16">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-[1200px] px-6 py-16">
         <section className="grid items-center gap-12 md:grid-cols-2">
           <div className="space-y-6">
             <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-5xl">
@@ -21,16 +20,12 @@ export default function HomePage() {
               insignias verificables.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/catalog">
-                <Button size="lg">
+              <ButtonLink href="/catalog" size="lg">
                   Ver catálogo <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button size="lg" variant="secondary">
+                </ButtonLink>
+              <ButtonLink href="/register" size="lg" variant="secondary">
                   Crear cuenta
-                </Button>
-              </Link>
+                </ButtonLink>
             </div>
           </div>
 
@@ -46,7 +41,7 @@ export default function HomePage() {
                     <Icon className="h-6 w-6" />
                   </span>
                   <div>
-                    <h3 className="font-semibold">{t}</h3>
+                    <h2 className="font-semibold">{t}</h2>
                     <p className="mt-1 text-sm text-[var(--color-text-muted)]">{d}</p>
                   </div>
                 </CardBody>

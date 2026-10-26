@@ -6,7 +6,7 @@ export default function CatalogLoading() {
   return (
     <>
       <Navbar />
-      <main
+      <main id="contenido" tabIndex={-1}
         className="mx-auto max-w-[1200px] space-y-8 px-6 py-10"
         aria-busy="true"
         aria-live="polite"

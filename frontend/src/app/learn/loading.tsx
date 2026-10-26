@@ -6,7 +6,7 @@ export default function LearnLoading() {
   return (
     <>
       <Navbar />
-      <main
+      <main id="contenido" tabIndex={-1}
         className="mx-auto max-w-5xl space-y-6 px-6 py-10"
         aria-busy="true"
         aria-live="polite"

@@ -21,6 +21,14 @@ terminadas; el proyecto se prepara para la **Entrega 3**.
   (TypeScript). No modificarlo al trabajar en el backend salvo peticion
   explicita; si cambia el contrato OpenAPI, avisar que el frontend regenera
   sus tipos con `npm run gen:api`.
+- El frontend debe cumplir **WCAG 2.2 AA** (criterio de calificacion). Al
+  tocarlo, seguir las convenciones de la seccion "Accesibilidad" de
+  `frontend/README.md` (tokens de color, `Field`, `ButtonLink`, titulos por
+  pagina, nada de texto atenuado con `opacity`) y volver a correr la auditoria
+  de `docs/entrega3/Prueba Accesibilidad/`. La ultima ejecucion (2026-10-24)
+  aprobo las 38 auditorias. Los subtitulos y transcripciones de video/audio
+  (1.2.2 y 1.2.5) siguen pendientes: necesitan que el backend guarde pistas
+  WebVTT.
 
 Un proyecto anterior del mismo autor, `okf-platform` (conversion de documentos
 a bundles OKF), sirvio de referencia: se conservan a proposito su estructura de
@@ -101,7 +109,13 @@ capacity-planning/ pruebas de carga k6 e informe de capacidad (escenarios 1 y 2)
 postman/          coleccion de la API y entornos local y nube
 docs/entrega1/    ARQUITECTURA.md, DOCUMENTACION.md, CREDENCIALES.md (locales)
 docs/entrega2/    documento de arquitectura del despliegue en GCP y diagramas
-docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes)
+docs/entrega3/    guia-mig.md (arquitectura elastica, estado y pendientes) y
+                  "Prueba Accesibilidad/": auditoria WCAG 2.2 AA con Playwright +
+                  axe que corre en un contenedor (ejecutar.sh) y deja su
+                  reporte en resultados/REPORTE.md
+.github/          workflows/calidad.yml: en cada push corre go test con
+                  cobertura y el analisis de SonarQube Cloud. Lo que se
+                  analiza lo define sonar-project.properties en la raiz
 docs/entrega1/testdata/
                   smoke.sh, otros smoke_*.sh (cada uno demuestra un
                   comportamiento concreto: un formato de archivo, un
@@ -184,7 +198,9 @@ make up      # levanta todo
 make reset   # BORRA los volumenes; obligatorio tras cambiar db/init.sql
 make logs    # sigue los logs de api y worker
 make psql    # consola SQL
+docker compose up -d --build --no-deps web   # reconstruye solo el frontend
 ./docs/entrega1/testdata/smoke.sh   # prueba de humo de extremo a extremo
+"./docs/entrega3/Prueba Accesibilidad/ejecutar.sh"   # auditoria WCAG 2.2 AA (en contenedor)
 
 # Nube (ver docs/entrega2/README.md seccion 6)
 ./deploy/gcp/provision.sh todo|config|resumen
@@ -217,15 +233,27 @@ Cosas que estan asi a proposito y que no hay que "arreglar" sin hablarlo:
   la API, autoescalado de workers, BD con alta disponibilidad y Redis
   administrado. Son las candidatas a la evolucion elastica (seccion 7.4 de
   `docs/entrega2/README.md`); el informe de capacidad decide cual aporta mas.
-- `GET /resources/:id/content` esta restringido a profesor/admin, asi que un
-  estudiante no puede leer el Markdown de un recurso `rich_text` (ver
-  `frontend/README.md`, "Gap conocido del backend").
+- `GET /resources/:id/content` es solo de autoria (profesor/admin). El
+  estudiante lee el Markdown de un recurso `rich_text` por
+  `GET /enrollments/:id/resources/:resourceId/content`, con la misma regla de
+  acceso que los archivos dentro del `WHERE` (inscripcion activa, curso
+  publicado, version vigente, recurso visible); cualquier otro caso es 404.
+- Los filtros de "Mis cursos" (`/teach`) y de la bitacora (`/admin/audit`) se
+  resuelven en parte en el servidor de Next, no en la API: `GET /courses` no
+  acepta filtros ni devuelve nivel ni idioma, y `GET /admin/audit` filtra por
+  `action` pero no por fecha (el frontend pide las ultimas 500 lineas y
+  recorta). Llevarlos al `WHERE` es un cambio pequeno de backend pendiente de
+  aprobar. La lista de tipos del filtro de auditoria copia las constantes
+  `Action*` de `internal/audit/audit.go`: al agregar una accion, agregarla
+  tambien en `frontend/src/components/admin/audit-filters.tsx`.
 - Los smoke tests no leen el token de verificacion de correo desde Mailpit;
   en produccion (`APP_ENV` distinto de `dev`) hay que leerlo a mano.
 - Pocas pruebas unitarias (`go test ./...`): `internal/queuemetrics`, la IP
   del cliente detras del balanceador (`internal/api/proxies_test.go`) y los
-  trabajos interrumpidos (`internal/tasks/interrupted_test.go`). El resto se
-  cubre con la prueba de humo.
+  trabajos interrumpidos (`internal/tasks/interrupted_test.go`). Las demas
+  pruebas automatizadas son la prueba de humo (`smoke*.sh`) y la auditoria de
+  accesibilidad (`docs/entrega3/Prueba Accesibilidad/ejecutar.sh`). Faltan,
+  segun la retroalimentacion de la Entrega 1, compatibilidad y recuperacion.
 - Detras del balanceador, las peticiones anonimas que pasan por el BFF
   llegan a la API con la IP del Cloud NAT del frontend, asi que comparten el
   limite de tasa por IP (afecta al login). Arreglarlo exige que el BFF

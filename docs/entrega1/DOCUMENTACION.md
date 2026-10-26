@@ -465,7 +465,7 @@ para decidir entre FFmpeg propio y un servicio gestionado).
 | `handlers_media.go` | Carga multipart, consulta de assets, entrega firmada y la lista HLS reescrita. `sanitizeFilename` evita que un nombre como `../../etc/x` se convierta en una ruta arbitraria dentro del bucket. |
 | `handlers_quiz_authoring.go` | Autoria de preguntas. `validate()` rechaza preguntas con menos de dos opciones, sin respuesta correcta, o con varias correctas sin `multiple`. Actualizar una pregunta la **reemplaza completa**: es mas simple y menos propenso a errores que parchear una lista ordenada. |
 | `handlers_quiz_attempts.go` | Intentos: snapshot, guardado parcial, calificacion. La pieza mas sensible del proyecto; ver 4.6. |
-| `handlers_learning.go` | Catalogo con cursor, inscripcion, retiro y eventos de progreso. Usa cursor en vez de `OFFSET` porque con `OFFSET`, si alguien publica un curso mientras el usuario pagina, las filas se desplazan y se repiten o se pierden. |
+| `handlers_learning.go` | Catalogo con cursor, inscripcion, retiro, eventos de progreso y la lectura del Markdown de un recurso `rich_text` para el estudiante (`handleEnrollmentResourceContent`, con el acceso en el `WHERE`). Usa cursor en vez de `OFFSET` porque con `OFFSET`, si alguien publica un curso mientras el usuario pagina, las filas se desplazan y se repiten o se pierden. |
 | `handlers_badges.go` | Insignias propias, verificacion publica y revocacion. Revocar **no borra**: alguien puede tener el enlace y necesita saber que ya no es valido. |
 
 ### 5.12 `internal/progress/progress.go`

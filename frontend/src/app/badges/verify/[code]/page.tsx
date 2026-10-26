@@ -1,14 +1,16 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { Award, CheckCircle2, XCircle } from "lucide-react";
 
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardBody } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { Tag } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { verifyBadge } from "@/lib/api/public";
 import { ApiRequestError } from "@/lib/api/server-client";
 import { formatDate } from "@/lib/utils";
+
+export const metadata: Metadata = { title: "Verificar insignia" };
 
 /**
  * Verificación PÚBLICA de una insignia. No requiere sesión: cualquiera con el
@@ -37,7 +39,7 @@ export default async function BadgeVerifyPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-2xl space-y-6 px-6 py-12">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-2xl space-y-6 px-6 py-12">
         <h1 className="text-center text-3xl font-bold tracking-tight">
           Verificación de insignia
         </h1>
@@ -76,23 +78,23 @@ export default async function BadgeVerifyPage({
 
               <dl className="space-y-2 text-left text-sm">
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Titular</dt>
+                  <dt className="text-[var(--color-text-muted)]">Titular</dt>
                   <dd className="text-right">{badge.recipient}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Curso</dt>
+                  <dt className="text-[var(--color-text-muted)]">Curso</dt>
                   <dd className="text-right">{badge.course}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Emitida por</dt>
+                  <dt className="text-[var(--color-text-muted)]">Emitida por</dt>
                   <dd className="text-right">{badge.issued_by}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Fecha de emisión</dt>
+                  <dt className="text-[var(--color-text-muted)]">Fecha de emisión</dt>
                   <dd className="text-right">{formatDate(badge.issued_at)}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="opacity-60">Código</dt>
+                  <dt className="text-[var(--color-text-muted)]">Código</dt>
                   <dd className="text-right font-mono text-xs">
                     {badge.public_code}
                   </dd>
@@ -116,9 +118,7 @@ export default async function BadgeVerifyPage({
         )}
 
         <div className="text-center">
-          <Link href="/catalog">
-            <Button variant="outline">Ver catálogo de cursos</Button>
-          </Link>
+          <ButtonLink href="/catalog" variant="outline">Ver catálogo de cursos</ButtonLink>
         </div>
       </main>
     </>

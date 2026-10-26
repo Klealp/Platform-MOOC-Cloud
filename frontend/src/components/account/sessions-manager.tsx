@@ -62,7 +62,7 @@ export function SessionsManager({ sessions }: { sessions: ActiveSession[] }) {
                   </span>
                   {s.current && <Tag tone="ok">Sesión actual</Tag>}
                 </div>
-                <p className="text-xs font-medium opacity-70">
+                <p className="text-xs font-medium text-[var(--color-text-muted)]">
                   IP {s.ip || "—"} · Inició {formatDateTime(s.created_at)} ·
                   Última actividad {formatDateTime(s.last_seen_at)}
                 </p>
@@ -72,6 +72,11 @@ export function SessionsManager({ sessions }: { sessions: ActiveSession[] }) {
                 variant={s.current ? "danger" : "outline"}
                 disabled={pending && revokingId === s.id}
                 onClick={() => revoke(s)}
+                aria-label={
+                  s.current
+                    ? "Cerrar esta sesión"
+                    : `Cerrar la sesión de ${s.user_agent || "dispositivo desconocido"}`
+                }
               >
                 <LogOut className="h-4 w-4" />
                 {pending && revokingId === s.id

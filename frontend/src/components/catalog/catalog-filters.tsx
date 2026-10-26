@@ -25,6 +25,9 @@ const LANGUAGES = [
  * Filtros del catalogo. Escribe los parametros en la URL (?q=&level=...), de
  * modo que la pagina (Server Component) vuelve a pedir los datos filtrados al
  * backend. El filtrado real lo hace el servidor; esto solo navega.
+ *
+ * Los desplegables no navegan al cambiar: con teclado, cada flecha dispararia
+ * una recarga (WCAG 3.2.2). Todo se aplica con el boton.
  */
 export function CatalogFilters() {
   const router = useRouter();
@@ -55,6 +58,8 @@ export function CatalogFilters() {
 
   return (
     <form
+      role="search"
+      aria-label="Filtrar el catálogo"
       className="grid gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 elevate-sm md:grid-cols-[1fr_auto_auto_auto_auto]"
       onSubmit={(e) => {
         e.preventDefault();
@@ -62,10 +67,12 @@ export function CatalogFilters() {
       }}
     >
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-text-muted)]" />
+        <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--color-text-muted)]" />
         <Input
           className="pl-10"
           placeholder="Buscar cursos…"
+          aria-label="Buscar cursos"
+          type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           name="q"
@@ -73,16 +80,17 @@ export function CatalogFilters() {
       </div>
       <Input
         placeholder="Categoría"
+        aria-label="Categoría"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         className="md:w-36"
       />
-      <Select value={level} onChange={(e) => { setLevel(e.target.value); apply({ level: e.target.value }); }}>
+      <Select aria-label="Nivel" value={level} onChange={(e) => setLevel(e.target.value)}>
         {LEVELS.map((o) => (
           <option key={o.v} value={o.v}>{o.l}</option>
         ))}
       </Select>
-      <Select value={language} onChange={(e) => { setLanguage(e.target.value); apply({ language: e.target.value }); }}>
+      <Select aria-label="Idioma" value={language} onChange={(e) => setLanguage(e.target.value)}>
         {LANGUAGES.map((o) => (
           <option key={o.v} value={o.v}>{o.l}</option>
         ))}
@@ -91,8 +99,8 @@ export function CatalogFilters() {
         <Button type="submit" size="sm" disabled={pending}>
           Buscar
         </Button>
-        <Button type="button" size="sm" variant="outline" onClick={clear} title="Limpiar">
-          <X className="h-4 w-4" />
+        <Button type="button" size="sm" variant="outline" onClick={clear} title="Limpiar filtros" aria-label="Limpiar filtros">
+          <X className="h-4 w-4" aria-hidden />
         </Button>
       </div>
     </form>

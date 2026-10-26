@@ -15,8 +15,10 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
+// Cada pagina declara su propio titulo (WCAG 2.4.2); la plantilla le agrega
+// el nombre del sitio.
 export const metadata: Metadata = {
-  title: "Plataforma MOOC",
+  title: { default: "Plataforma MOOC", template: "%s · Plataforma MOOC" },
   description: "Cursos masivos abiertos en linea",
 };
 
@@ -45,7 +47,17 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Primer elemento tabulable: permite saltar la barra de navegacion
+            (WCAG 2.4.1). Cada pagina marca su <main> con id="contenido". */}
+        <a
+          href="#contenido"
+          className="sr-only rounded-md bg-[var(--color-primary)] px-4 py-2 font-semibold text-[var(--color-on-primary)] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
+        >
+          Saltar al contenido
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

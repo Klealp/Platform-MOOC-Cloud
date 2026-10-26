@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Navbar } from "@/components/layout/navbar";
@@ -10,6 +11,8 @@ import {
 } from "@/lib/api/authoring";
 import { ApiRequestError } from "@/lib/api/server-client";
 import { CourseEditor } from "@/components/teach/course-editor";
+
+export const metadata: Metadata = { title: "Editor de curso" };
 
 export default async function CourseEditorPage({
   params,

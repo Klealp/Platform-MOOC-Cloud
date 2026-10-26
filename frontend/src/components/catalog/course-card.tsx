@@ -22,9 +22,9 @@ export function CourseCard({ course }: { course: CatalogItem }) {
             {course.category && <Tag tone="blue">{course.category}</Tag>}
             {course.level && <Tag tone={tone}>{course.level}</Tag>}
           </div>
-          <h3 className="text-lg font-semibold leading-snug tracking-tight">
+          <h2 className="text-lg font-semibold leading-snug tracking-tight">
             {course.title}
-          </h3>
+          </h2>
           <p className="line-clamp-3 text-sm text-[var(--color-text-muted)]">
             {course.summary || "Sin descripción."}
           </p>
@@ -41,7 +41,8 @@ export function CourseCard({ course }: { course: CatalogItem }) {
         <CardFooter className="flex items-center justify-between text-sm text-[var(--color-text-muted)]">
           <span className="truncate">{course.teacher}</span>
           <span className="flex items-center gap-1">
-            <Users className="h-4 w-4" /> {course.enrolled}
+            <Users className="h-4 w-4" aria-hidden /> {course.enrolled}
+            <span className="sr-only">inscritos</span>
           </span>
         </CardFooter>
       </Card>

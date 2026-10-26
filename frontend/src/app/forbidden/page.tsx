@@ -1,10 +1,12 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import { ShieldX } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
+
+export const metadata: Metadata = { title: "Sin permiso" };
 
 export default function ForbiddenPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] p-4 text-center">
+    <main id="contenido" tabIndex={-1} className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[var(--color-bg)] p-4 text-center">
       <span className="flex h-20 w-20 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-danger)_12%,transparent)] text-[var(--color-danger)]">
         <ShieldX className="h-10 w-10" />
       </span>
@@ -15,9 +17,7 @@ export default function ForbiddenPage() {
           el servidor.
         </p>
       </div>
-      <Link href="/dashboard">
-        <Button variant="secondary">Volver al panel</Button>
-      </Link>
+      <ButtonLink href="/dashboard" variant="secondary">Volver al panel</ButtonLink>
     </main>
   );
 }

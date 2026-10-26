@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FileText, Film, HelpCircle, Music, Image as ImageIcon, Link2, FileDown } from "lucide-react";
 
@@ -5,10 +6,15 @@ import { Navbar } from "@/components/layout/navbar";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tag } from "@/components/ui/badge";
 import { EnrollButton } from "@/components/catalog/enroll-button";
+import { ApprovedBanner } from "@/components/catalog/approved-banner";
+import { ButtonLink } from "@/components/ui/button";
 import { getCatalogDetail } from "@/lib/api/catalog";
+import { listEnrollments, listMyBadges } from "@/lib/api/learning";
 import { getCurrentUser } from "@/lib/auth/session";
 import { ApiRequestError } from "@/lib/api/server-client";
-import type { ResourceType } from "@/lib/api/types";
+import type { Badge, Enrollment, ResourceType } from "@/lib/api/types";
+
+export const metadata: Metadata = { title: "Curso" };
 
 const typeIcon: Record<ResourceType, typeof FileText> = {
   rich_text: FileText,
@@ -38,6 +44,21 @@ export default async function CourseDetailPage({
 
   const user = await getCurrentUser();
 
+  // Con sesion, se busca la inscripcion del usuario en este curso para saber
+  // si ya lo aprobo. Si falla, la ficha se muestra igual, sin felicitacion.
+  let enrollment: Enrollment | undefined;
+  let badge: Badge | undefined;
+  if (user) {
+    try {
+      const [enrollments, badges] = await Promise.all([listEnrollments(), listMyBadges()]);
+      enrollment = enrollments.find((e) => e.slug === detail.slug);
+      badge = badges.find((b) => b.course_slug === detail.slug);
+    } catch {
+      enrollment = undefined;
+    }
+  }
+  const approved = !!enrollment && (enrollment.state === "approved" || !!enrollment.approved_at);
+
   const totalResources = detail.outline.reduce(
     (acc, m) => acc + m.units.reduce((a, u) => a + u.resources.length, 0),
     0,
@@ -46,7 +67,8 @@ export default async function CourseDetailPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-[1200px] px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-[1200px] px-6 py-10">
+        {approved && <ApprovedBanner approvedAt={enrollment!.approved_at} badge={badge} />}
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <div className="space-y-6">
             <div className="flex flex-wrap gap-2">
@@ -115,7 +137,13 @@ export default async function CourseDetailPage({
                     <dd>{detail.required_completion}%</dd>
                   </div>
                 </dl>
-                <EnrollButton slug={detail.slug} authenticated={!!user} />
+                {approved && enrollment!.status === "active" ? (
+                  <ButtonLink href={`/learn/${enrollment!.id}`} variant="secondary" className="w-full">
+                    Repasar el curso
+                  </ButtonLink>
+                ) : (
+                  <EnrollButton slug={detail.slug} authenticated={!!user} />
+                )}
               </CardBody>
             </Card>
           </aside>

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -7,9 +8,11 @@ import { listEnrollments } from "@/lib/api/learning";
 import { Card, CardBody, CardFooter } from "@/components/ui/card";
 import { Tag, statusTone } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { WithdrawButton } from "@/components/learn/withdraw-button";
+
+export const metadata: Metadata = { title: "Mis cursos" };
 
 export default async function MyLearningPage() {
   await requireUser("/learn");
@@ -18,13 +21,13 @@ export default async function MyLearningPage() {
   return (
     <>
       <Navbar />
-      <main className="mx-auto max-w-5xl space-y-6 px-6 py-10">
+      <main id="contenido" tabIndex={-1} className="mx-auto max-w-5xl space-y-6 px-6 py-10">
         <h1 className="text-3xl font-bold tracking-tight">Mis cursos</h1>
 
         {enrollments.length === 0 ? (
           <Alert variant="info" title="Aún no te has inscrito">
             Explora el{" "}
-            <Link href="/catalog" className="font-medium text-[var(--color-primary)] hover:underline">catálogo</Link>{" "}
+            <Link href="/catalog" className="font-medium text-[var(--color-primary)] underline underline-offset-2">catálogo</Link>{" "}
             y empieza tu primer curso.
           </Alert>
         ) : (
@@ -39,24 +42,25 @@ export default async function MyLearningPage() {
                   <h2 className="text-lg font-semibold leading-snug">
                     {e.title}
                   </h2>
-                  <ProgressBar value={e.progress_pct} />
+                  <ProgressBar value={e.progress_pct} label={`Progreso en ${e.title}`} />
                 </CardBody>
                 <CardFooter className="flex flex-col items-stretch gap-2">
                   {e.status === "active" ? (
                     <>
-                      <Link href={`/learn/${e.id}`}>
-                        <Button className="w-full">
-                          Continuar <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <ButtonLink href={`/learn/${e.id}`} className="w-full" aria-label={`Continuar ${e.title}`}>
+                        Continuar <ArrowRight className="h-4 w-4" aria-hidden />
+                      </ButtonLink>
                       <WithdrawButton enrollmentId={e.id} />
                     </>
                   ) : (
-                    <Link href={`/catalog/${e.slug}`}>
-                      <Button variant="outline" className="w-full">
-                        Reinscribirme
-                      </Button>
-                    </Link>
+                    <ButtonLink
+                      href={`/catalog/${e.slug}`}
+                      variant="outline"
+                      className="w-full"
+                      aria-label={`Reinscribirme en ${e.title}`}
+                    >
+                      Reinscribirme
+                    </ButtonLink>
                   )}
                 </CardFooter>
               </Card>

@@ -90,7 +90,7 @@ export function AddResourceDialog({
       {error && <Alert variant="error">{error}</Alert>}
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Tipo">
-          <Select value={type} onChange={(e) => setType(e.target.value as ResourceType)}>
+          <Select autoFocus value={type} onChange={(e) => setType(e.target.value as ResourceType)}>
             {TYPES.map((t) => (
               <option key={t.value} value={t.value}>{t.label}</option>
             ))}
@@ -140,7 +140,7 @@ export function AddResourceDialog({
           type="checkbox"
           checked={required}
           onChange={(e) => setRequired(e.target.checked)}
-          className="h-4 w-4 rounded-[var(--radius-sm)] border border-[var(--color-border)]"
+          className="h-4 w-4 accent-[var(--color-primary)]"
         />
         Obligatorio para completar el curso
       </label>

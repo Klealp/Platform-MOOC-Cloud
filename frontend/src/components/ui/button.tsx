@@ -1,13 +1,14 @@
 import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost" | "outline";
 type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
-  // Acción principal: fondo de marca, texto blanco.
+  // Acción principal: fondo de marca, texto en --color-on-primary.
   primary:
-    "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]",
+    "bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)]",
   // Secundario: superficie con borde sutil.
   secondary:
     "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:bg-[var(--color-surface-alt)]",
@@ -15,7 +16,7 @@ const variants: Record<Variant, string> = {
   outline:
     "bg-[var(--color-surface)] text-[var(--color-text)] border border-[var(--color-border)] hover:bg-[var(--color-surface-alt)]",
   // Destructivo.
-  danger: "bg-[var(--color-danger)] text-white hover:brightness-95",
+  danger: "bg-[var(--color-danger)] text-[var(--color-on-danger)] hover:brightness-95",
   // Terciario: sin fondo ni borde.
   ghost:
     "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-surface-alt)]",
@@ -33,21 +34,46 @@ export interface ButtonProps
   size?: Size;
 }
 
+/** Clases de un boton, para aplicarlas tambien a un enlace. */
+export function buttonClasses({
+  variant = "primary",
+  size = "md",
+  className,
+}: { variant?: Variant; size?: Size; className?: string } = {}) {
+  return cn(
+    "inline-flex items-center justify-center rounded-md font-semibold",
+    "transition-colors duration-150 ease-out",
+    "disabled:cursor-not-allowed disabled:opacity-50",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+}
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", ...props }, ref) => (
+  ({ className, variant, size, ...props }, ref) => (
     <button
       ref={ref}
-      className={cn(
-        "inline-flex items-center justify-center rounded-md font-semibold",
-        "transition-colors duration-150 ease-out",
-        "focus-visible:outline-none",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        variants[variant],
-        sizes[size],
-        className,
-      )}
+      className={buttonClasses({ variant, size, className })}
       {...props}
     />
   ),
 );
 Button.displayName = "Button";
+
+/**
+ * Enlace con aspecto de boton. Reemplaza el patron <Link><Button/></Link>,
+ * que anida un control dentro de otro (HTML invalido, dos paradas de
+ * tabulacion y un nombre accesible confuso para los lectores de pantalla).
+ */
+export function ButtonLink({
+  href,
+  variant,
+  size,
+  className,
+  ...props
+}: React.ComponentProps<typeof Link> & { variant?: Variant; size?: Size }) {
+  return (
+    <Link href={href} className={buttonClasses({ variant, size, className })} {...props} />
+  );
+}

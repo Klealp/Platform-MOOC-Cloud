@@ -65,10 +65,10 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
           {createState.error && <Alert variant="error" className="mb-3">{createState.error}</Alert>}
           {createState.ok && <Alert variant="success" className="mb-3">Usuario creado.</Alert>}
           <form action={createAction} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Field label="Nombre"><Input name="full_name" required /></Field>
+            <Field label="Nombre"><Input name="full_name" autoComplete="off" required /></Field>
             <Field label="Correo"><Input name="email" type="email" required /></Field>
             <Field label="Contraseña" hint="mín. 10">
-              <Input name="password" type="password" minLength={10} required />
+              <Input name="password" type="password" minLength={10} autoComplete="new-password" required />
             </Field>
             <Field label="Rol">
               <Select name="role" defaultValue="teacher">
@@ -91,13 +91,14 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
       {/* Tabla de usuarios */}
       <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] elevate-sm">
         <table className="w-full text-sm">
+          <caption className="sr-only">Usuarios de la plataforma</caption>
           <thead className="border-b border-[var(--color-border)] bg-[var(--color-surface-alt)]">
             <tr className="text-left">
-              <th className="p-3">Usuario</th>
-              <th className="p-3">Rol</th>
-              <th className="p-3">Estado</th>
-              <th className="p-3">Creado</th>
-              <th className="p-3">Acciones</th>
+              <th scope="col" className="p-3">Usuario</th>
+              <th scope="col" className="p-3">Rol</th>
+              <th scope="col" className="p-3">Estado</th>
+              <th scope="col" className="p-3">Creado</th>
+              <th scope="col" className="p-3">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -110,6 +111,7 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
                 </td>
                 <td className="p-3">
                   <Select
+                    aria-label={`Rol de ${u.full_name}`}
                     value={u.role}
                     disabled={pending}
                     onChange={(e) => changeRole(u, e.target.value as Role)}
@@ -122,6 +124,7 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
                 </td>
                 <td className="p-3">
                   <Select
+                    aria-label={`Estado de ${u.full_name}`}
                     value={u.status}
                     disabled={pending}
                     onChange={(e) => changeStatus(u, e.target.value)}
@@ -136,10 +139,12 @@ export function UsersManager({ initialUsers }: { initialUsers: AdminUser[] }) {
                 <td className="p-3 font-medium text-[var(--color-text-muted)]">{formatDate(u.created_at)}</td>
                 <td className="p-3">
                   <button
+                    type="button"
                     title="Revocar sesiones"
+                    aria-label={`Revocar las sesiones de ${u.full_name}`}
                     disabled={pending}
                     onClick={() => revoke(u)}
-                    className="flex items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-surface-alt)] px-2 py-1 text-xs font-medium transition-colors"
+                    className="flex min-h-6 items-center gap-1 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface-alt)] px-2 py-1 text-xs font-medium transition-colors"
                   >
                     <ShieldOff className="h-3.5 w-3.5" /> Sesiones
                   </button>

@@ -20,9 +20,11 @@
   --color-accent: #06b6d4;
 
   /* ---- Semántica de estado ---- */
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-danger: #dc2626;
+  /* Tonos 700/800: se usan como color de texto sobre fondos tenues y deben
+     llegar a 4.5:1 (WCAG 1.4.3). Los valores de cada tema estan en :root/.dark. */
+  --color-success: #166534;
+  --color-warning: #92400e;
+  --color-danger: #b91c1c;
 
   /* ---- Superficies y texto (modo claro, valores por defecto del tema) ---- */
   --color-bg: #f7f8fa;
@@ -31,6 +33,7 @@
   --color-text: #1a1a2e;
   --color-text-muted: #5a6072;
   --color-border: #e3e6eb;
+  --color-border-strong: #7b8294;
 
   /* ---- Radios ---- */
   --radius-sm: 6px;
@@ -66,10 +69,18 @@
   --color-text: #1a1a2e;
   --color-text-muted: #5a6072;
   --color-border: #e3e6eb;
+  /* Borde de controles de formulario: 3:1 contra el fondo (WCAG 1.4.11). */
+  --color-border-strong: #7b8294;
   --color-primary: #4f46e5;
   --color-primary-hover: #4338ca;
-  --color-accent: #06b6d4;
-  --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.4);
+  /* Texto sobre un fondo de color de marca o de peligro. */
+  --color-on-primary: #ffffff;
+  --color-on-danger: #ffffff;
+  --color-accent: #155e75;
+  --color-success: #166534;
+  --color-warning: #92400e;
+  --color-danger: #b91c1c;
+  --focus-color: #4f46e5;
 }
 
 .dark {
@@ -80,10 +91,24 @@
   --color-text: #e8eaed;
   --color-text-muted: #9aa0ae;
   --color-border: #2c3040;
-  --color-primary: #6366f1;
-  --color-primary-hover: #818cf8;
+  --color-border-strong: #6b7285;
+  /* En oscuro la marca se aclara para leerse como texto (5.6:1); por eso el
+     texto encima de ella pasa a ser oscuro. */
+  --color-primary: #818cf8;
+  --color-primary-hover: #a5b4fc;
+  --color-on-primary: #0f1117;
+  --color-on-danger: #0f1117;
   --color-accent: #22d3ee;
-  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.5);
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --focus-color: #818cf8;
+}
+
+html {
+  /* La barra superior es sticky: sin este margen, un elemento que recibe el
+     foco al tabular hacia atras queda tapado por ella (WCAG 2.4.11). */
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -94,11 +119,17 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Foco de teclado SIEMPRE visible (WCAG AA). */
+/* Foco de teclado SIEMPRE visible y con 3:1 de contraste (WCAG 2.4.7 y
+   1.4.11). Es un contorno solido, no una sombra translucida: va fuera de la
+   capa de utilidades para que ningun `outline-none` lo apague. */
 :focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: var(--focus-ring);
-  border-radius: var(--radius-sm);
+  outline: 2px solid var(--focus-color) !important;
+  outline-offset: 2px;
+}
+
+/* <main> recibe el foco al usar "Saltar al contenido"; no necesita anillo. */
+main:focus-visible {
+  outline: none !important;
 }
 
 /* ===================================================================
@@ -140,7 +171,7 @@ body {
 
 ::selection {
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-on-primary);
 }
 
 /* Respeta la preferencia de menos movimiento. */

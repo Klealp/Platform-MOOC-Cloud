@@ -19,13 +19,14 @@ export async function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)]/90 backdrop-blur">
-      <nav className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6 py-3">
+      <nav aria-label="Principal" className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6 py-3">
         <Link
           href="/"
+          aria-label="MOOC, inicio"
           className="flex items-center gap-2 font-semibold tracking-tight text-[var(--color-text)]"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--color-primary)] text-white">
-            <GraduationCap className="h-5 w-5" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--color-primary)] text-[var(--color-on-primary)]">
+            <GraduationCap className="h-5 w-5" aria-hidden />
           </span>
           <span className="hidden sm:inline">MOOC</span>
         </Link>
@@ -54,7 +55,7 @@ export async function Navbar() {
               <ThemeToggle />
               <Link
                 href="/login"
-                className="rounded-md bg-[var(--color-primary)] px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]"
+                className="rounded-md bg-[var(--color-primary)] px-4 py-1.5 text-sm font-semibold text-[var(--color-on-primary)] transition-colors hover:bg-[var(--color-primary-hover)]"
               >
                 Entrar
               </Link>
