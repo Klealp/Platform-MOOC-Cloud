@@ -3,9 +3,6 @@
 Frontend en **Next.js 15 (App Router) + TypeScript + Tailwind v4**, con una capa
 **BFF (Backend For Frontend)** que se sienta entre el navegador y la API Go.
 
-Referencia visual estilo **Platzi** con una paleta **brutalista**: bordes negros
-gruesos, sombras duras sin desenfoque, colores saturados y tipografía pesada.
-
 ## Puesta en marcha
 
 ```bash
@@ -16,7 +13,7 @@ npm run dev                     # http://localhost:3000
 ```
 
 Requiere el backend Go en marcha (por defecto `http://localhost:8080/api/v1`).
-Levántalo desde la raíz del repo con `docker compose up --build`.
+Se levanta desde la raíz del repo con `docker compose up --build`.
 
 ## Decisiones de arquitectura (requisitos de seguridad)
 
