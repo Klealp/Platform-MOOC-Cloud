@@ -1,0 +1,45 @@
+%% Modelo de componentes de la Entrega 3 (arquitectura elastica).
+%% Flechas continuas: llamadas sincronas. Discontinuas: asincronas (cola) o
+%% transferencias directas de archivos con URL firmada.
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i componentes.mmd -o componentes.svg
+flowchart LR
+    nav["Navegador<br>(estudiante, profesor)"]
+
+    subgraph web["Frontend (grupo mooc-web, 1 VM)"]
+        bff["Next.js 15 BFF<br>cookie HttpOnly con el token"]
+    end
+
+    subgraph api["API (grupo mooc-api, 1 a 3 VMs)"]
+        mods["Monolito modular Go<br>auth · cursos · contenido · uploads<br>inscripciones · progreso · quizzes<br>insignias · auditoria · admin"]
+    end
+
+    subgraph wrk["Workers (grupo mooc-worker, 1 a 3 VMs)"]
+        tasks["Worker Go (asynq)<br>escaneo · transcodificacion HLS (ffmpeg)<br>insignias · correo · mantenimiento"]
+    end
+
+    subgraph infra["infra-server (VM fija)"]
+        redis[("Redis<br>cola asynq · cache de sesion<br>limite de tasa")]
+        qm["queue-metrics<br>backlog cada 30 s"]
+        mail["Mailpit (SMTP)"]
+    end
+
+    sql[("Cloud SQL PostgreSQL 16<br>fuente de verdad")]
+    gcs[("Cloud Storage<br>originales · HLS · insignias")]
+    mon["Cloud Monitoring<br>autoescaladores"]
+
+    nav -- "HTTPS (paginas y /api/*)" --> bff
+    bff -- "HTTPS Bearer por el balanceador" --> mods
+    nav -. "PUT/GET con URL firmada<br>(los archivos no pasan por la API)" .-> gcs
+
+    mods -- "SQL TLS" --> sql
+    mods -- "sesion, rate limit" --> redis
+    mods -. "encola tareas" .-> redis
+    mods -- "firma URLs, crea multipart" --> gcs
+
+    redis -. "desencola" .-> tasks
+    tasks -- "SQL TLS" --> sql
+    tasks -- "lee originales, escribe derivados" --> gcs
+    tasks --> mail
+
+    qm -- "inspecciona colas" --> redis
+    qm -- "custom.googleapis.com/mooc/queue_backlog" --> mon

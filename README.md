@@ -5,7 +5,7 @@ Backend en Go (monolito modular + workers asincronos) y frontend Next.js (BFF),
 todo en contenedores.
 
 > La documentacion detallada de la arquitectura y de cada archivo esta en
-> [`DOCUMENTACION.md`](./DOCUMENTACION.md).
+> [`docs/entrega1/DOCUMENTACION.md`](docs/entrega1/DOCUMENTACION.md).
 >
 > **Despliegue local completo (backend + frontend) con un solo comando:**
 > `docker compose up --build` levanta la API, los workers, el frontend y todas
@@ -19,19 +19,32 @@ todo en contenedores.
 | Arquitectura del despliegue en GCP (Entrega 2) | [`docs/entrega2/README.md`](docs/entrega2/README.md) |
 | Informe de capacidad (Entrega 2) | [`capacity-planning/pruebas_de_carga_entrega2.md`](capacity-planning/pruebas_de_carga_entrega2.md) |
 | Aprovisionamiento, compose por VM y migracion | [`deploy/gcp/`](deploy/gcp/) |
-| Prueba automatica de accesibilidad WCAG 2.2 AA (Entrega 3) | [`docs/entrega3/Prueba Accesibilidad/README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md) |
-| Ultimo reporte de accesibilidad | [`docs/entrega3/Prueba Accesibilidad/resultados/REPORTE.md`](docs/entrega3/Prueba%20Accesibilidad/resultados/REPORTE.md) |
+| **Arquitectura elastica desplegada (Entrega 3)**: grupos, balanceador, autoescalado, operacion, costos | [`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md) |
+| Informe de capacidad (Entrega 3): escenarios 1, 2, 3A y 3B | [`capacity-planning/pruebas_de_carga_entrega3.md`](capacity-planning/pruebas_de_carga_entrega3.md) |
+| Prueba automatica de accesibilidad WCAG 2.2 AA (Entrega 3) | [`docs/entrega3/PruebaAccesibilidad/README.md`](docs/entrega3/PruebaAccesibilidad/README.md) |
+| Ultimo reporte de accesibilidad | [`docs/entrega3/PruebaAccesibilidad/resultados/REPORTE.md`](docs/entrega3/PruebaAccesibilidad/resultados/REPORTE.md) |
 | Convenciones de accesibilidad del frontend | [`frontend/README.md`](frontend/README.md), seccion "Accesibilidad (WCAG 2.2 AA)" |
-| URL de la aplicacion | https://136-114-53-21.sslip.io |
+| URL del frontend (Entrega 3) | https://34-149-212-102.sslip.io |
+| URL del balanceador de la API (Entrega 3) | https://34-149-212-102.sslip.io/api/v1 (documentacion en `/docs`) |
+| Video de sustentacion (Entrega 3) | PENDIENTE |
 
 Las credenciales de la nube se entregan al equipo docente por el canal privado
 del curso, nunca en este repositorio.
 
 ## Arquitectura actual (despliegue en Google Cloud)
 
-La arquitectura vigente es la descrita en
-[`docs/entrega2/`](docs/entrega2/README.md): dos VMs `e2-highcpu-2` en una VPC
-propia (`us-central1-a`) mas servicios administrados.
+La arquitectura vigente es la de la Entrega 3, descrita en
+[`docs/entrega3/arquitectura.md`](docs/entrega3/arquitectura.md):
+
+- un balanceador HTTPS externo;
+- grupos administrados autoescalados de 1 a 3 VMs para la API (por CPU) y
+  para los workers (por trabajos en cola);
+- un grupo de 1 VM para el frontend;
+- Redis compartido en `infra-server`;
+- Cloud SQL y Cloud Storage.
+
+La de dos VMs fijas de la Entrega 2 se conserva en
+[`docs/entrega2/`](docs/entrega2/README.md) como linea base.
 
 No hace falta tener Go instalado: la compilacion ocurre dentro de Docker.
 
@@ -84,7 +97,7 @@ del quiz y el aislamiento entre estudiantes.
 ## Prueba de accesibilidad
 
 ```bash
-"./docs/entrega3/Prueba Accesibilidad/ejecutar.sh"
+"./docs/entrega3/PruebaAccesibilidad/ejecutar.sh"
 ```
 
 Auditoria automatica WCAG 2.2 AA con Playwright + axe-core. Corre por completo
@@ -94,9 +107,9 @@ de los cuatro roles (anonimo, estudiante, profesor, administrador) en tema
 claro y oscuro, y aprueba solo si ninguna tiene incumplimientos `critical` o
 `serious`. Requiere el proyecto levantado y los datos que deja la prueba de
 humo. El reporte queda en
-[`resultados/REPORTE.md`](docs/entrega3/Prueba%20Accesibilidad/resultados/REPORTE.md); la ultima
+[`resultados/REPORTE.md`](docs/entrega3/PruebaAccesibilidad/resultados/REPORTE.md); la ultima
 ejecucion (2026-10-24) aprobo las 38 auditorias. Paso a paso en
-[`docs/entrega3/Prueba Accesibilidad/README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md).
+[`docs/entrega3/PruebaAccesibilidad/README.md`](docs/entrega3/PruebaAccesibilidad/README.md).
 
 ## Comandos frecuentes
 
@@ -176,7 +189,7 @@ operacion (despliegue, migracion, respaldo) ver
 | [`postman/`](postman/) | Coleccion de la API y entornos local y nube. | [`postman/README.md`](postman/README.md) |
 | [`.postman/`](.postman/) | Metadatos del workspace de Postman. | — |
 | [`docs/`](docs/) | Documentacion de cada entrega (`entrega1/`, `entrega2/`, `entrega3/`). | — |
-| [`docs/entrega3/Prueba Accesibilidad/`](docs/entrega3/Prueba%20Accesibilidad/) | Auditoria automatica WCAG 2.2 AA (`ejecutar.sh`, script de Playwright + axe en `prueba/`) y su ultimo reporte en `resultados/`. | [`README.md`](docs/entrega3/Prueba%20Accesibilidad/README.md) |
+| [`docs/entrega3/PruebaAccesibilidad/`](docs/entrega3/PruebaAccesibilidad/) | Auditoria automatica WCAG 2.2 AA (`ejecutar.sh`, script de Playwright + axe en `prueba/`) y su ultimo reporte en `resultados/`. | [`README.md`](docs/entrega3/PruebaAccesibilidad/README.md) |
 | [`docs/entrega1/testdata/`](docs/entrega1/testdata/) | Pruebas de humo de extremo a extremo (`smoke.sh` y `smoke_*.sh`, cada una demuestra un comportamiento concreto). | [`docs/entrega1/testdata/README.md`](docs/entrega1/testdata/README.md) |
 | `Dockerfile.api`, `Dockerfile.worker`, `Dockerfile.web` | Imagenes de la API, el worker y el frontend. | — |
 | `docker-compose.yml`, `Makefile` | Entorno local completo y atajos. | Esta pagina |

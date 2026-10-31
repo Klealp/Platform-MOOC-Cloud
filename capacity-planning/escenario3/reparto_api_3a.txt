@@ -1,0 +1,4 @@
+# Reparto de peticiones /api/v1 entre replicas (logs de la API en Cloud Logging, driver gcplogs)
+# Ventana 2026-10-31T04:44:00Z a 04:44:20Z, corrida r1 del escenario 1 con 2 replicas
+   1145 mooc-api-wqv3
+   1087 mooc-api-zwx0

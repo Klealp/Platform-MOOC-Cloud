@@ -1,0 +1,86 @@
+{
+  "fecha": "2026-10-31T17:00Z",
+  "api_url": "https://34-149-212-102.sslip.io",
+  "k6_version": "k6 v1.3.0 (commit/5870e99ae8, go1.25.1, linux/amd64)",
+  "git_commit_generador": "19d7f8e",
+  "generador": "vm-pruebas, 8 vCPU, 31.3 GiB",
+  "worker_concurrency_por_instancia": "2",
+  "zona": "us-central1-a",
+  "plantilla_api": "?",
+  "plantilla_worker": "?",
+  "media_igual_a_entrega2": true,
+  "niveles": {
+    "L1": {
+      "descripcion": "Linea base con baja carga.",
+      "calentamiento": "30s",
+      "duracion": "3m",
+      "cargas_por_min": 1,
+      "espectadores": 10,
+      "drenaje_max": "15m"
+    },
+    "L2": {
+      "descripcion": "El doble de L1.",
+      "calentamiento": "30s",
+      "duracion": "3m",
+      "cargas_por_min": 2,
+      "espectadores": 20,
+      "drenaje_max": "15m"
+    },
+    "L3": {
+      "descripcion": "El cuadruple de L1: en la Entrega 2 la cola ya crecia (complete -> ready p95 de 770 s).",
+      "calentamiento": "30s",
+      "duracion": "3m",
+      "cargas_por_min": 4,
+      "espectadores": 40,
+      "drenaje_max": "15m"
+    }
+  },
+  "comun": {
+    "patron_perfiles": [
+      "P1",
+      "P2",
+      "A1",
+      "P1",
+      "P3",
+      "P2",
+      "P1",
+      "A1",
+      "P2",
+      "P1"
+    ],
+    "_patron": "Orden deterministico de los archivos que suben los profesores (se repite): 40% P1, 30% P2, 20% A1, 10% P3. Igual en todos los niveles.",
+    "poll_estado_s": 3,
+    "timeout_ready_s": 1800,
+    "segmentos_por_sesion": 20,
+    "prebuffer_segmentos": 3,
+    "pausa_entre_videos_s": 5,
+    "_consumo": "Cada espectador: pide el master .m3u8, elige una rendicion (rotando por usuario virtual), pre-carga 3 segmentos y luego pide cada segmento al ritmo de reproduccion (EXTINF) manteniendo 3 segmentos de ventaja. Ve hasta 20 segmentos, pausa 5 s y pasa al siguiente contenido."
+  },
+  "datos": {
+    "curso_contenido": "escenario-2-contenido-hls-1793465320",
+    "profesores": 20,
+    "estudiantes": 40,
+    "contenido": [
+      {
+        "perfil": "P1",
+        "duracion_s": 30,
+        "variantes": 2
+      },
+      {
+        "perfil": "P2",
+        "duracion_s": 90,
+        "variantes": 3
+      },
+      {
+        "perfil": "P3",
+        "duracion_s": 178,
+        "variantes": 4
+      },
+      {
+        "perfil": "A1",
+        "duracion_s": 178,
+        "variantes": 1
+      }
+    ]
+  }
+}

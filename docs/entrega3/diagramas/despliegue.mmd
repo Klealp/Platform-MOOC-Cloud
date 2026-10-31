@@ -1,0 +1,64 @@
+%% Modelo de despliegue efectivo de la Entrega 3 en Google Cloud (31-10-2026).
+%% Render: npx -p @mermaid-js/mermaid-cli mmdc -i despliegue.mmd -o despliegue.svg
+flowchart TB
+    user["Navegador / k6<br>Internet"]
+    admin["Equipo<br>SSH por IAP 35.235.240.0/20"]
+
+    subgraph gcp["Proyecto dsc-uniandes-20262 · region us-central1 · zona us-central1-a"]
+        direction TB
+
+        subgraph lb["Balanceador HTTPS externo (EXTERNAL_MANAGED, global)"]
+            ip["IP mooc-lb-ip 34.149.212.102<br>34-149-212-102.sslip.io"]
+            fr["mooc-https :443 (cert. administrado mooc-cert)<br>mooc-http :80 -> redireccion a HTTPS"]
+            um["URL map mooc-lb<br>/api/v1/*, /docs, /openapi.yaml, /healthz, /readyz -> mooc-api-be<br>resto -> mooc-web-be"]
+            ip --> fr --> um
+        end
+
+        subgraph vpc["VPC mooc-vpc (custom) · sin IPs publicas en las VMs"]
+            direction TB
+            subgraph app["Subred mooc-app 10.20.3.0/24"]
+                mapi["MIG mooc-api · 1 a 3 x e2-highcpu-2<br>plantilla mooc-api-tpl-61f22e4<br>contenedor api:61f22e4 :8080<br>autoescalado CPU 60 %"]
+                mweb["MIG mooc-web · 1 x e2-small<br>plantilla mooc-web-tpl-61f22e4<br>contenedor web:61f22e4 :3000"]
+            end
+            subgraph wk["Subred mooc-worker 10.20.2.0/24"]
+                mwrk["MIG mooc-worker · 1 a 3 x e2-highcpu-2<br>plantilla mooc-worker-tpl-61f22e4<br>contenedor worker:61f22e4 (ffmpeg), concurrencia 2<br>autoescalado backlog 2 por VM"]
+            end
+            subgraph inf["Subred mooc-infra 10.20.4.0/24"]
+                infra["infra-server e2-small · 10.20.4.10 (fija)<br>Redis 7 :6379 (AOF) · queue-metrics · Mailpit :1025"]
+            end
+            nat["Cloud Router + Cloud NAT<br>salida a Internet (apt, get.docker.com)"]
+        end
+
+        subgraph psa["Private Service Access mooc-psa 10.31.32.0/20"]
+            sql[("Cloud SQL mooc-pg · PostgreSQL 16<br>db-custom-1-3840 · zonal · IP privada 10.31.32.3 · TLS")]
+        end
+
+        gcs[("Cloud Storage gs://mooc-dsc-uniandes-20262<br>privado, acceso uniforme, CORS GET/HEAD/PUT")]
+        ar["Artifact Registry mooc<br>api · worker · web · queue-metrics :61f22e4"]
+        sm["Secret Manager<br>mooc-api-env · mooc-worker-env<br>mooc-web-env · mooc-infra-env"]
+        mon["Cloud Monitoring y Logging<br>Ops Agent · gcplogs · queue_backlog"]
+    end
+
+    user -- "HTTPS" --> ip
+    user -. "URL firmada" .-> gcs
+    um -- "HTTP :8080, HC /readyz" --> mapi
+    um -- "HTTP :3000, HC /login" --> mweb
+    mweb -- "API_BASE_URL por el balanceador" --> ip
+    mapi -- ":6379" --> infra
+    mwrk -- ":6379" --> infra
+    mapi -- ":5432 TLS" --> sql
+    mwrk -- ":5432 TLS" --> sql
+    mapi -- "HMAC mooc-api" --> gcs
+    mwrk -- "HMAC mooc-worker" --> gcs
+    infra -- "metrica" --> mon
+    mon -- "senal" --> mwrk
+    mapi -. "arranque: imagen y secreto" .-> ar
+    mwrk -.-> ar
+    mweb -.-> ar
+    infra -.-> ar
+    mapi -.-> sm
+    mwrk -.-> sm
+    mweb -.-> sm
+    infra -.-> sm
+    infra -. "get.docker.com, apt" .-> nat
+    admin -. "tcp 22" .-> infra

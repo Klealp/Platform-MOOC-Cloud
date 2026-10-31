@@ -1,0 +1,77 @@
+{
+  "origen": "original.mp4",
+  "generado": "2026-10-31T15:33:06+00:00",
+  "tamano_parte_bytes": 8388608,
+  "perfiles": [
+    {
+      "id": "P1",
+      "archivo": "p1_corto_480p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 30,
+      "ancho": 854,
+      "alto": 480,
+      "bitrate_kbps": 180,
+      "tamano_bytes": 679338,
+      "partes_multipart": 1,
+      "sha256": "53c75e429ce6b10098b123e7ca62742abad01ec73b64c512bea78b8a9215a661",
+      "rendiciones_esperadas": [
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "P2",
+      "archivo": "p2_medio_720p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 90,
+      "ancho": 1280,
+      "alto": 720,
+      "bitrate_kbps": 226,
+      "tamano_bytes": 2547043,
+      "partes_multipart": 1,
+      "sha256": "230aa65c243a51e2c98b033e1afe410e18f0da178d2d9c870c8bc52886e86e93",
+      "rendiciones_esperadas": [
+        "v720",
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "P3",
+      "archivo": "p3_largo_1080p.mp4",
+      "kind": "video",
+      "mime": "video/mp4",
+      "duracion_s": 178,
+      "ancho": 1920,
+      "alto": 1080,
+      "bitrate_kbps": 2340,
+      "tamano_bytes": 52336934,
+      "partes_multipart": 7,
+      "sha256": "a51ec0c22e56b5cf8aa21b15860329abb6c8684f98d79ba38069d800e5944543",
+      "rendiciones_esperadas": [
+        "v1080",
+        "v720",
+        "v480",
+        "v360"
+      ]
+    },
+    {
+      "id": "A1",
+      "archivo": "a1_audio.m4a",
+      "kind": "audio",
+      "mime": "audio/mp4",
+      "duracion_s": 178,
+      "ancho": 0,
+      "alto": 0,
+      "bitrate_kbps": 318,
+      "tamano_bytes": 7131941,
+      "partes_multipart": 1,
+      "sha256": "b3bb6b9070fa9980f9686681c37def4dd1f6b004ceb848c7c67d0ada6735ceab",
+      "rendiciones_esperadas": [
+        "a128"
+      ]
+    }
+  ]
+}

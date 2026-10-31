@@ -1,0 +1,51 @@
+# Logs del contenedor worker (driver gcplogs) entre 16:58 y 17:45 UTC del 31-10-2026, sin /healthz
+2026-10-31T17:01:01.691235285Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:01.690556 INFO: Stopping processor
+2026-10-31T17:01:01.691852505Z	mooc-worker-50g5	2026/10/31 17:01:01 [worker] apagando: se esperan los trabajos en curso...
+2026-10-31T17:01:01.691905050Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:01.690618 INFO: Scheduler shutting down
+2026-10-31T17:01:01.697644409Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:01.696148 INFO: Scheduler stopped
+2026-10-31T17:01:01.697784731Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:01.696166 INFO: Starting graceful shutdown
+2026-10-31T17:01:02.345502500Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:02.344826 INFO: Processor stopped
+2026-10-31T17:01:02.345604651Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:02.344868 INFO: Waiting for all workers to finish...
+2026-10-31T17:01:02.345640671Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:02.344886 INFO: All workers have finished
+2026-10-31T17:01:02.348322646Z	mooc-worker-50g5	asynq: pid=1 2026/10/31 17:01:02.347773 INFO: Exiting
+2026-10-31T17:01:02.348434460Z	mooc-worker-50g5	2026/10/31 17:01:02 [worker] adios
+2026-10-31T17:10:34.820198014Z	mooc-worker-grvm	2026/10/31 17:10:34 [worker] iniciando: env=prod instancia=mooc-worker-grvm addr=:8080 db_pool=5 redis=10.20.4.10:6379 bucket=mooc-dsc-uniandes-20262 cdn="" antimalware=stub
+2026-10-31T17:10:34.848869837Z	mooc-worker-grvm	2026/10/31 17:10:34 [worker] database: conectado a postgres (intento 1)
+2026-10-31T17:10:34.849111215Z	mooc-worker-grvm	2026/10/31 17:10:34 [worker] metricas del worker en :9100/metrics
+2026-10-31T17:10:34.849168922Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.847967 INFO: Scheduler starting
+2026-10-31T17:10:34.849199559Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.848013 INFO: Scheduler timezone is set to UTC
+2026-10-31T17:10:34.849242684Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.848029 INFO: Send signal TERM or INT to stop the scheduler
+2026-10-31T17:10:34.849274053Z	mooc-worker-grvm	2026/10/31 17:10:34 [worker] consumiendo la cola (concurrencia=2)
+2026-10-31T17:10:34.849307673Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.848102 INFO: Starting processing
+2026-10-31T17:10:34.849336144Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.848118 INFO: Send signal TSTP to stop processing new tasks
+2026-10-31T17:10:34.849364498Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:10:34.848122 INFO: Send signal TERM or INT to terminate the process
+2026-10-31T17:22:32.811618718Z	mooc-worker-bp1x	2026/10/31 17:22:32 [worker] iniciando: env=prod instancia=mooc-worker-bp1x addr=:8080 db_pool=5 redis=10.20.4.10:6379 bucket=mooc-dsc-uniandes-20262 cdn="" antimalware=stub
+2026-10-31T17:22:32.845811008Z	mooc-worker-bp1x	2026/10/31 17:22:32 [worker] database: conectado a postgres (intento 1)
+2026-10-31T17:22:32.850509184Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.848569 INFO: Scheduler starting
+2026-10-31T17:22:32.850617288Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.848664 INFO: Scheduler timezone is set to UTC
+2026-10-31T17:22:32.850659811Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.848702 INFO: Send signal TERM or INT to stop the scheduler
+2026-10-31T17:22:32.850711873Z	mooc-worker-bp1x	2026/10/31 17:22:32 [worker] metricas del worker en :9100/metrics
+2026-10-31T17:22:32.850747884Z	mooc-worker-bp1x	2026/10/31 17:22:32 [worker] consumiendo la cola (concurrencia=2)
+2026-10-31T17:22:32.851020546Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.849623 INFO: Starting processing
+2026-10-31T17:22:32.851056575Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.849646 INFO: Send signal TSTP to stop processing new tasks
+2026-10-31T17:22:32.851087751Z	mooc-worker-bp1x	asynq: pid=1 2026/10/31 17:22:32.849650 INFO: Send signal TERM or INT to terminate the process
+2026-10-31T17:31:11.886934330Z	mooc-worker-grvm	2026/10/31 17:31:11 [worker] apagando: se esperan los trabajos en curso...
+2026-10-31T17:31:11.887427439Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.886496 INFO: Scheduler shutting down
+2026-10-31T17:31:11.887481824Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.886513 INFO: Stopping processor
+2026-10-31T17:31:11.887520073Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.886533 INFO: Starting graceful shutdown
+2026-10-31T17:31:11.892566831Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.892417 INFO: Scheduler stopped
+2026-10-31T17:31:11.921045998Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.920590 INFO: Processor stopped
+2026-10-31T17:31:11.921219843Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.920625 INFO: Waiting for all workers to finish...
+2026-10-31T17:31:11.921353465Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.920645 INFO: All workers have finished
+2026-10-31T17:31:11.923160731Z	mooc-worker-grvm	asynq: pid=1 2026/10/31 17:31:11.922532 INFO: Exiting
+2026-10-31T17:31:11.923255909Z	mooc-worker-grvm	2026/10/31 17:31:11 [worker] adios
+2026-10-31T17:41:21.876124367Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:21.875272 INFO: Stopping processor
+2026-10-31T17:41:21.877467099Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:21.875354 INFO: Scheduler shutting down
+2026-10-31T17:41:21.877895638Z	mooc-worker-77ct	2026/10/31 17:41:21 [worker] apagando: se esperan los trabajos en curso...
+2026-10-31T17:41:21.878204677Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:21.876305 INFO: Starting graceful shutdown
+2026-10-31T17:41:21.884312358Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:21.884148 INFO: Scheduler stopped
+2026-10-31T17:41:23.312356488Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:23.311751 INFO: Processor stopped
+2026-10-31T17:41:23.312531300Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:23.311790 INFO: Waiting for all workers to finish...
+2026-10-31T17:41:23.312674517Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:23.311910 INFO: All workers have finished
+2026-10-31T17:41:23.315011626Z	mooc-worker-77ct	asynq: pid=1 2026/10/31 17:41:23.314652 INFO: Exiting
+2026-10-31T17:41:23.315130560Z	mooc-worker-77ct	2026/10/31 17:41:23 [worker] adios

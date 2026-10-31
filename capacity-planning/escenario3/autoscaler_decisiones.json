@@ -1,0 +1,331 @@
+[
+ {
+  "tiempo_utc": "2026-10-31T04:35:45Z",
+  "autoescalador": "mooc-api-bcf6",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 2,
+     "calculationDetails": {
+      "servingSize": 1,
+      "signalTarget": 0.6,
+      "signalValue": 0.64472
+     },
+     "name": "CPU_UTILIZATION",
+     "signalPolicy": {
+      "coolDownPeriodSec": 180,
+      "cpuUtilization": {
+       "utilizationTarget": 0.6
+      }
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 1 to 2. Decision based on: the average CPU utilization of 64.472% across 1 serving instance was above the utilization target of 60%."
+   },
+   "newSize": 2,
+   "oldSize": 1
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T04:52:11Z",
+  "autoescalador": "mooc-api-bcf6",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 1,
+     "calculationDetails": {
+      "servingSize": 2,
+      "signalTarget": 0.6,
+      "signalValue": 0.0324
+     },
+     "name": "CPU_UTILIZATION",
+     "signalPolicy": {
+      "coolDownPeriodSec": 180,
+      "cpuUtilization": {
+       "utilizationTarget": 0.6
+      }
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 2 to 1. Decision based on: the average CPU utilization of 3.24% across 2 serving instances was below the utilization target of 60%."
+   },
+   "newSize": 1,
+   "oldSize": 2
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T15:43:15Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 2,
+     "calculationDetails": {
+      "signalValue": 2.0043,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 1 to 2, overriding the previous recommendation of 1, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 2.0043 and the single instance assignment was equal to 2."
+   },
+   "newSize": 2,
+   "oldSize": 1
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T15:55:59Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingLimit": {
+     "limitPolicy": {
+      "stabilizationPeriodSec": 600
+     },
+     "limitSize": 1,
+     "name": "STABILIZATION_PERIOD"
+    },
+    "scalingSignal": {
+     "calculatedSize": 0,
+     "calculationDetails": {
+      "signalValue": 0,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 2 to 1, overriding the previous recommendation of 2, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 0 and the single instance assignment was equal to 2. The calculated size was 0 based on the metric value divided by the single instance assignment but the size was limited based on the peak load over the stabilization period of 600 seconds."
+   },
+   "newSize": 1,
+   "oldSize": 2
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T16:41:45Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 2,
+     "calculationDetails": {
+      "signalValue": 2.3209,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 1 to 2, overriding the previous recommendation of 1, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 2.3209 and the single instance assignment was equal to 2."
+   },
+   "newSize": 2,
+   "oldSize": 1
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T17:00:59Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingLimit": {
+     "limitPolicy": {
+      "stabilizationPeriodSec": 600
+     },
+     "limitSize": 1,
+     "name": "STABILIZATION_PERIOD"
+    },
+    "scalingSignal": {
+     "calculatedSize": 0,
+     "calculationDetails": {
+      "signalValue": 0,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 2 to 1, overriding the previous recommendation of 2, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 0 and the single instance assignment was equal to 2. The calculated size was 0 based on the metric value divided by the single instance assignment but the size was limited based on the peak load over the stabilization period of 600 seconds."
+   },
+   "newSize": 1,
+   "oldSize": 2
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T17:08:48Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 2,
+     "calculationDetails": {
+      "signalValue": 2.2962,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 1 to 2, overriding the previous recommendation of 1, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 2.2962 and the single instance assignment was equal to 2."
+   },
+   "newSize": 2,
+   "oldSize": 1
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T17:19:48Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingSignal": {
+     "calculatedSize": 3,
+     "calculationDetails": {
+      "signalValue": 4.0721,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 2 to 3, overriding the previous recommendation of 2, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 4.0721 and the single instance assignment was equal to 2."
+   },
+   "newSize": 3,
+   "oldSize": 2
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T17:31:09Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingLimit": {
+     "limitPolicy": {
+      "stabilizationPeriodSec": 600
+     },
+     "limitSize": 2,
+     "name": "STABILIZATION_PERIOD"
+    },
+    "scalingSignal": {
+     "calculatedSize": 0,
+     "calculationDetails": {
+      "signalValue": 0,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 3 to 2, overriding the previous recommendation of 3, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 0 and the single instance assignment was equal to 2. The calculated size was 0 based on the metric value divided by the single instance assignment but the size was limited based on the peak load over the stabilization period of 600 seconds."
+   },
+   "newSize": 2,
+   "oldSize": 3
+  }
+ },
+ {
+  "tiempo_utc": "2026-10-31T17:41:19Z",
+  "autoescalador": "mooc-worker-yiah",
+  "explicacion": {
+   "@type": "type.googleapis.com/autoscaler.AutoscalerSizeChangeExplanation",
+   "autoscalingMode": "ON",
+   "autoscalingReason": {
+    "scalingLimit": {
+     "limitPolicy": {
+      "scaleInControl": {
+       "maxScaledInReplicas": {
+        "fixed": 1
+       },
+       "timeWindowSec": 600
+      }
+     },
+     "limitSize": 1,
+     "name": "SCALE_IN_CONTROL"
+    },
+    "scalingSignal": {
+     "calculatedSize": 0,
+     "calculationDetails": {
+      "signalValue": 0,
+      "singleInstanceAssignment": 2
+     },
+     "name": "CUSTOM_METRIC_SINGLE_INSTANCE_ASSIGNMENT",
+     "signalPolicy": {
+      "customMetricUtilizations": [
+       {
+        "filter": "resource.type = \"global\"",
+        "metric": "custom.googleapis.com/mooc/queue_backlog",
+        "singleInstanceAssignment": 2
+       }
+      ]
+     }
+    },
+    "summary": "The autoscaler's recommended size changed from 2 to 1, overriding the previous recommendation of 2, which was not actuated. Decision based on: the value of custom.googleapis.com/mooc/queue_backlog metric was equal to 0 and the single instance assignment was equal to 2. The calculated size was 0 based on the metric value divided by the single instance assignment but the size was limited by scale-in rate of maximum 1 VMs from the peak size over the last 600 seconds."
+   },
+   "newSize": 1,
+   "oldSize": 2
+  }
+ }
+]
